@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BF WIFI ZONE - Connexion</title>
+    <style>
+        /* Style général - identique aux autres pages */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(145deg, #0B1120 0%, #192132 100%);
+            color: #E2E8F0;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 450px;
+            width: 100%;
+            background: rgba(18, 24, 38, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(52, 69, 104, 0.5);
+            border-radius: 48px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* En-tête */
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 15px;
+        }
+
+        .bf-wifi {
+            color: #FFFFFF;
+        }
+
+        .zone {
+            background: linear-gradient(135deg, #F59E0B, #F97316);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-left: 5px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #FFFFFF;
+        }
+
+        .page-subtitle {
+            color: #A0B3D9;
+            font-size: 0.95rem;
+        }
+
+        /* Sélecteur de méthode de connexion */
+        .login-method {
+            display: flex;
+            background: rgba(28, 36, 54, 0.8);
+            border-radius: 40px;
+            padding: 5px;
+            margin-bottom: 25px;
+            border: 1px solid #2A3855;
+        }
+
+        .method-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 35px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #A0B3D9;
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+            font-size: 0.95rem;
+        }
+
+        .method-btn.active {
+            background: linear-gradient(135deg, #F59E0B, #F97316);
+            color: #0B1120;
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Formulaire */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #E2E8F0;
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            color: #F59E0B;
+            font-size: 1.2rem;
+            z-index: 1;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            background: rgba(28, 36, 54, 0.8);
+            border: 1.5px solid #2A3855;
+            border-radius: 30px;
+            font-size: 1rem;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #F59E0B;
+            background: rgba(35, 45, 70, 0.9);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        input::placeholder {
+            color: #5D729B;
+            font-size: 0.95rem;
+        }
+
+        /* Groupe téléphone (indicatif + numéro) */
+        .phone-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .phone-group select {
+            width: 120px;
+            padding: 16px;
+            background: rgba(28, 36, 54, 0.8);
+            border: 1.5px solid #2A3855;
+            border-radius: 30px;
+            font-size: 1rem;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23F59E0B'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .phone-group select:focus {
+            outline: none;
+            border-color: #F59E0B;
+        }
+
+        .phone-group .input-wrapper {
+            flex: 1;
+        }
+
+        /* Mot de passe avec bouton voir/masquer */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #A0B3D9;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            z-index: 2;
+        }
+
+        .toggle-password:hover {
+            color: #F59E0B;
+        }
+
+        /* Options supplémentaires */
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #F59E0B;
+            margin: 0;
+        }
+
+        .remember-me label {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            color: #A0B3D9;
+        }
+
+        .forgot-password {
+            color: #F59E0B;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        /* Bouton de connexion */
+        .btn-login {
+            width: 100%;
+            padding: 18px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            background: linear-gradient(135deg, #F59E0B, #F97316);
+            color: #0B1120;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .btn-login:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Message d'erreur */
+        .error-message {
+            background: rgba(220, 38, 38, 0.2);
+            border: 1px solid #EF4444;
+            color: #FCA5A5;
+            padding: 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Séparateur */
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #5D729B;
+            margin: 20px 0;
+        }
+
+        .separator::before,
+        .separator::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #2A3855;
+        }
+
+        .separator span {
+            padding: 0 10px;
+            font-size: 0.9rem;
+        }
+
+        /* Lien d'inscription */
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #A0B3D9;
+        }
+
+        .register-link a {
+            color: #F59E0B;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Indicateur de validation */
+        .validation-indicator {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            padding-left: 15px;
+            color: #F59E0B;
+            display: none;
+        }
+
+        .validation-indicator.show {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 450px) {
+            .container {
+                padding: 25px;
+                border-radius: 32px;
+            }
+
+            .phone-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .phone-group select {
+                width: 100%;
+            }
+
+            .login-options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- En-tête -->
+        <div class="header">
+            <div class="logo">
+                <span class="bf-wifi">BF WIFI</span>
+                <span class="zone">ZONE</span>
+            </div>
+            <div class="page-title">Connexion</div>
+            <div class="page-subtitle">Accédez à votre espace de gestion</div>
+        </div>
+
+        <!-- Sélecteur Email/Téléphone -->
+        <div class="login-method">
+            <button class="method-btn active" id="methodEmail" onclick="switchMethod('email')">
+                📧 Email
+            </button>
+            <button class="method-btn" id="methodPhone" onclick="switchMethod('phone')">
+                📱 Téléphone
+            </button>
+        </div>
+
+        <!-- Formulaire de connexion -->
+        <form id="loginForm" onsubmit="handleSubmit(event)">
+            <!-- Message d'erreur -->
+            <div class="error-message" id="errorMessage">
+                ⚠️ Email/Téléphone ou mot de passe incorrect
+            </div>
+
+            <!-- Champ Email (visible par défaut) -->
+            <div class="form-group" id="emailField">
+                <label for="email">Adresse email</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">✉️</span>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="exemple@email.com"
+                        autocomplete="email"
+                    >
+                </div>
+            </div>
+
+            <!-- Champ Téléphone (caché par défaut) -->
+            <div class="form-group" id="phoneField" style="display: none;">
+                <label for="phone">Numéro de téléphone</label>
+                <div class="phone-group">
+                    <select id="countryCode" name="countryCode">
+                        <option value="+226">Burkina Faso (+226)</option>
+                        <option value="+225">Côte d'Ivoire (+225)</option>
+                        <option value="+221">Sénégal (+221)</option>
+                        <option value="+229">Bénin (+229)</option>
+                        <option value="+228">Togo (+228)</option>
+                        <option value="+223">Mali (+223)</option>
+                        <option value="+227">Niger (+227)</option>
+                        <option value="+237">Cameroun (+237)</option>
+                        <option value="+224">Guinée (+224)</option>
+                        <option value="+33">France (+33)</option>
+                    </select>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            placeholder="70 00 00 00"
+                            autocomplete="tel"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Petit indicateur pour montrer ce qui est attendu -->
+            <div class="validation-indicator" id="inputHelp">
+                Entrez votre email pour vous connecter
+            </div>
+
+            <!-- Mot de passe -->
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <div class="password-wrapper">
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Votre mot de passe"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+                    <button type="button" class="toggle-password" onclick="togglePassword()" tabindex="-1">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <!-- Options de connexion -->
+            <div class="login-options">
+                <div class="remember-me">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Se souvenir de moi</label>
+                </div>
+                <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+            </div>
+
+            <!-- Bouton de connexion -->
+            <button type="submit" class="btn-login">
+                🔐 Se connecter
+            </button>
+
+            <!-- Séparateur -->
+            <div class="separator">
+                <span>ou</span>
+            </div>
+
+            <!-- Lien vers inscription -->
+            <div class="register-link">
+                Pas encore de compte ?
+                <a href="register.html">Créer un compte</a>
+            </div>
+
+            <!-- Démo rapide (à supprimer plus tard) -->
+            <div style="margin-top: 20px; padding: 10px; background: rgba(245,158,11,0.1); border-radius: 15px; font-size: 0.8rem; color: #A0B3D9; text-align: center;">
+                <strong>Démo :</strong> Testez avec email ou téléphone<br>
+                (admin@bfwifi.bf / 70000000 · mot de passe : 12345678)
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let currentMethod = 'email'; // 'email' ou 'phone'
+
+        // Fonction pour basculer entre email et téléphone
+        function switchMethod(method) {
+            currentMethod = method;
+            
+            // Mise à jour des boutons
+            document.getElementById('methodEmail').classList.remove('active');
+            document.getElementById('methodPhone').classList.remove('active');
+            
+            // Mise à jour des champs
+            if (method === 'email') {
+                document.getElementById('methodEmail').classList.add('active');
+                document.getElementById('emailField').style.display = 'block';
+                document.getElementById('phoneField').style.display = 'none';
+                
+                // Rendre l'email requis
+                document.getElementById('email').required = true;
+                document.getElementById('phone').required = false;
+                
+                // Mise à jour du message d'aide
+                document.getElementById('inputHelp').textContent = 'Entrez votre email pour vous connecter';
+                document.getElementById('inputHelp').classList.add('show');
+                
+                // Focus sur le champ email
+                setTimeout(() => document.getElementById('email').focus(), 100);
+                
+            } else {
+                document.getElementById('methodPhone').classList.add('active');
+                document.getElementById('emailField').style.display = 'none';
+                document.getElementById('phoneField').style.display = 'block';
+                
+                // Rendre le téléphone requis
+                document.getElementById('email').required = false;
+                document.getElementById('phone').required = true;
+                
+                // Mise à jour du message d'aide
+                document.getElementById('inputHelp').textContent = 'Entrez votre numéro WhatsApp pour vous connecter';
+                document.getElementById('inputHelp').classList.add('show');
+                
+                // Focus sur le champ téléphone
+                setTimeout(() => document.getElementById('phone').focus(), 100);
+            }
+        }
+
+        // Fonction pour afficher/masquer le mot de passe
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Changer l'icône
+            const toggleBtn = document.querySelector('.toggle-password');
+            toggleBtn.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+        }
+
+        // Fonction de validation et soumission
+        function handleSubmit(event) {
+            event.preventDefault();
+
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Réinitialisation
+            errorMessage.classList.remove('show');
+
+            // Validation selon la méthode choisie
+            if (currentMethod === 'email') {
+                const email = document.getElementById('email').value.trim();
+                
+                if (!email) {
+                    showError("Veuillez entrer votre adresse email");
+                    return;
+                }
+                
+                if (!email.includes('@') || !email.includes('.')) {
+                    showError("Format d'email invalide");
+                    return;
+                }
+                
+                console.log("Tentative de connexion avec email:", email);
+                
+            } else {
+                const phone = document.getElementById('phone').value.trim();
+                const countryCode = document.getElementById('countryCode').value;
+                
+                if (!phone) {
+                    showError("Veuillez entrer votre numéro de téléphone");
+                    return;
+                }
+                
+                // Nettoie le numéro (enlève les espaces)
+                const cleanPhone = phone.replace(/\s/g, '');
+                if (cleanPhone.length < 8) {
+                    showError("Numéro de téléphone invalide");
+                    return;
+                }
+                
+                console.log("Tentative de connexion avec téléphone:", countryCode + cleanPhone);
+            }
+
+            // Validation du mot de passe
+            if (!password) {
+                showError("Veuillez entrer votre mot de passe");
+                return;
+            }
+
+            if (password.length < 8) {
+                showError("Le mot de passe doit contenir au moins 8 caractères");
+                return;
+            }
+
+            // Ici, vous connecterez à votre backend plus tard
+            // Pour la démo, on simule une connexion réussie avec certains identifiants
+            const demoPassword = "12345678";
+            const demoEmail = "admin@bfwifi.bf";
+            const demoPhone = "70000000";
+
+            let loginSuccess = false;
+
+            if (currentMethod === 'email') {
+                if (document.getElementById('email').value.trim() === demoEmail && password === demoPassword) {
+                    loginSuccess = true;
+                }
+            } else {
+                if (document.getElementById('phone').value.trim() === demoPhone && password === demoPassword) {
+                    loginSuccess = true;
+                }
+            }
+
+            if (loginSuccess) {
+                alert("✅ Connexion réussie ! Redirection vers le tableau de bord...");
+                // window.location.href = "dashboard.html"; // Décommentez quand la page dashboard existera
+            } else {
+                showError("Email/Téléphone ou mot de passe incorrect");
+            }
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = "⚠️ " + message;
+            errorMessage.classList.add('show');
+            
+            // Faire défiler jusqu'au message
+            errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Validation en temps réel pour le téléphone (optionnel)
+        document.getElementById('phone')?.addEventListener('input', function(e) {
+            // Nettoie le numéro (garde seulement les chiffres)
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Formatage basique (XX XX XX XX)
+            if (value.length > 0) {
+                if (value.length <= 2) {
+                    value = value;
+                } else if (value.length <= 4) {
+                    value = value.slice(0,2) + ' ' + value.slice(2);
+                } else if (value.length <= 6) {
+                    value = value.slice(0,2) + ' ' + value.slice(2,4) + ' ' + value.slice(4);
+                } else {
+                    value = value.slice(0,2) + ' ' + value.slice(2,4) + ' ' + value.slice(4,6) + ' ' + value.slice(6,8);
+                }
+            }
+            
+            e.target.value = value;
+        });
+
+        // Détection automatique si l'utilisateur colle un email ou un téléphone
+        document.getElementById('email').addEventListener('input', function(e) {
+            const value = e.target.value;
+            // Si ça ressemble à un numéro (beaucoup de chiffres) et qu'on est en mode email, suggérer le mode téléphone
+            if (value.replace(/\D/g, '').length > 6 && currentMethod === 'email') {
+                document.getElementById('inputHelp').textContent = '💡 Vous tapez un numéro ? Passez en mode "Téléphone"';
+                document.getElementById('inputHelp').classList.add('show');
+            }
+        });
+
+        // Au chargement, focus sur le champ email
+        window.addEventListener('load', function() {
+            document.getElementById('email').focus();
+        });
+    </script>
+</body>
+</html>
