@@ -543,6 +543,36 @@
                 alternativePhone: document.getElementById('phone').value.trim(),
                 password: password // À hasher côté serveur !
             };
+     try {
+        // Envoi au serveur avec fetch
+        const response = await fetch('https://ton-serveur.com/api/register', {
+            method: 'POST',
+            body: formData
+            // ⚠️ Ne pas définir l'en-tête Content-Type !
+            // Le navigateur le fera automatiquement avec la bonne boundary
+        });
+        
+        // Traitement de la réponse
+        const result = await response.json();
+        
+        if (response.ok) {
+            // Succès
+            alert('Inscription réussie !');
+            window.location.href = 'login.html';
+        } else {
+            // Erreur retournée par le serveur
+            showError(result.message || 'Erreur lors de l\'inscription');
+        }
+    } catch (error) {
+        // Erreur réseau
+        console.error('Erreur:', error);
+        showError('Problème de connexion au serveur');
+    }
+
+            
+
+
+            
             
             console.log("Données du formulaire :", formData);
             
