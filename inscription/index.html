@@ -234,6 +234,12 @@
             box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.4);
         }
 
+        .btn-register:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         /* Lien connexion */
         .login-link {
             text-align: center;
@@ -273,7 +279,7 @@
             font-size: 0.9rem;
         }
 
-        /* Message d'erreur (caché par défaut) */
+        /* Message d'erreur */
         .error-message {
             background: rgba(220, 38, 38, 0.2);
             border: 1px solid #EF4444;
@@ -287,6 +293,92 @@
 
         .error-message.show {
             display: block;
+        }
+
+        /* Loading overlay */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 17, 32, 0.9);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .loading-spinner {
+            text-align: center;
+            padding: 30px;
+            border-radius: 20px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(245, 158, 11, 0.3);
+            border-top: 4px solid #F59E0B;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loading-message {
+            color: #FFFFFF;
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-top: 15px;
+        }
+        
+        /* Success message */
+        #successMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .success-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        #successMessage p {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -30%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
         }
 
         /* Responsive */
@@ -325,7 +417,7 @@
 
         <!-- Formulaire d'inscription -->
         <form id="registerForm" onsubmit="handleSubmit(event)">
-            <!-- Message d'erreur (exemple) -->
+            <!-- Message d'erreur -->
             <div class="error-message" id="errorMessage">
                 ⚠️ Une erreur est survenue. Veuillez réessayer.
             </div>
@@ -376,7 +468,6 @@
                         <option value="+237">Cameroun (+237)</option>
                         <option value="+33">France (+33)</option>
                         <option value="+1">USA/Canada (+1)</option>
-                        <option value="+other">Autre</option>
                     </select>
                     <div class="input-wrapper">
                         <span class="input-icon">📱</span>
@@ -452,7 +543,7 @@
             </div>
 
             <!-- Bouton de création -->
-            <button type="submit" class="btn-register">
+            <button type="submit" class="btn-register" id="submitBtn">
                 🚀 Créer mon compte
             </button>
 
@@ -469,6 +560,14 @@
         </form>
     </div>
 
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p class="loading-message">Chargement en cours...</p>
+        </div>
+    </div>
+
     <script>
         // Fonction pour afficher/masquer le mot de passe
         function togglePassword() {
@@ -476,286 +575,166 @@
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             
-            // Changer l'icône (optionnel)
             const toggleBtn = document.querySelector('.toggle-password');
             toggleBtn.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
         }
 
-       
-
+        // Fonction principale de soumission
+        async function handleSubmit(event) {
+            event.preventDefault();
             
-async function handleSubmit(event) {
-    event.preventDefault();
-    
-    // Récupération des valeurs
-    const fullname = document.getElementById('fullname').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const countryCode = document.getElementById('countryCode').value;
-    const whatsapp = document.getElementById('whatsapp').value.trim();
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    const terms = document.getElementById('terms').checked;
-    const errorMessage = document.getElementById('errorMessage');
-    const alternativePhone = document.getElementById('phone').value.trim();
+            // Récupération des éléments
+            const submitBtn = document.getElementById('submitBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingMessage = document.querySelector('.loading-message');
+            
+            // Récupération des valeurs
+            const fullname = document.getElementById('fullname').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const countryCode = document.getElementById('countryCode').value;
+            const whatsapp = document.getElementById('whatsapp').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const terms = document.getElementById('terms').checked;
+            const alternativePhone = document.getElementById('phone').value.trim();
 
-    // Réinitialisation du message d'erreur
-    errorMessage.classList.remove('show');
+            // Réinitialisation du message d'erreur
+            errorMessage.classList.remove('show');
 
-    // Validations basiques
-    if (fullname.length < 3) {
-        showError("Le nom complet doit contenir au moins 3 caractères.");
-        return false;
-    }
+            // Validations basiques
+            if (fullname.length < 3) {
+                showError("Le nom complet doit contenir au moins 3 caractères.");
+                return false;
+            }
 
-    if (!email.includes('@') || !email.includes('.')) {
-        showError("Veuillez entrer une adresse email valide.");
-        return false;
-    }
+            if (!email.includes('@') || !email.includes('.')) {
+                showError("Veuillez entrer une adresse email valide.");
+                return false;
+            }
 
-    if (whatsapp.length < 8) {
-        showError("Veuillez entrer un numéro WhatsApp valide.");
-        return false;
-    }
+            const cleanWhatsapp = whatsapp.replace(/\s/g, '');
+            if (cleanWhatsapp.length < 8) {
+                showError("Veuillez entrer un numéro WhatsApp valide (8 chiffres minimum).");
+                return false;
+            }
 
-    if (password.length < 8) {
-        showError("Le mot de passe doit contenir au moins 8 caractères.");
-        return false;
-    }
+            if (password.length < 8) {
+                showError("Le mot de passe doit contenir au moins 8 caractères.");
+                return false;
+            }
 
-    if (password !== confirmPassword) {
-        showError("Les mots de passe ne correspondent pas.");
-        return false;
-    }
+            if (password !== confirmPassword) {
+                showError("Les mots de passe ne correspondent pas.");
+                return false;
+            }
 
-    if (!terms) {
-        showError("Vous devez accepter les conditions d'utilisation.");
-        return false;
-    }
+            if (!terms) {
+                showError("Vous devez accepter les conditions d'utilisation.");
+                return false;
+            }
 
-    // 🎯 AFFICHER LE CHARGEMENT
-    showLoading("Création de votre compte en cours...");
-
-    // Préparation des données
-    const formData = new FormData();
-    formData.append('fullname', fullname);
-    formData.append('email', email);
-    formData.append('countryCode', countryCode);
-    
-    const cleanWhatsapp = whatsapp.replace(/\s/g, '');
-    formData.append('whatsapp', cleanWhatsapp);
-    
-    if (alternativePhone) {
-        const cleanAlternative = alternativePhone.replace(/\s/g, '');
-        formData.append('alternativePhone', cleanAlternative);
-    }
-    
-    formData.append('password', password);
-
-    try {
-        // Désactiver le bouton
-        const submitBtn = event.target.querySelector('button[type="submit"]');
-        if (submitBtn) {
+            // AFFICHER LE CHARGEMENT
+            loadingMessage.textContent = "Création de votre compte en cours...";
+            loadingOverlay.style.display = 'flex';
             submitBtn.disabled = true;
-        }
 
-// Remplacez la partie traitement de la réponse par ceci :
-const response = await fetch('http://fasowifizone.pythonanywhere.com/create_account', {
-    method: 'POST',
-    body: formData
-});
-
-console.log('Statut:', response.status);
-console.log('Headers:', response.headers);
-
-// Lire la réponse comme texte d'abord
-const textResponse = await response.text();
-console.log('Réponse brute:', textResponse);
-
-try {
-    // Essayer de parser en JSON
-    const result = JSON.parse(textResponse);
-    
-    hideLoading();
-    
-    if (response.ok) {
-        showSuccessMessage('🎉 Compte créé avec succès ! Redirection...');
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 2000);
-    } else {
-        if (submitBtn) submitBtn.disabled = false;
-        showError(result.message || 'Erreur lors de l\'inscription');
-    }
-} catch (e) {
-    // Ce n'est pas du JSON, c'est une page HTML d'erreur
-    console.error('La réponse n\'est pas du JSON:', textResponse);
-    hideLoading();
-    showError('Erreur serveur 500. Vérifiez les logs PythonAnywhere.');
-    if (submitBtn) submitBtn.disabled = false;
-}
-   
-
-    
-}
-
-// ⏳ FONCTIONS POUR LE CHARGEMENT
-function showLoading(message = "Chargement en cours...") {
-    // Créer l'overlay de chargement s'il n'existe pas
-    let loadingOverlay = document.getElementById('loadingOverlay');
-    
-    if (!loadingOverlay) {
-        loadingOverlay = document.createElement('div');
-        loadingOverlay.id = 'loadingOverlay';
-        loadingOverlay.innerHTML = `
-            <div class="loading-spinner">
-                <div class="spinner"></div>
-                <p class="loading-message"></p>
-            </div>
-        `;
-        document.body.appendChild(loadingOverlay);
-        
-        // Ajouter les styles CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            #loadingOverlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(11, 17, 32, 0.9);
-                backdrop-filter: blur(5px);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-                animation: fadeIn 0.3s ease;
+            // Préparation des données
+            const formData = new FormData();
+            formData.append('fullname', fullname);
+            formData.append('email', email);
+            formData.append('countryCode', countryCode);
+            formData.append('whatsapp', cleanWhatsapp);
+            
+            if (alternativePhone) {
+                const cleanAlternative = alternativePhone.replace(/\s/g, '');
+                formData.append('alternativePhone', cleanAlternative);
             }
             
-            .loading-spinner {
-                text-align: center;
-                padding: 30px;
-                border-radius: 20px;
-            }
-            
-            .spinner {
-                width: 50px;
-                height: 50px;
-                border: 4px solid rgba(245, 158, 11, 0.3);
-                border-top: 4px solid #F59E0B;
-                border-radius: 50%;
-                margin: 0 auto 20px;
-                animation: spin 1s linear infinite;
-            }
-            
-            .loading-message {
-                color: #FFFFFF;
-                font-size: 1.2rem;
-                font-weight: 500;
-                margin-top: 15px;
-            }
-            
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-            
-            @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    // Mettre à jour le message et afficher
-    loadingOverlay.querySelector('.loading-message').textContent = message;
-    loadingOverlay.style.display = 'flex';
-}
+            formData.append('password', password);
 
-function hideLoading() {
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) {
-        loadingOverlay.style.display = 'none';
-    }
-}
+            try {
+                // Envoi au serveur
+                const response = await fetch('http://fasowifizone.pythonanywhere.com/create_account', {
+                    method: 'POST',
+                    body: formData
+                });
 
-// Fonction pour les messages de succès temporaires
-function showSuccessMessage(message) {
-    // Cacher d'abord l'overlay de chargement
-    hideLoading();
-    
-    // Créer un message de succès
-    const successDiv = document.createElement('div');
-    successDiv.id = 'successMessage';
-    successDiv.innerHTML = `
-        <div class="success-content">
-            <div class="success-icon">✅</div>
-            <p>${message}</p>
-        </div>
-    `;
-    
-    // Styles pour le message de succès
-    const style = document.createElement('style');
-    style.textContent = `
-        #successMessage {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: white;
-            padding: 30px 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-            z-index: 10000;
-            text-align: center;
-            animation: slideIn 0.3s ease;
-        }
-        
-        .success-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-        
-        #successMessage p {
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
-        
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -30%);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%);
+                console.log('Statut:', response.status);
+                
+                // Lire la réponse comme texte d'abord
+                const textResponse = await response.text();
+                console.log('Réponse brute:', textResponse);
+
+                // Cacher le chargement
+                loadingOverlay.style.display = 'none';
+
+                try {
+                    // Essayer de parser en JSON
+                    const result = JSON.parse(textResponse);
+                    
+                    if (response.ok) {
+                        // Succès
+                        showSuccessMessage('🎉 Compte créé avec succès ! Redirection...');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 2000);
+                    } else {
+                        // Erreur retournée par le serveur
+                        submitBtn.disabled = false;
+                        showError(result.message || 'Erreur lors de l\'inscription');
+                    }
+                } catch (e) {
+                    // Ce n'est pas du JSON
+                    console.error('La réponse n\'est pas du JSON');
+                    submitBtn.disabled = false;
+                    
+                    if (response.status === 500) {
+                        showError('Erreur serveur (500). Vérifiez que votre base de données est bien configurée.');
+                    } else {
+                        showError('Erreur de communication avec le serveur. Code: ' + response.status);
+                    }
+                }
+                
+            } catch (error) {
+                // Erreur réseau
+                console.error('Erreur réseau:', error);
+                loadingOverlay.style.display = 'none';
+                submitBtn.disabled = false;
+                
+                if (error.message.includes('Failed to fetch')) {
+                    showError('Impossible de joindre le serveur. Vérifiez que PythonAnywhere est bien lancé.');
+                } else {
+                    showError('Problème de connexion: ' + error.message);
+                }
             }
         }
-    `;
-    document.head.appendChild(style);
-    
-    document.body.appendChild(successDiv);
-    
-    // Auto-suppression après 2 secondes
-    setTimeout(() => {
-        if (successDiv) {
-            successDiv.remove();
-        }
-    }, 2000);
-}
 
-            
-
-
+        // Fonction pour afficher les erreurs
         function showError(message) {
             const errorMessage = document.getElementById('errorMessage');
             errorMessage.textContent = "⚠️ " + message;
             errorMessage.classList.add('show');
-            
-            // Faire défiler jusqu'au message d'erreur
             errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Fonction pour les messages de succès
+        function showSuccessMessage(message) {
+            // Créer le message de succès
+            const successDiv = document.createElement('div');
+            successDiv.id = 'successMessage';
+            successDiv.innerHTML = `
+                <div class="success-icon">✅</div>
+                <p>${message}</p>
+            `;
+            document.body.appendChild(successDiv);
+            
+            // Auto-suppression après 2 secondes
+            setTimeout(() => {
+                if (successDiv) {
+                    successDiv.remove();
+                }
+            }, 2000);
         }
 
         // Validation en temps réel pour la confirmation du mot de passe
@@ -765,16 +744,15 @@ function showSuccessMessage(message) {
             
             if (confirm.length > 0) {
                 if (password === confirm) {
-                    e.target.style.borderColor = '#10B981'; // Vert si correspond
+                    e.target.style.borderColor = '#10B981';
                 } else {
-                    e.target.style.borderColor = '#EF4444'; // Rouge si différent
+                    e.target.style.borderColor = '#EF4444';
                 }
             } else {
-                e.target.style.borderColor = '#2A3855'; // Couleur par défaut
+                e.target.style.borderColor = '#2A3855';
             }
         });
 
-        // Remise à zéro de la couleur quand on modifie le mot de passe
         document.getElementById('password').addEventListener('input', function() {
             const confirmInput = document.getElementById('confirmPassword');
             if (confirmInput.value.length > 0) {
@@ -784,6 +762,23 @@ function showSuccessMessage(message) {
                     confirmInput.style.borderColor = '#EF4444';
                 }
             }
+        });
+
+        // Formatage automatique du numéro WhatsApp
+        document.getElementById('whatsapp').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value.length <= 2) {
+                    value = value;
+                } else if (value.length <= 4) {
+                    value = value.slice(0,2) + ' ' + value.slice(2);
+                } else if (value.length <= 6) {
+                    value = value.slice(0,2) + ' ' + value.slice(2,4) + ' ' + value.slice(4);
+                } else {
+                    value = value.slice(0,2) + ' ' + value.slice(2,4) + ' ' + value.slice(4,6) + ' ' + value.slice(6,8);
+                }
+            }
+            e.target.value = value;
         });
     </script>
 </body>
