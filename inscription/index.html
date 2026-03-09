@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BF WIFI ZONE - Créer un compte</title>
+    <style>
+        /* Style général - identique à visitor.html pour la cohérence */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(145deg, #0B1120 0%, #192132 100%);
+            color: #E2E8F0;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(18, 24, 38, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(52, 69, 104, 0.5);
+            border-radius: 48px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* En-tête */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+        }
+
+        .bf-wifi {
+            color: #FFFFFF;
+        }
+
+        .zone {
+            background: linear-gradient(135deg, #F59E0B, #F97316);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-left: 5px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #FFFFFF;
+        }
+
+        .page-subtitle {
+            color: #A0B3D9;
+            font-size: 0.95rem;
+        }
+
+        /* Formulaire */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #E2E8F0;
+            font-size: 0.95rem;
+        }
+
+        label span {
+            color: #F59E0B;
+            margin-left: 2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            color: #F59E0B;
+            font-size: 1.2rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            background: rgba(28, 36, 54, 0.8);
+            border: 1.5px solid #2A3855;
+            border-radius: 30px;
+            font-size: 1rem;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #F59E0B;
+            background: rgba(35, 45, 70, 0.9);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        input::placeholder {
+            color: #5D729B;
+            font-size: 0.95rem;
+        }
+
+        /* Pour le select (indicatif téléphone) */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23F59E0B'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 20px;
+            padding-right: 45px;
+        }
+
+        /* Groupe spécial pour le téléphone (indicatif + numéro) */
+        .phone-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .phone-group select {
+            width: 120px;
+            padding-left: 16px;
+            flex-shrink: 0;
+        }
+
+        .phone-group .input-wrapper {
+            flex: 1;
+        }
+
+        .phone-group .input-wrapper input {
+            padding-left: 50px;
+        }
+
+        /* Mot de passe avec bouton voir/masquer */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #A0B3D9;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+        }
+
+        .toggle-password:hover {
+            color: #F59E0B;
+        }
+
+        /* Conditions d'utilisation */
+        .terms {
+            margin: 25px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .terms input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 3px;
+            accent-color: #F59E0B;
+            padding: 0;
+        }
+
+        .terms label {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            color: #A0B3D9;
+        }
+
+        .terms a {
+            color: #F59E0B;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .terms a:hover {
+            text-decoration: underline;
+        }
+
+        /* Bouton de création */
+        .btn-register {
+            width: 100%;
+            padding: 18px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            background: linear-gradient(135deg, #F59E0B, #F97316);
+            color: #0B1120;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .btn-register:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Lien connexion */
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #A0B3D9;
+        }
+
+        .login-link a {
+            color: #F59E0B;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Séparateur */
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #5D729B;
+            margin: 20px 0;
+        }
+
+        .separator::before,
+        .separator::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #2A3855;
+        }
+
+        .separator span {
+            padding: 0 10px;
+            font-size: 0.9rem;
+        }
+
+        /* Message d'erreur (caché par défaut) */
+        .error-message {
+            background: rgba(220, 38, 38, 0.2);
+            border: 1px solid #EF4444;
+            color: #FCA5A5;
+            padding: 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .container {
+                padding: 25px;
+                border-radius: 32px;
+            }
+
+            .phone-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .phone-group select {
+                width: 100%;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- En-tête -->
+        <div class="header">
+            <div class="logo">
+                <span class="bf-wifi">BF WIFI</span>
+                <span class="zone">ZONE</span>
+            </div>
+            <div class="page-title">Créer un compte</div>
+            <div class="page-subtitle">Commencez votre expérience gratuitement</div>
+        </div>
+
+        <!-- Formulaire d'inscription -->
+        <form id="registerForm" onsubmit="handleSubmit(event)">
+            <!-- Message d'erreur (exemple) -->
+            <div class="error-message" id="errorMessage">
+                ⚠️ Une erreur est survenue. Veuillez réessayer.
+            </div>
+
+            <!-- Nom complet -->
+            <div class="form-group">
+                <label for="fullname">Nom complet <span>*</span></label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input 
+                        type="text" 
+                        id="fullname" 
+                        name="fullname" 
+                        placeholder="Votre nom et prénom"
+                        required
+                    >
+                </div>
+            </div>
+
+            <!-- Adresse email -->
+            <div class="form-group">
+                <label for="email">Adresse email <span>*</span></label>
+                <div class="input-wrapper">
+                    <span class="input-icon">✉️</span>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="exemple@email.com"
+                        required
+                    >
+                </div>
+            </div>
+
+            <!-- Numéro WhatsApp (avec indicatif) -->
+            <div class="form-group">
+                <label for="whatsapp">WhatsApp <span>*</span></label>
+                <div class="phone-group">
+                    <select id="countryCode" name="countryCode" required>
+                        <option value="+226">Burkina Faso (+226)</option>
+                        <option value="+225">Côte d'Ivoire (+225)</option>
+                        <option value="+221">Sénégal (+221)</option>
+                        <option value="+229">Bénin (+229)</option>
+                        <option value="+228">Togo (+228)</option>
+                        <option value="+223">Mali (+223)</option>
+                        <option value="+227">Niger (+227)</option>
+                        <option value="+224">Guinée (+224)</option>
+                        <option value="+237">Cameroun (+237)</option>
+                        <option value="+33">France (+33)</option>
+                        <option value="+1">USA/Canada (+1)</option>
+                        <option value="+other">Autre</option>
+                    </select>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <input 
+                            type="tel" 
+                            id="whatsapp" 
+                            name="whatsapp" 
+                            placeholder="70 00 00 00"
+                            required
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Numéro de téléphone standard (optionnel) -->
+            <div class="form-group">
+                <label for="phone">Téléphone (optionnel)</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">📞</span>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone" 
+                        placeholder="Votre numéro de téléphone"
+                    >
+                </div>
+            </div>
+
+            <!-- Mot de passe -->
+            <div class="form-group">
+                <label for="password">Mot de passe <span>*</span></label>
+                <div class="password-wrapper">
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Au moins 8 caractères"
+                            required
+                            minlength="8"
+                        >
+                    </div>
+                    <button type="button" class="toggle-password" onclick="togglePassword()" tabindex="-1">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <!-- Confirmation mot de passe -->
+            <div class="form-group">
+                <label for="confirmPassword">Confirmer le mot de passe <span>*</span></label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        name="confirmPassword" 
+                        placeholder="Retapez votre mot de passe"
+                        required
+                        minlength="8"
+                    >
+                </div>
+            </div>
+
+            <!-- Conditions d'utilisation -->
+            <div class="terms">
+                <input type="checkbox" id="terms" name="terms" required>
+                <label for="terms">
+                    J'accepte les <a href="#" target="_blank">conditions d'utilisation</a> 
+                    et la <a href="#" target="_blank">politique de confidentialité</a> <span>*</span>
+                </label>
+            </div>
+
+            <!-- Bouton de création -->
+            <button type="submit" class="btn-register">
+                🚀 Créer mon compte
+            </button>
+
+            <!-- Séparateur -->
+            <div class="separator">
+                <span>ou</span>
+            </div>
+
+            <!-- Lien vers connexion -->
+            <div class="login-link">
+                Vous avez déjà un compte ?
+                <a href="login.html">Se connecter</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Fonction pour afficher/masquer le mot de passe
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Changer l'icône (optionnel)
+            const toggleBtn = document.querySelector('.toggle-password');
+            toggleBtn.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+        }
+
+        // Fonction de validation du formulaire
+        function handleSubmit(event) {
+            event.preventDefault(); // Empêche l'envoi réel pour le moment
+
+            // Récupération des valeurs
+            const fullname = document.getElementById('fullname').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const countryCode = document.getElementById('countryCode').value;
+            const whatsapp = document.getElementById('whatsapp').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const terms = document.getElementById('terms').checked;
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Réinitialisation du message d'erreur
+            errorMessage.classList.remove('show');
+
+            // Validations basiques
+            if (fullname.length < 3) {
+                showError("Le nom complet doit contenir au moins 3 caractères.");
+                return false;
+            }
+
+            if (!email.includes('@') || !email.includes('.')) {
+                showError("Veuillez entrer une adresse email valide.");
+                return false;
+            }
+
+            if (whatsapp.length < 8) {
+                showError("Veuillez entrer un numéro WhatsApp valide.");
+                return false;
+            }
+
+            if (password.length < 8) {
+                showError("Le mot de passe doit contenir au moins 8 caractères.");
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                showError("Les mots de passe ne correspondent pas.");
+                return false;
+            }
+
+            if (!terms) {
+                showError("Vous devez accepter les conditions d'utilisation.");
+                return false;
+            }
+
+            // Si tout est OK, on simule l'envoi
+            alert("🎉 Compte créé avec succès ! (Simulation - À connecter à votre backend)");
+            
+            // Ici, vous pourrez plus tard envoyer les données à votre serveur
+            const formData = {
+                fullname: fullname,
+                email: email,
+                phone: {
+                    countryCode: countryCode,
+                    number: whatsapp
+                },
+                alternativePhone: document.getElementById('phone').value.trim(),
+                password: password // À hasher côté serveur !
+            };
+            
+            console.log("Données du formulaire :", formData);
+            
+            // Redirection simulée vers la page de connexion
+            // window.location.href = "login.html?registered=1";
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = "⚠️ " + message;
+            errorMessage.classList.add('show');
+            
+            // Faire défiler jusqu'au message d'erreur
+            errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Validation en temps réel pour la confirmation du mot de passe
+        document.getElementById('confirmPassword').addEventListener('input', function(e) {
+            const password = document.getElementById('password').value;
+            const confirm = e.target.value;
+            
+            if (confirm.length > 0) {
+                if (password === confirm) {
+                    e.target.style.borderColor = '#10B981'; // Vert si correspond
+                } else {
+                    e.target.style.borderColor = '#EF4444'; // Rouge si différent
+                }
+            } else {
+                e.target.style.borderColor = '#2A3855'; // Couleur par défaut
+            }
+        });
+
+        // Remise à zéro de la couleur quand on modifie le mot de passe
+        document.getElementById('password').addEventListener('input', function() {
+            const confirmInput = document.getElementById('confirmPassword');
+            if (confirmInput.value.length > 0) {
+                if (this.value === confirmInput.value) {
+                    confirmInput.style.borderColor = '#10B981';
+                } else {
+                    confirmInput.style.borderColor = '#EF4444';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
