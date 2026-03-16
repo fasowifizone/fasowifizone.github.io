@@ -477,7 +477,7 @@
             color: #E2E8F0;
         }
 
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 15px 20px;
             background: rgba(28, 36, 54, 0.8);
@@ -486,11 +486,17 @@
             font-size: 1rem;
             color: #FFFFFF;
             transition: all 0.3s ease;
+            font-family: inherit;
         }
 
-        .form-group input:focus, .form-group select:focus {
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: none;
             border-color: #F59E0B;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
         }
 
         /* Message d'alerte */
@@ -574,6 +580,7 @@
             color: #A0B3D9;
             font-size: 0.9rem;
             margin-bottom: 20px;
+            line-height: 1.5;
         }
 
         /* Loader */
@@ -655,6 +662,7 @@
             padding: 15px;
             display: none;
             z-index: 100;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
         .notifications-panel.show {
@@ -671,6 +679,80 @@
 
         .notification-item:last-child {
             border-bottom: none;
+        }
+
+        .notification-icon {
+            font-size: 1.2rem;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            color: #FFFFFF;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+
+        .notification-message {
+            color: #A0B3D9;
+            font-size: 0.8rem;
+        }
+
+        /* Stats supplémentaires */
+        .stats-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-mini-card {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-mini-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #F59E0B;
+        }
+
+        .stat-mini-label {
+            font-size: 0.8rem;
+            color: #A0B3D9;
+        }
+
+        /* Table responsive */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 15px;
+            background: rgba(245, 158, 11, 0.1);
+            color: #F59E0B;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid #2A3855;
+        }
+
+        .data-table tr:hover {
+            background: rgba(255,255,255,0.02);
         }
 
         /* Responsive */
@@ -690,6 +772,10 @@
             }
 
             .mikrotik-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cards-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -782,7 +868,19 @@
                     </div>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <!-- Stats additionnelles -->
+                <div class="stats-mini-grid">
+                    <div class="stat-mini-card">
+                        <div class="stat-mini-value" id="activeMikrotiks">0</div>
+                        <div class="stat-mini-label">Mikrotiks actifs</div>
+                    </div>
+                    <div class="stat-mini-card">
+                        <div class="stat-mini-value" id="totalSessions">0</div>
+                        <div class="stat-mini-label">Sessions actives</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0 20px;">
                     <h2 style="color: #FFFFFF;">Mes Mikrotik</h2>
                     <button class="btn-primary" onclick="showAddMikrotikModal()">
                         <span>➕</span> Ajouter un Mikrotik
@@ -860,7 +958,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Nouveau mot de passe</label>
-                                <input type="password" id="newPassword" placeholder="Nouveau mot de passe">
+                                <input type="password" id="newPassword" placeholder="Nouveau mot de passe (min. 6 caractères)">
                             </div>
                             <button class="btn-primary" onclick="changePassword()">Changer le mot de passe</button>
                         </div>
@@ -1064,18 +1162,36 @@
                 showLoader();
                 
                 const response = await fetch(`${API_BASE_URL}/dashboard/${currentUser.account_key}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                
                 const data = await response.json();
 
                 if (data.success) {
                     dashboardData = data;
                     
                     // Mettre à jour les infos utilisateur
-                    currentUser = { ...currentUser, ...data.user };
+                    currentUser = { 
+                        ...currentUser, 
+                        ...data.user,
+                        name: data.user.name,
+                        email: data.user.email,
+                        whatsapp: data.user.whatsapp,
+                        licence_statut: data.user.licence_status,
+                        account_key: data.user.account_key,
+                        date_created: data.user.date_created
+                    };
                     
                     // Mettre à jour les statistiques
                     document.getElementById('mikrotikCount').textContent = data.stats.total_mikrotiks;
                     document.getElementById('userCount').textContent = data.stats.total_users;
-                    document.getElementById('totalRevenue').textContent = data.stats.total_revenue.toLocaleString('fr-FR') + ' FCFA';
+                    document.getElementById('totalRevenue').textContent = (data.stats.total_revenue || 0).toLocaleString('fr-FR') + ' FCFA';
+                    
+                    // Stats additionnelles
+                    document.getElementById('activeMikrotiks').textContent = data.stats.active_mikrotiks || 0;
+                    document.getElementById('totalSessions').textContent = data.stats.active_sessions || 0;
                     
                     // Mettre à jour la date d'inscription
                     if (data.user.date_created) {
@@ -1096,29 +1212,31 @@
                     } else {
                         sessionStorage.setItem('user', JSON.stringify(currentUser));
                     }
+                } else {
+                    showError(data.message || 'Erreur lors du chargement des données');
                 }
                 
                 hideLoader();
             } catch (error) {
                 console.error('Erreur chargement dashboard:', error);
-                showError('Erreur lors du chargement des données');
+                showError('Erreur lors du chargement des données: ' + error.message);
                 hideLoader();
             }
         }
 
         // Mettre à jour les infos du profil
         function updateProfileInfo(user) {
-            document.getElementById('profileName').textContent = currentUser.name || '-';
-            document.getElementById('profileEmail').textContent = currentUser.email || '-';
-            document.getElementById('profileWhatsapp').textContent = currentUser.whatsapp || '-';
-            document.getElementById('profileLicence').textContent = currentUser.licence_status || '-';
-            document.getElementById('profileDate').textContent = currentUser.date_created ? new Date(user.date_created).toLocaleDateString('fr-FR') : '-';
-            document.getElementById('profileKey').textContent = currentUser.account_key || '-';
+            document.getElementById('profileName').textContent = user.name || '-';
+            document.getElementById('profileEmail').textContent = user.email || '-';
+            document.getElementById('profileWhatsapp').textContent = user.whatsapp || '-';
+            document.getElementById('profileLicence').textContent = user.licence_status || '-';
+            document.getElementById('profileDate').textContent = user.date_created ? new Date(user.date_created).toLocaleDateString('fr-FR') : '-';
+            document.getElementById('profileKey').textContent = user.account_key || '-';
             
             // Pré-remplir les champs de mise à jour
-            document.getElementById('updateName').value = currentUser.name || '';
-            document.getElementById('updateEmail').value = currentUser.email || '';
-            document.getElementById('updateWhatsapp').value = currentUser.whatsapp || '';
+            document.getElementById('updateName').value = user.name || '';
+            document.getElementById('updateEmail').value = user.email || '';
+            document.getElementById('updateWhatsapp').value = user.whatsapp || '';
         }
 
         // Afficher les Mikrotiks
@@ -1155,7 +1273,7 @@
                         <div class="mikrotik-detail">
                             <div class="detail-row">
                                 <span class="detail-label">ID :</span>
-                                <span class="detail-value">${mik.mik_id || '-'}</span>
+                                <span class="detail-value">${mik.mik_id ? mik.mik_id.substring(0,8) + '...' : '-'}</span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">IP :</span>
@@ -1216,7 +1334,7 @@
 
                 if (data.success) {
                     showSuccess('Statut mis à jour');
-                    loadDashboardData(); // Recharger les données
+                    await loadDashboardData(); // Recharger les données
                 } else {
                     showError(data.message || 'Erreur lors de la mise à jour');
                 }
@@ -1246,6 +1364,7 @@
                         <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 20px;">
                             <p><strong style="color: #F59E0B;">IP:</strong> ${mik.ip_address}</p>
                             <p><strong style="color: #F59E0B;">Modèle:</strong> ${mik.model}</p>
+                            <p><strong style="color: #F59E0B;">ID:</strong> ${mik.mik_id}</p>
                         </div>
                     </div>
                     
@@ -1316,7 +1435,7 @@
                 if (data.success) {
                     showSuccess('Utilisateur supprimé');
                     hideManageModal();
-                    loadDashboardData(); // Recharger
+                    await loadDashboardData(); // Recharger
                 } else {
                     showError(data.message || 'Erreur lors de la suppression');
                 }
@@ -1328,6 +1447,9 @@
 
         // Modal Ajout Utilisateur
         function showAddUserModal(mikId) {
+            const today = new Date().toISOString().split('T')[0];
+            const now = new Date().toTimeString().split(' ')[0].substring(0,5);
+            
             const content = `
                 <h3 style="color: #FFFFFF; margin-bottom: 20px;">Ajouter un utilisateur</h3>
                 <form onsubmit="addMikrotikUser(event, '${mikId}')">
@@ -1350,17 +1472,17 @@
                     
                     <div class="form-group">
                         <label>Prix (FCFA)</label>
-                        <input type="number" id="userPrice" required placeholder="Ex: 5000">
+                        <input type="number" id="userPrice" required placeholder="Ex: 5000" min="0">
                     </div>
                     
                     <div class="form-group">
                         <label>Date</label>
-                        <input type="date" id="userDate" required value="${new Date().toISOString().split('T')[0]}">
+                        <input type="date" id="userDate" required value="${today}">
                     </div>
                     
                     <div class="form-group">
                         <label>Heure</label>
-                        <input type="time" id="userTime" required>
+                        <input type="time" id="userTime" required value="${now}">
                     </div>
                     
                     <div style="display: flex; gap: 10px; justify-content: flex-end;">
@@ -1399,7 +1521,7 @@
                 if (data.success) {
                     showSuccess('Utilisateur ajouté avec succès');
                     hideManageModal();
-                    loadDashboardData(); // Recharger
+                    await loadDashboardData(); // Recharger
                 } else {
                     showError(data.message || 'Erreur lors de l\'ajout');
                 }
@@ -1422,6 +1544,7 @@
             };
 
             const submitBtn = document.getElementById('submitMikrotikBtn');
+            const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<span class="loader"></span> Ajout...';
             submitBtn.disabled = true;
 
@@ -1437,7 +1560,7 @@
                 if (data.success) {
                     showSuccess('Mikrotik ajouté avec succès');
                     hideAddMikrotikModal();
-                    loadDashboardData(); // Recharger la liste
+                    await loadDashboardData(); // Recharger la liste
                 } else {
                     showError(data.message || 'Erreur lors de l\'ajout');
                 }
@@ -1445,7 +1568,7 @@
                 console.error('Erreur:', error);
                 showError('Erreur de connexion au serveur');
             } finally {
-                submitBtn.innerHTML = '<span>➕</span> Ajouter';
+                submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             }
         }
@@ -1480,7 +1603,7 @@
 
                 if (data.success) {
                     showSuccess('Profil mis à jour');
-                    loadDashboardData(); // Recharger
+                    await loadDashboardData(); // Recharger
                 } else {
                     showError(data.message || 'Erreur lors de la mise à jour');
                 }
@@ -1561,7 +1684,7 @@
                 if (data.success) {
                     showSuccess('Mikrotik supprimé avec succès');
                     hideDeleteMikrotikModal();
-                    loadDashboardData(); // Recharger
+                    await loadDashboardData(); // Recharger
                 } else {
                     showError(data.message || 'Erreur lors de la suppression');
                 }
@@ -1617,7 +1740,7 @@
 
         // Charger les notifications
         async function loadNotifications() {
-            if (!currentUser) return;
+            if (!currentUser || !currentUser.account_key) return;
 
             try {
                 const response = await fetch(`${API_BASE_URL}/notifications/${currentUser.account_key}`);
@@ -1633,10 +1756,10 @@
                         data.notifications.forEach(notif => {
                             notificationsHtml += `
                                 <div class="notification-item">
-                                    <span>${notif.icon}</span>
-                                    <div>
-                                        <strong style="color: #FFFFFF;">${notif.title}</strong>
-                                        <p style="color: #A0B3D9; font-size: 0.8rem;">${notif.message}</p>
+                                    <span class="notification-icon">${notif.icon}</span>
+                                    <div class="notification-content">
+                                        <div class="notification-title">${notif.title}</div>
+                                        <div class="notification-message">${notif.message}</div>
                                     </div>
                                 </div>
                             `;
@@ -1675,14 +1798,14 @@
                 id: 3,
                 name: 'Antenne WiFi',
                 price: 25000,
-                description: 'Antenne directionnelle 2.4GHz',
+                description: 'Antenne directionnelle 2.4GHz, 15dBi',
                 image: '📡'
             },
             {
                 id: 4,
                 name: 'Câble Ethernet 10m',
                 price: 5000,
-                description: 'Câble RJ45 catégorie 6',
+                description: 'Câble RJ45 catégorie 6, blindé',
                 image: '🔌'
             },
             {
@@ -1696,7 +1819,7 @@
                 id: 6,
                 name: 'Alimentation PoE',
                 price: 15000,
-                description: 'Injecteur PoE 24V',
+                description: 'Injecteur PoE 24V, 1A',
                 image: '⚡'
             }
         ];
@@ -1727,7 +1850,7 @@
         function commanderProduit(productId) {
             const product = products.find(p => p.id === productId);
             if (product) {
-                const message = `Bonjour, je souhaite commander :\n\n${product.name}\nPrix: ${product.price.toLocaleString('fr-FR')} FCFA\n\nNom: ${currentUser?.name}\nTéléphone: ${currentUser?.whatsapp || ''}`;
+                const message = `Bonjour, je souhaite commander :\n\n${product.name}\nPrix: ${product.price.toLocaleString('fr-FR')} FCFA\n\nNom: ${currentUser?.name || ''}\nTéléphone: ${currentUser?.whatsapp || ''}`;
                 
                 // Ouvrir WhatsApp avec le message pré-rempli
                 window.open(`https://wa.me/22670000000?text=${encodeURIComponent(message)}`, '_blank');
@@ -1791,14 +1914,16 @@
         // Déconnexion
         async function logout() {
             try {
-                // Appeler l'API de déconnexion (optionnel)
-                await fetch(`${API_BASE_URL}/logout`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        account_key: currentUser?.account_key
-                    })
-                });
+                // Appeler l'API de déconnexion
+                if (currentUser) {
+                    await fetch(`${API_BASE_URL}/logout`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            account_key: currentUser.account_key
+                        })
+                    });
+                }
             } catch (error) {
                 console.error('Erreur déconnexion:', error);
             } finally {
@@ -1844,6 +1969,16 @@
                 event.target.classList.remove('active');
             }
         }
+
+        // Fermer les notifications en cliquant ailleurs
+        document.addEventListener('click', function(event) {
+            const panel = document.getElementById('notificationsPanel');
+            const bell = document.querySelector('.notification-bell');
+            
+            if (!bell.contains(event.target) && !panel.contains(event.target)) {
+                panel.classList.remove('show');
+            }
+        });
     </script>
 </body>
 </html>
