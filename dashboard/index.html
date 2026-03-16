@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BF WIFI ZONE - Tableau de bord</title>
+    <style>
+        /* Style général */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(145deg, #0B1120 0%, #192132 100%);
+            color: #E2E8F0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(18, 24, 38, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(52, 69, 104, 0.5);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+            padding-left: 15px;
+        }
+
+        .bf-wifi {
+            color: #FFFFFF;
+        }
+
+        .zone {
+            background: linear-gradient(135deg, #F59E0B, #F97316);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-left: 5px;
+        }
+
+        .user-info {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #F59E0B, #F97316);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0B1120;
+        }
+
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: 5px;
+        }
+
+        .user-email {
+            font-size: 0.9rem;
+            color: #A0B3D9;
+            margin-bottom: 10px;
+        }
+
+        .user-status {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(245, 158, 11, 0.2);
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: #F59E0B;
+            border: 1px solid #F59E0B;
+        }
+
+        .nav-menu {
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin: 5px 0;
+            border-radius: 15px;
+            color: #A0B3D9;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: rgba(245, 158, 11, 0.1);
+            color: #F59E0B;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #F59E0B, #F97316);
+            color: #0B1120;
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            margin-right: 15px;
+            font-size: 1.3rem;
+        }
+
+        .logout-btn {
+            margin-top: 20px;
+            padding: 15px 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #EF4444;
+            border-radius: 15px;
+            color: #FCA5A5;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        .date-display {
+            color: #A0B3D9;
+            font-size: 1rem;
+        }
+
+        /* Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(18, 24, 38, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(52, 69, 104, 0.5);
+            border-radius: 30px;
+            padding: 25px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #F59E0B;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #A0B3D9;
+            font-size: 0.9rem;
+        }
+
+        /* Boutons */
+        .btn-primary {
+            background: linear-gradient(135deg, #F59E0B, #F97316);
+            color: #0B1120;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #F59E0B;
+            border: 1.5px solid #F59E0B;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+            border: 1px solid #EF4444;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Liste Mikrotik */
+        .mikrotik-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .mikrotik-card {
+            background: rgba(18, 24, 38, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(52, 69, 104, 0.5);
+            border-radius: 30px;
+            padding: 25px;
+        }
+
+        .mikrotik-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .mikrotik-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .mikrotik-status {
+            padding: 5px 15px;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            border: 1px solid #10B981;
+        }
+
+        .mikrotik-detail {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 0.95rem;
+        }
+
+        .detail-label {
+            color: #A0B3D9;
+        }
+
+        .detail-value {
+            color: #FFFFFF;
+            font-weight: 500;
+        }
+
+        .mikrotik-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(18, 24, 38, 0.5);
+            border-radius: 40px;
+            border: 2px dashed #2A3855;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            color: #FFFFFF;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: #A0B3D9;
+            margin-bottom: 25px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(18, 24, 38, 0.95);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 40px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #A0B3D9;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Formulaire */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #E2E8F0;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(28, 36, 54, 0.8);
+            border: 1.5px solid #2A3855;
+            border-radius: 30px;
+            font-size: 1rem;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #F59E0B;
+        }
+
+        /* Message d'alerte */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10B981;
+            color: #A7F3D0;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #EF4444;
+            color: #FCA5A5;
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid #F59E0B;
+            color: #FCD34D;
+        }
+
+        /* Market */
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .product-card {
+            background: rgba(18, 24, 38, 0.8);
+            border: 1px solid rgba(52, 69, 104, 0.5);
+            border-radius: 30px;
+            padding: 25px;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: #F59E0B;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(145deg, #2A3855, #1E2A44);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #F59E0B;
+            margin-bottom: 15px;
+        }
+
+        .product-description {
+            color: #A0B3D9;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #0B1120;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .app-container {
+                flex-direction: column;
+            }
+
+            .mikrotik-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="bf-wifi">BF WIFI</span>
+                <span class="zone">ZONE</span>
+            </div>
+
+            <div class="user-info" id="userInfo">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-name" id="userDisplayName">Chargement...</div>
+                <div class="user-email" id="userEmail">...</div>
+                <div class="user-status" id="userStatus">...</div>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="switchTab('accueil')" id="tabAccueil">
+                    <span class="nav-icon">🏠</span>
+                    Accueil
+                </div>
+                <div class="nav-item" onclick="switchTab('market')" id="tabMarket">
+                    <span class="nav-icon">🛒</span>
+                    Wifi Zone Market
+                </div>
+                <div class="nav-item" onclick="switchTab('compte')" id="tabCompte">
+                    <span class="nav-icon">👤</span>
+                    Mon Compte
+                </div>
+            </nav>
+
+            <div class="logout-btn" onclick="logout()">
+                <span class="nav-icon">🚪</span>
+                Déconnexion
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <h1 class="page-title" id="currentPageTitle">Accueil</h1>
+                <div class="date-display" id="currentDate"></div>
+            </div>
+
+            <!-- Alertes -->
+            <div class="alert alert-success" id="successAlert"></div>
+            <div class="alert alert-error" id="errorAlert"></div>
+            <div class="alert alert-warning" id="warningAlert"></div>
+
+            <!-- Contenu Accueil -->
+            <div id="accueilContent">
+                <div class="cards-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📡</div>
+                        <div class="stat-value" id="mikrotikCount">0</div>
+                        <div class="stat-label">Mikrotik actifs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-value" id="userCount">0</div>
+                        <div class="stat-label">Utilisateurs Mikrotik</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-value" id="activeSince">-</div>
+                        <div class="stat-label">Membre depuis</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #FFFFFF;">Mes Mikrotik</h2>
+                    <button class="btn-primary" onclick="showAddMikrotikModal()">
+                        <span>➕</span> Ajouter un Mikrotik
+                    </button>
+                </div>
+
+                <div id="mikrotikListContainer">
+                    <!-- Les Mikrotiks seront chargés ici -->
+                </div>
+            </div>
+
+            <!-- Contenu Market -->
+            <div id="marketContent" style="display: none;">
+                <h2 style="color: #FFFFFF; margin-bottom: 25px;">Matériel disponible</h2>
+                <div class="market-grid" id="productsList">
+                    <!-- Produits chargés dynamiquement -->
+                </div>
+            </div>
+
+            <!-- Contenu Mon Compte -->
+            <div id="compteContent" style="display: none;">
+                <div style="background: rgba(18, 24, 38, 0.8); border-radius: 40px; padding: 40px;">
+                    <h2 style="color: #FFFFFF; margin-bottom: 30px;">Informations personnelles</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-bottom: 40px;">
+                        <div>
+                            <label style="color: #A0B3D9;">Nom complet</label>
+                            <p style="color: #FFFFFF; font-size: 1.1rem;" id="profileName">-</p>
+                        </div>
+                        <div>
+                            <label style="color: #A0B3D9;">Email</label>
+                            <p style="color: #FFFFFF; font-size: 1.1rem;" id="profileEmail">-</p>
+                        </div>
+                        <div>
+                            <label style="color: #A0B3D9;">WhatsApp</label>
+                            <p style="color: #FFFFFF; font-size: 1.1rem;" id="profileWhatsapp">-</p>
+                        </div>
+                        <div>
+                            <label style="color: #A0B3D9;">Statut licence</label>
+                            <p style="color: #FFFFFF; font-size: 1.1rem;" id="profileLicence">-</p>
+                        </div>
+                        <div>
+                            <label style="color: #A0B3D9;">Date d'inscription</label>
+                            <p style="color: #FFFFFF; font-size: 1.1rem;" id="profileDate">-</p>
+                        </div>
+                        <div>
+                            <label style="color: #A0B3D9;">Clé de compte</label>
+                            <p style="color: #FFFFFF; font-size: 1.1rem; font-family: monospace;" id="profileKey">-</p>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid #2A3855; padding-top: 30px;">
+                        <h3 style="color: #FFFFFF; margin-bottom: 20px;">Zone de danger</h3>
+                        <button class="btn-danger" onclick="confirmDeleteAccount()">
+                            🗑️ Supprimer définitivement mon compte
+                        </button>
+                        <p style="color: #A0B3D9; font-size: 0.9rem; margin-top: 15px;">
+                            Cette action est irréversible. Toutes vos données seront effacées.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Ajout Mikrotik -->
+    <div class="modal" id="addMikrotikModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Ajouter un Mikrotik</h2>
+                <button class="modal-close" onclick="hideAddMikrotikModal()">✕</button>
+            </div>
+
+            <form id="addMikrotikForm" onsubmit="addMikrotik(event)">
+                <div class="form-group">
+                    <label>Nom du Mikrotik (Hostname)</label>
+                    <input type="text" id="mikHostname" required placeholder="Ex: Mikrotik Bureau">
+                </div>
+
+                <div class="form-group">
+                    <label>Adresse IP</label>
+                    <input type="text" id="mikIp" required placeholder="Ex: 192.168.1.1">
+                </div>
+
+                <div class="form-group">
+                    <label>Modèle</label>
+                    <select id="mikModel" required>
+                        <option value="">Sélectionnez un modèle</option>
+                        <option value="RB750">RB750</option>
+                        <option value="RB951">RB951</option>
+                        <option value="RB962">RB962</option>
+                        <option value="RB4011">RB4011</option>
+                        <option value="CCR1009">CCR1009</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Mot de passe Mikrotik</label>
+                    <input type="password" id="mikPassword" required placeholder="Mot de passe">
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn-secondary" onclick="hideAddMikrotikModal()">Annuler</button>
+                    <button type="submit" class="btn-primary" id="submitMikrotikBtn">
+                        <span>➕</span> Ajouter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Confirmation suppression compte -->
+    <div class="modal" id="deleteAccountModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirmation suppression</h2>
+                <button class="modal-close" onclick="hideDeleteModal()">✕</button>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <div style="font-size: 4rem; margin-bottom: 20px;">⚠️</div>
+                <h3 style="color: #FFFFFF; margin-bottom: 15px;">Êtes-vous absolument sûr ?</h3>
+                <p style="color: #A0B3D9; margin-bottom: 25px;">
+                    Cette action supprimera définitivement votre compte et toutes vos données.<br>
+                    Cette opération est irréversible.
+                </p>
+
+                <div class="form-group">
+                    <input type="text" id="confirmDeleteText" placeholder="Tapez 'SUPPRIMER' pour confirmer">
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="btn-secondary" onclick="hideDeleteModal()">Annuler</button>
+                    <button class="btn-danger" onclick="deleteAccount()" id="confirmDeleteBtn" disabled>
+                        Supprimer définitivement
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Gestion Mikrotik -->
+    <div class="modal" id="manageMikrotikModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="manageMikrotikTitle">Gérer Mikrotik</h2>
+                <button class="modal-close" onclick="hideManageModal()">✕</button>
+            </div>
+
+            <div id="manageMikrotikContent">
+                <!-- Contenu chargé dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = 'https://fasowifizone.pythonanywhere.com';
+        let currentUser = null;
+        let currentTab = 'accueil';
+        let mikrotiks = [];
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            updateDate();
+            
+            // Vérifier la confirmation de suppression
+            document.getElementById('confirmDeleteText')?.addEventListener('input', function(e) {
+                const confirmBtn = document.getElementById('confirmDeleteBtn');
+                confirmBtn.disabled = e.target.value !== 'SUPPRIMER';
+            });
+        });
+
+        // Mise à jour de la date
+        function updateDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const date = new Date().toLocaleDateString('fr-FR', options);
+            document.getElementById('currentDate').textContent = date;
+        }
+
+        // Vérifier l'authentification
+        function checkAuth() {
+            const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+            
+            if (!userStr) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userStr);
+                updateUserInfo();
+                loadUserData();
+            } catch (e) {
+                logout();
+            }
+        }
+
+        // Mettre à jour les infos utilisateur dans la sidebar
+        function updateUserInfo() {
+            if (!currentUser) return;
+
+            document.getElementById('userDisplayName').textContent = currentUser.name || 'Utilisateur';
+            document.getElementById('userEmail').textContent = currentUser.email || '';
+            document.getElementById('userStatus').textContent = currentUser.licence_statut || 'essai';
+            
+            // Avatar avec initiales
+            const initial = (currentUser.name || 'U').charAt(0).toUpperCase();
+            document.getElementById('userAvatar').textContent = initial;
+        }
+
+        // Charger les données utilisateur
+        async function loadUserData() {
+            try {
+                showLoader();
+                
+                // Charger le profil
+                await loadUserProfile();
+                
+                // Charger les Mikrotiks
+                await loadMikrotiks();
+                
+                hideLoader();
+            } catch (error) {
+                console.error('Erreur chargement données:', error);
+                showError('Erreur lors du chargement des données');
+                hideLoader();
+            }
+        }
+
+        // Charger le profil
+        async function loadUserProfile() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/profile/${currentUser.account_key}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Mettre à jour les infos profil
+                    document.getElementById('profileName').textContent = data.user.name;
+                    document.getElementById('profileEmail').textContent = data.user.email;
+                    document.getElementById('profileWhatsapp').textContent = data.user.whatsapp;
+                    document.getElementById('profileLicence').textContent = data.user.licence_status;
+                    document.getElementById('profileDate').textContent = new Date(data.user.date_created).toLocaleDateString('fr-FR');
+                    document.getElementById('profileKey').textContent = data.user.account_key;
+                    
+                    // Mettre à jour les stats
+                    document.getElementById('activeSince').textContent = new Date(data.user.date_created).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+                }
+            } catch (error) {
+                console.error('Erreur chargement profil:', error);
+            }
+        }
+
+        // Charger les Mikrotiks
+        async function loadMikrotiks() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/profile/${currentUser.account_key}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    mikrotiks = data.mikrotiks || [];
+                    
+                    // Mettre à jour les compteurs
+                    document.getElementById('mikrotikCount').textContent = mikrotiks.length;
+                    document.getElementById('userCount').textContent = data.stats.total_users || 0;
+                    
+                    // Afficher la liste
+                    displayMikrotiks();
+                }
+            } catch (error) {
+                console.error('Erreur chargement Mikrotiks:', error);
+            }
+        }
+
+        // Afficher les Mikrotiks
+        function displayMikrotiks() {
+            const container = document.getElementById('mikrotikListContainer');
+
+            if (mikrotiks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📡</div>
+                        <h3 class="empty-title">Aucun Mikrotik</h3>
+                        <p class="empty-text">Commencez par ajouter votre premier Mikrotik</p>
+                        <button class="btn-primary" onclick="showAddMikrotikModal()">
+                            <span>➕</span> Ajouter votre premier Mikrotik
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="mikrotik-grid">';
+            
+            mikrotiks.forEach(mik => {
+                html += `
+                    <div class="mikrotik-card">
+                        <div class="mikrotik-header">
+                            <span class="mikrotik-name">${mik.hostname || 'Sans nom'}</span>
+                            <span class="mikrotik-status">${mik.mik_statut || 'actif'}</span>
+                        </div>
+                        
+                        <div class="mikrotik-detail">
+                            <div class="detail-row">
+                                <span class="detail-label">ID :</span>
+                                <span class="detail-value">${mik.mik_id || '-'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">IP :</span>
+                                <span class="detail-value">${mik.ip_adress || '-'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Modèle :</span>
+                                <span class="detail-value">${mik.mik_model || '-'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Ajouté le :</span>
+                                <span class="detail-value">${mik.date_for_mik_add ? new Date(mik.date_for_mik_add).toLocaleDateString('fr-FR') : '-'}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mikrotik-actions">
+                            <button class="btn-primary" style="flex: 1;" onclick="manageMikrotik('${mik.mik_id}')">
+                                ⚙️ Gérer
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Gérer un Mikrotik
+        async function manageMikrotik(mikId) {
+            const mik = mikrotiks.find(m => m.mik_id === mikId);
+            if (!mik) return;
+
+            document.getElementById('manageMikrotikTitle').textContent = `Gérer ${mik.hostname || 'Mikrotik'}`;
+            
+            // Charger les détails et utilisateurs du Mikrotik
+            try {
+                const response = await fetch(`${API_BASE_URL}/profile/${currentUser.account_key}`);
+                const data = await response.json();
+                
+                const mikUsers = data.mik_users?.filter(u => u.mik_id === mikId) || [];
+                
+                let content = `
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: #FFFFFF; margin-bottom: 15px;">Informations</h3>
+                        <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 20px;">
+                            <p><strong style="color: #F59E0B;">IP:</strong> ${mik.ip_adress}</p>
+                            <p><strong style="color: #F59E0B;">Modèle:</strong> ${mik.mik_model}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 style="color: #FFFFFF;">Utilisateurs (${mikUsers.length})</h3>
+                            <button class="btn-primary" onclick="showAddUserModal('${mikId}')">
+                                <span>➕</span> Ajouter
+                            </button>
+                        </div>
+                `;
+
+                if (mikUsers.length === 0) {
+                    content += `
+                        <div style="text-align: center; padding: 30px; background: rgba(0,0,0,0.2); border-radius: 20px;">
+                            <p style="color: #A0B3D9;">Aucun utilisateur pour ce Mikrotik</p>
+                        </div>
+                    `;
+                } else {
+                    content += '<div style="display: grid; gap: 15px;">';
+                    mikUsers.forEach(user => {
+                        content += `
+                            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 20px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <span style="color: #FFFFFF; font-weight: 600;">${user.name}</span>
+                                    <span style="color: #F59E0B;">${user.profile}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; color: #A0B3D9;">
+                                    <span>💰 ${user.prix} FCFA</span>
+                                    <span>📅 ${new Date(user.date).toLocaleDateString('fr-FR')}</span>
+                                    <span>⏰ ${user.heure}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    content += '</div>';
+                }
+
+                content += `
+                    <div style="margin-top: 25px; display: flex; gap: 10px;">
+                        <button class="btn-secondary" style="flex: 1;" onclick="hideManageModal()">Fermer</button>
+                    </div>
+                `;
+
+                document.getElementById('manageMikrotikContent').innerHTML = content;
+                document.getElementById('manageMikrotikModal').classList.add('active');
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Erreur lors du chargement');
+            }
+        }
+
+        // Modal Ajout Utilisateur
+        function showAddUserModal(mikId) {
+            const content = `
+                <h3 style="color: #FFFFFF; margin-bottom: 20px;">Ajouter un utilisateur</h3>
+                <form onsubmit="addMikrotikUser(event, '${mikId}')">
+                    <div class="form-group">
+                        <label>Nom</label>
+                        <input type="text" id="userName" required placeholder="Nom de l'utilisateur">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Profile</label>
+                        <select id="userProfile" required>
+                            <option value="">Choisir un profile</option>
+                            <option value="1Mbps">1 Mbps</option>
+                            <option value="2Mbps">2 Mbps</option>
+                            <option value="5Mbps">5 Mbps</option>
+                            <option value="10Mbps">10 Mbps</option>
+                            <option value="20Mbps">20 Mbps</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Prix (FCFA)</label>
+                        <input type="number" id="userPrice" required placeholder="Ex: 5000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="userDate" required value="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Heure</label>
+                        <input type="time" id="userTime" required>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button type="button" class="btn-secondary" onclick="hideManageModal()">Annuler</button>
+                        <button type="submit" class="btn-primary">Ajouter</button>
+                    </div>
+                </form>
+            `;
+
+            document.getElementById('manageMikrotikContent').innerHTML = content;
+        }
+
+        // Ajouter un utilisateur Mikrotik
+        async function addMikrotikUser(event, mikId) {
+            event.preventDefault();
+
+            const userData = {
+                mik_id: mikId,
+                name: document.getElementById('userName').value,
+                profile: document.getElementById('userProfile').value,
+                prix: document.getElementById('userPrice').value,
+                date: document.getElementById('userDate').value,
+                heure: document.getElementById('userTime').value,
+                account_key: currentUser.account_key
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/add_mik_user`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Utilisateur ajouté avec succès');
+                    hideManageModal();
+                    loadMikrotiks(); // Recharger
+                } else {
+                    showError(data.message || 'Erreur lors de l\'ajout');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Erreur de connexion');
+            }
+        }
+
+        // Ajouter un Mikrotik
+        async function addMikrotik(event) {
+            event.preventDefault();
+
+            const mikData = {
+                account_key: currentUser.account_key,
+                hostname: document.getElementById('mikHostname').value,
+                ip_address: document.getElementById('mikIp').value,
+                mik_model: document.getElementById('mikModel').value,
+                mik_password: document.getElementById('mikPassword').value
+            };
+
+            const submitBtn = document.getElementById('submitMikrotikBtn');
+            submitBtn.innerHTML = '<span class="loader"></span> Ajout...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/add_mikrotik`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(mikData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Mikrotik ajouté avec succès');
+                    hideAddMikrotikModal();
+                    loadMikrotiks(); // Recharger la liste
+                } else {
+                    showError(data.message || 'Erreur lors de l\'ajout');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Erreur de connexion au serveur');
+            } finally {
+                submitBtn.innerHTML = '<span>➕</span> Ajouter';
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Produits du market
+        const products = [
+            {
+                id: 1,
+                name: 'Mikrotik RB750',
+                price: 45000,
+                description: 'Routeur 5 ports, idéal pour petit réseau',
+                image: '📡'
+            },
+            {
+                id: 2,
+                name: 'Mikrotik RB951',
+                price: 65000,
+                description: 'Routeur WiFi 2.4GHz, 5 ports',
+                image: '📶'
+            },
+            {
+                id: 3,
+                name: 'Antenne WiFi',
+                price: 25000,
+                description: 'Antenne directionnelle 2.4GHz',
+                image: '📡'
+            },
+            {
+                id: 4,
+                name: 'Câble Ethernet 10m',
+                price: 5000,
+                description: 'Câble RJ45 catégorie 6',
+                image: '🔌'
+            },
+            {
+                id: 5,
+                name: 'RB4011',
+                price: 185000,
+                description: 'Routeur 10 ports, performances élevées',
+                image: '🚀'
+            },
+            {
+                id: 6,
+                name: 'Alimentation PoE',
+                price: 15000,
+                description: 'Injecteur PoE 24V',
+                image: '⚡'
+            }
+        ];
+
+        // Afficher les produits
+        function displayProducts() {
+            const container = document.getElementById('productsList');
+            let html = '';
+
+            products.forEach(product => {
+                html += `
+                    <div class="product-card">
+                        <div class="product-image">${product.image}</div>
+                        <h3 class="product-name">${product.name}</h3>
+                        <div class="product-price">${product.price.toLocaleString('fr-FR')} FCFA</div>
+                        <p class="product-description">${product.description}</p>
+                        <button class="btn-primary" style="width: 100%;" onclick="commanderProduit(${product.id})">
+                            🛒 Commander
+                        </button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Commander un produit
+        function commanderProduit(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                const message = `Bonjour, je souhaite commander :\n\n${product.name}\nPrix: ${product.price.toLocaleString('fr-FR')} FCFA\n\nNom: ${currentUser?.name}\nTéléphone: ${currentUser?.whatsapp_number || ''}`;
+                
+                // Ouvrir WhatsApp avec le message pré-rempli
+                window.open(`https://wa.me/22670000000?text=${encodeURIComponent(message)}`, '_blank');
+                
+                showSuccess('Redirection vers WhatsApp...');
+            }
+        }
+
+        // Changer d'onglet
+        function switchTab(tab) {
+            currentTab = tab;
+
+            // Mettre à jour les classes actives
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
+
+            // Mettre à jour le titre
+            const titles = {
+                accueil: 'Accueil',
+                market: 'Wifi Zone Market',
+                compte: 'Mon Compte'
+            };
+            document.getElementById('currentPageTitle').textContent = titles[tab];
+
+            // Afficher le bon contenu
+            document.getElementById('accueilContent').style.display = tab === 'accueil' ? 'block' : 'none';
+            document.getElementById('marketContent').style.display = tab === 'market' ? 'block' : 'none';
+            document.getElementById('compteContent').style.display = tab === 'compte' ? 'block' : 'none';
+
+            // Charger les produits si on va sur market
+            if (tab === 'market') {
+                displayProducts();
+            }
+        }
+
+        // Gestion des modals
+        function showAddMikrotikModal() {
+            document.getElementById('addMikrotikModal').classList.add('active');
+        }
+
+        function hideAddMikrotikModal() {
+            document.getElementById('addMikrotikModal').classList.remove('active');
+            document.getElementById('addMikrotikForm').reset();
+        }
+
+        function hideManageModal() {
+            document.getElementById('manageMikrotikModal').classList.remove('active');
+        }
+
+        // Confirmation suppression compte
+        function confirmDeleteAccount() {
+            document.getElementById('deleteAccountModal').classList.add('active');
+        }
+
+        function hideDeleteModal() {
+            document.getElementById('deleteAccountModal').classList.remove('active');
+            document.getElementById('confirmDeleteText').value = '';
+            document.getElementById('confirmDeleteBtn').disabled = true;
+        }
+
+        // Supprimer le compte
+        async function deleteAccount() {
+            // TODO: Implémenter la suppression du compte
+            // Nécessite un endpoint API supplémentaire
+            showWarning('Fonctionnalité à implémenter côté serveur');
+            hideDeleteModal();
+        }
+
+        // Déconnexion
+        function logout() {
+            localStorage.removeItem('user');
+            sessionStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        // Gestion des alertes
+        function showSuccess(message) {
+            const alert = document.getElementById('successAlert');
+            alert.textContent = '✅ ' + message;
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 3000);
+        }
+
+        function showError(message) {
+            const alert = document.getElementById('errorAlert');
+            alert.textContent = '❌ ' + message;
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 3000);
+        }
+
+        function showWarning(message) {
+            const alert = document.getElementById('warningAlert');
+            alert.textContent = '⚠️ ' + message;
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 3000);
+        }
+
+        function showLoader() {
+            // Optionnel: ajouter un loader global
+        }
+
+        function hideLoader() {
+            // Optionnel: cacher le loader
+        }
+    </script>
+</body>
+</html>
