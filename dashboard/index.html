@@ -1108,17 +1108,17 @@
 
         // Mettre à jour les infos du profil
         function updateProfileInfo(user) {
-            document.getElementById('profileName').textContent = user.name || '-';
-            document.getElementById('profileEmail').textContent = user.email || '-';
-            document.getElementById('profileWhatsapp').textContent = user.whatsapp || '-';
-            document.getElementById('profileLicence').textContent = user.licence_status || '-';
-            document.getElementById('profileDate').textContent = user.date_created ? new Date(user.date_created).toLocaleDateString('fr-FR') : '-';
-            document.getElementById('profileKey').textContent = user.account_key || '-';
+            document.getElementById('profileName').textContent = currentUser.name || '-';
+            document.getElementById('profileEmail').textContent = currentUser.email || '-';
+            document.getElementById('profileWhatsapp').textContent = currentUser.whatsapp || '-';
+            document.getElementById('profileLicence').textContent = currentUser.licence_status || '-';
+            document.getElementById('profileDate').textContent = currentUser.date_created ? new Date(user.date_created).toLocaleDateString('fr-FR') : '-';
+            document.getElementById('profileKey').textContent = currentUser.account_key || '-';
             
             // Pré-remplir les champs de mise à jour
-            document.getElementById('updateName').value = user.name || '';
-            document.getElementById('updateEmail').value = user.email || '';
-            document.getElementById('updateWhatsapp').value = user.whatsapp || '';
+            document.getElementById('updateName').value = currentUser.name || '';
+            document.getElementById('updateEmail').value = currentUser.email || '';
+            document.getElementById('updateWhatsapp').value = currentUser.whatsapp || '';
         }
 
         // Afficher les Mikrotiks
