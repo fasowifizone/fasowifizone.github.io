@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BF WIFI ZONE - Tableau de bord</title>
     <style>
-        /* Style général */
+        /* Style général - gardé identique */
         * {
             margin: 0;
             padding: 0;
@@ -274,6 +274,22 @@
             background: rgba(239, 68, 68, 0.2);
         }
 
+        .btn-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #F59E0B;
+            border: 1px solid #F59E0B;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-warning:hover {
+            background: rgba(245, 158, 11, 0.2);
+        }
+
         /* Liste Mikrotik */
         .mikrotik-grid {
             display: grid;
@@ -289,6 +305,7 @@
             border: 1px solid rgba(52, 69, 104, 0.5);
             border-radius: 30px;
             padding: 25px;
+            position: relative;
         }
 
         .mikrotik-header {
@@ -306,11 +323,26 @@
 
         .mikrotik-status {
             padding: 5px 15px;
-            background: rgba(16, 185, 129, 0.2);
-            color: #10B981;
             border-radius: 30px;
             font-size: 0.8rem;
+        }
+
+        .status-actif {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
             border: 1px solid #10B981;
+        }
+
+        .status-inactif {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: 1px solid #EF4444;
+        }
+
+        .status-maintenance {
+            background: rgba(245, 158, 11, 0.2);
+            color: #F59E0B;
+            border: 1px solid #F59E0B;
         }
 
         .mikrotik-detail {
@@ -340,6 +372,22 @@
             display: flex;
             gap: 10px;
             margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+            border: 1px solid #EF4444;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
         }
 
         .empty-state {
@@ -528,6 +576,7 @@
             margin-bottom: 20px;
         }
 
+        /* Loader */
         .loader {
             display: inline-block;
             width: 20px;
@@ -538,8 +587,90 @@
             animation: spin 1s linear infinite;
         }
 
+        .loader-white {
+            border: 3px solid #FFFFFF;
+            border-top-color: transparent;
+        }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            border: 1px solid #10B981;
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #F59E0B;
+            border: 1px solid #F59E0B;
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: 1px solid #EF4444;
+        }
+
+        /* Notifications */
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #EF4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notifications-panel {
+            position: absolute;
+            top: 60px;
+            right: 30px;
+            width: 300px;
+            background: rgba(18, 24, 38, 0.95);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 20px;
+            padding: 15px;
+            display: none;
+            z-index: 100;
+        }
+
+        .notifications-panel.show {
+            display: block;
+        }
+
+        .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid #2A3855;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
         }
 
         /* Responsive */
@@ -605,7 +736,20 @@
         <main class="main-content">
             <div class="content-header">
                 <h1 class="page-title" id="currentPageTitle">Accueil</h1>
-                <div class="date-display" id="currentDate"></div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div class="notification-bell" onclick="toggleNotifications()">
+                        <span style="font-size: 1.5rem;">🔔</span>
+                        <span class="notification-badge" id="notificationCount">0</span>
+                    </div>
+                    <div class="date-display" id="currentDate"></div>
+                </div>
+            </div>
+
+            <!-- Notifications Panel -->
+            <div class="notifications-panel" id="notificationsPanel">
+                <div id="notificationsList">
+                    <!-- Notifications will be loaded here -->
+                </div>
             </div>
 
             <!-- Alertes -->
@@ -625,6 +769,11 @@
                         <div class="stat-icon">👥</div>
                         <div class="stat-value" id="userCount">0</div>
                         <div class="stat-label">Utilisateurs Mikrotik</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-value" id="totalRevenue">0 FCFA</div>
+                        <div class="stat-label">Revenu total</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">⚡</div>
@@ -682,6 +831,38 @@
                         <div>
                             <label style="color: #A0B3D9;">Clé de compte</label>
                             <p style="color: #FFFFFF; font-size: 1.1rem; font-family: monospace;" id="profileKey">-</p>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid #2A3855; padding-top: 30px;">
+                        <h3 style="color: #FFFFFF; margin-bottom: 20px;">Modifier le profil</h3>
+                        <div style="display: grid; gap: 20px; margin-bottom: 30px;">
+                            <div class="form-group">
+                                <label>Nouveau nom</label>
+                                <input type="text" id="updateName" placeholder="Votre nom">
+                            </div>
+                            <div class="form-group">
+                                <label>Nouvel email</label>
+                                <input type="email" id="updateEmail" placeholder="Votre email">
+                            </div>
+                            <div class="form-group">
+                                <label>Nouveau WhatsApp</label>
+                                <input type="text" id="updateWhatsapp" placeholder="Votre numéro WhatsApp">
+                            </div>
+                            <button class="btn-primary" onclick="updateProfile()">Mettre à jour le profil</button>
+                        </div>
+
+                        <h3 style="color: #FFFFFF; margin-bottom: 20px;">Changer le mot de passe</h3>
+                        <div style="display: grid; gap: 20px; margin-bottom: 30px;">
+                            <div class="form-group">
+                                <label>Ancien mot de passe</label>
+                                <input type="password" id="oldPassword" placeholder="Ancien mot de passe">
+                            </div>
+                            <div class="form-group">
+                                <label>Nouveau mot de passe</label>
+                                <input type="password" id="newPassword" placeholder="Nouveau mot de passe">
+                            </div>
+                            <button class="btn-primary" onclick="changePassword()">Changer le mot de passe</button>
                         </div>
                     </div>
 
@@ -763,13 +944,43 @@
                 </p>
 
                 <div class="form-group">
+                    <input type="password" id="deletePassword" placeholder="Votre mot de passe">
+                </div>
+
+                <div class="form-group">
                     <input type="text" id="confirmDeleteText" placeholder="Tapez 'SUPPRIMER' pour confirmer">
                 </div>
 
                 <div style="display: flex; gap: 10px; justify-content: center;">
                     <button class="btn-secondary" onclick="hideDeleteModal()">Annuler</button>
-                    <button class="btn-danger" onclick="deleteAccount()" id="confirmDeleteBtn" disabled>
+                    <button class="btn-danger" onclick="deleteAccount()" id="confirmDeleteBtn">
                         Supprimer définitivement
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmation suppression Mikrotik -->
+    <div class="modal" id="deleteMikrotikModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirmation suppression</h2>
+                <button class="modal-close" onclick="hideDeleteMikrotikModal()">✕</button>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <div style="font-size: 4rem; margin-bottom: 20px;">⚠️</div>
+                <h3 style="color: #FFFFFF; margin-bottom: 15px;" id="deleteMikrotikName">Supprimer ce Mikrotik ?</h3>
+                <p style="color: #A0B3D9; margin-bottom: 25px;">
+                    Cette action supprimera ce Mikrotik et tous ses utilisateurs associés.<br>
+                    Cette opération est irréversible.
+                </p>
+
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="btn-secondary" onclick="hideDeleteMikrotikModal()">Annuler</button>
+                    <button class="btn-danger" onclick="confirmDeleteMikrotik()">
+                        Supprimer
                     </button>
                 </div>
             </div>
@@ -796,17 +1007,17 @@
         let currentUser = null;
         let currentTab = 'accueil';
         let mikrotiks = [];
+        let currentMikrotikToDelete = null;
+        let dashboardData = null;
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
             checkAuth();
             updateDate();
+            loadNotifications();
             
-            // Vérifier la confirmation de suppression
-            document.getElementById('confirmDeleteText')?.addEventListener('input', function(e) {
-                const confirmBtn = document.getElementById('confirmDeleteBtn');
-                confirmBtn.disabled = e.target.value !== 'SUPPRIMER';
-            });
+            // Rafraîchir les notifications toutes les 30 secondes
+            setInterval(loadNotifications, 30000);
         });
 
         // Mise à jour de la date
@@ -828,7 +1039,7 @@
             try {
                 currentUser = JSON.parse(userStr);
                 updateUserInfo();
-                loadUserData();
+                loadDashboardData();
             } catch (e) {
                 logout();
             }
@@ -847,67 +1058,67 @@
             document.getElementById('userAvatar').textContent = initial;
         }
 
-        // Charger les données utilisateur
-        async function loadUserData() {
+        // Charger toutes les données du dashboard en une seule requête
+        async function loadDashboardData() {
             try {
                 showLoader();
                 
-                // Charger le profil
-                await loadUserProfile();
-                
-                // Charger les Mikrotiks
-                await loadMikrotiks();
+                const response = await fetch(`${API_BASE_URL}/dashboard/${currentUser.account_key}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    dashboardData = data;
+                    
+                    // Mettre à jour les infos utilisateur
+                    currentUser = { ...currentUser, ...data.user };
+                    
+                    // Mettre à jour les statistiques
+                    document.getElementById('mikrotikCount').textContent = data.stats.total_mikrotiks;
+                    document.getElementById('userCount').textContent = data.stats.total_users;
+                    document.getElementById('totalRevenue').textContent = data.stats.total_revenue.toLocaleString('fr-FR') + ' FCFA';
+                    
+                    // Mettre à jour la date d'inscription
+                    if (data.user.date_created) {
+                        const date = new Date(data.user.date_created);
+                        document.getElementById('activeSince').textContent = date.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+                    }
+                    
+                    // Mettre à jour le profil
+                    updateProfileInfo(data.user);
+                    
+                    // Mettre à jour les Mikrotiks
+                    mikrotiks = data.mikrotiks || [];
+                    displayMikrotiks();
+                    
+                    // Sauvegarder les données mises à jour
+                    if (localStorage.getItem('user')) {
+                        localStorage.setItem('user', JSON.stringify(currentUser));
+                    } else {
+                        sessionStorage.setItem('user', JSON.stringify(currentUser));
+                    }
+                }
                 
                 hideLoader();
             } catch (error) {
-                console.error('Erreur chargement données:', error);
+                console.error('Erreur chargement dashboard:', error);
                 showError('Erreur lors du chargement des données');
                 hideLoader();
             }
         }
 
-        // Charger le profil
-        async function loadUserProfile() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/profile/${currentUser.account_key}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    // Mettre à jour les infos profil
-                    document.getElementById('profileName').textContent = data.user.name;
-                    document.getElementById('profileEmail').textContent = data.user.email;
-                    document.getElementById('profileWhatsapp').textContent = data.user.whatsapp;
-                    document.getElementById('profileLicence').textContent = data.user.licence_status;
-                    document.getElementById('profileDate').textContent = new Date(data.user.date_created).toLocaleDateString('fr-FR');
-                    document.getElementById('profileKey').textContent = data.user.account_key;
-                    
-                    // Mettre à jour les stats
-                    document.getElementById('activeSince').textContent = new Date(data.user.date_created).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
-                }
-            } catch (error) {
-                console.error('Erreur chargement profil:', error);
-            }
-        }
-
-        // Charger les Mikrotiks
-        async function loadMikrotiks() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/profile/${currentUser.account_key}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    mikrotiks = data.mikrotiks || [];
-                    
-                    // Mettre à jour les compteurs
-                    document.getElementById('mikrotikCount').textContent = mikrotiks.length;
-                    document.getElementById('userCount').textContent = data.stats.total_users || 0;
-                    
-                    // Afficher la liste
-                    displayMikrotiks();
-                }
-            } catch (error) {
-                console.error('Erreur chargement Mikrotiks:', error);
-            }
+        // Mettre à jour les infos du profil
+        function updateProfileInfo(user) {
+            document.getElementById('profileName').textContent = user.name || '-';
+            document.getElementById('profileEmail').textContent = user.email || '-';
+            document.getElementById('profileWhatsapp').textContent = user.whatsapp || '-';
+            document.getElementById('profileLicence').textContent = user.licence_status || '-';
+            document.getElementById('profileDate').textContent = user.date_created ? new Date(user.date_created).toLocaleDateString('fr-FR') : '-';
+            document.getElementById('profileKey').textContent = user.account_key || '-';
+            
+            // Pré-remplir les champs de mise à jour
+            document.getElementById('updateName').value = user.name || '';
+            document.getElementById('updateEmail').value = user.email || '';
+            document.getElementById('updateWhatsapp').value = user.whatsapp || '';
         }
 
         // Afficher les Mikrotiks
@@ -931,11 +1142,14 @@
             let html = '<div class="mikrotik-grid">';
             
             mikrotiks.forEach(mik => {
+                const statusClass = mik.status === 'actif' ? 'status-actif' : 
+                                   mik.status === 'inactif' ? 'status-inactif' : 'status-maintenance';
+                
                 html += `
                     <div class="mikrotik-card">
                         <div class="mikrotik-header">
                             <span class="mikrotik-name">${mik.hostname || 'Sans nom'}</span>
-                            <span class="mikrotik-status">${mik.mik_statut || 'actif'}</span>
+                            <span class="mikrotik-status ${statusClass}">${mik.status || 'actif'}</span>
                         </div>
                         
                         <div class="mikrotik-detail">
@@ -945,15 +1159,19 @@
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">IP :</span>
-                                <span class="detail-value">${mik.ip_adress || '-'}</span>
+                                <span class="detail-value">${mik.ip_address || '-'}</span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">Modèle :</span>
-                                <span class="detail-value">${mik.mik_model || '-'}</span>
+                                <span class="detail-value">${mik.model || '-'}</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">Ajouté le :</span>
-                                <span class="detail-value">${mik.date_for_mik_add ? new Date(mik.date_for_mik_add).toLocaleDateString('fr-FR') : '-'}</span>
+                                <span class="detail-label">Utilisateurs :</span>
+                                <span class="detail-value">${mik.users_count || 0}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Revenu :</span>
+                                <span class="detail-value">${(mik.total_revenue || 0).toLocaleString('fr-FR')} FCFA</span>
                             </div>
                         </div>
                         
@@ -961,6 +1179,17 @@
                             <button class="btn-primary" style="flex: 1;" onclick="manageMikrotik('${mik.mik_id}')">
                                 ⚙️ Gérer
                             </button>
+                            <button class="delete-btn" onclick="showDeleteMikrotikModal('${mik.mik_id}', '${mik.hostname}')">
+                                🗑️
+                            </button>
+                        </div>
+                        
+                        <div style="margin-top: 15px;">
+                            <select class="btn-warning" style="width: 100%;" onchange="updateMikrotikStatus('${mik.mik_id}', this.value)">
+                                <option value="actif" ${mik.status === 'actif' ? 'selected' : ''}>Statut: Actif</option>
+                                <option value="inactif" ${mik.status === 'inactif' ? 'selected' : ''}>Statut: Inactif</option>
+                                <option value="maintenance" ${mik.status === 'maintenance' ? 'selected' : ''}>Statut: Maintenance</option>
+                            </select>
                         </div>
                     </div>
                 `;
@@ -970,6 +1199,33 @@
             container.innerHTML = html;
         }
 
+        // Mettre à jour le statut d'un Mikrotik
+        async function updateMikrotikStatus(mikId, newStatus) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/update_mikrotik_status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        mik_id: mikId,
+                        account_key: currentUser.account_key,
+                        status: newStatus
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Statut mis à jour');
+                    loadDashboardData(); // Recharger les données
+                } else {
+                    showError(data.message || 'Erreur lors de la mise à jour');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Erreur de connexion');
+            }
+        }
+
         // Gérer un Mikrotik
         async function manageMikrotik(mikId) {
             const mik = mikrotiks.find(m => m.mik_id === mikId);
@@ -977,9 +1233,9 @@
 
             document.getElementById('manageMikrotikTitle').textContent = `Gérer ${mik.hostname || 'Mikrotik'}`;
             
-            // Charger les détails et utilisateurs du Mikrotik
             try {
-                const response = await fetch(`${API_BASE_URL}/profile/${currentUser.account_key}`);
+                // Recharger les données fraîches
+                const response = await fetch(`${API_BASE_URL}/dashboard/${currentUser.account_key}`);
                 const data = await response.json();
                 
                 const mikUsers = data.mik_users?.filter(u => u.mik_id === mikId) || [];
@@ -988,8 +1244,8 @@
                     <div style="margin-bottom: 25px;">
                         <h3 style="color: #FFFFFF; margin-bottom: 15px;">Informations</h3>
                         <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 20px;">
-                            <p><strong style="color: #F59E0B;">IP:</strong> ${mik.ip_adress}</p>
-                            <p><strong style="color: #F59E0B;">Modèle:</strong> ${mik.mik_model}</p>
+                            <p><strong style="color: #F59E0B;">IP:</strong> ${mik.ip_address}</p>
+                            <p><strong style="color: #F59E0B;">Modèle:</strong> ${mik.model}</p>
                         </div>
                     </div>
                     
@@ -1017,11 +1273,14 @@
                                     <span style="color: #FFFFFF; font-weight: 600;">${user.name}</span>
                                     <span style="color: #F59E0B;">${user.profile}</span>
                                 </div>
-                                <div style="display: flex; justify-content: space-between; color: #A0B3D9;">
+                                <div style="display: flex; justify-content: space-between; color: #A0B3D9; margin-bottom: 10px;">
                                     <span>💰 ${user.prix} FCFA</span>
                                     <span>📅 ${new Date(user.date).toLocaleDateString('fr-FR')}</span>
                                     <span>⏰ ${user.heure}</span>
                                 </div>
+                                <button class="delete-btn" style="width: 100%;" onclick="deleteMikrotikUser(${user.id}, '${mikId}')">
+                                    Supprimer cet utilisateur
+                                </button>
                             </div>
                         `;
                     });
@@ -1040,6 +1299,30 @@
             } catch (error) {
                 console.error('Erreur:', error);
                 showError('Erreur lors du chargement');
+            }
+        }
+
+        // Supprimer un utilisateur Mikrotik
+        async function deleteMikrotikUser(userId, mikId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/delete_mik_user/${userId}?account_key=${currentUser.account_key}&mik_id=${mikId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Utilisateur supprimé');
+                    hideManageModal();
+                    loadDashboardData(); // Recharger
+                } else {
+                    showError(data.message || 'Erreur lors de la suppression');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Erreur de connexion');
             }
         }
 
@@ -1116,7 +1399,7 @@
                 if (data.success) {
                     showSuccess('Utilisateur ajouté avec succès');
                     hideManageModal();
-                    loadMikrotiks(); // Recharger
+                    loadDashboardData(); // Recharger
                 } else {
                     showError(data.message || 'Erreur lors de l\'ajout');
                 }
@@ -1154,7 +1437,7 @@
                 if (data.success) {
                     showSuccess('Mikrotik ajouté avec succès');
                     hideAddMikrotikModal();
-                    loadMikrotiks(); // Recharger la liste
+                    loadDashboardData(); // Recharger la liste
                 } else {
                     showError(data.message || 'Erreur lors de l\'ajout');
                 }
@@ -1165,6 +1448,211 @@
                 submitBtn.innerHTML = '<span>➕</span> Ajouter';
                 submitBtn.disabled = false;
             }
+        }
+
+        // Mettre à jour le profil
+        async function updateProfile() {
+            const updateData = {
+                account_key: currentUser.account_key,
+                name: document.getElementById('updateName').value,
+                email: document.getElementById('updateEmail').value,
+                whatsapp: document.getElementById('updateWhatsapp').value
+            };
+
+            // Enlever les champs vides
+            Object.keys(updateData).forEach(key => {
+                if (!updateData[key]) delete updateData[key];
+            });
+
+            if (Object.keys(updateData).length === 1) {
+                showWarning('Aucune information à mettre à jour');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/update_profile`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Profil mis à jour');
+                    loadDashboardData(); // Recharger
+                } else {
+                    showError(data.message || 'Erreur lors de la mise à jour');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Erreur de connexion');
+            }
+        }
+
+        // Changer le mot de passe
+        async function changePassword() {
+            const oldPassword = document.getElementById('oldPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+
+            if (!oldPassword || !newPassword) {
+                showWarning('Veuillez remplir tous les champs');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showWarning('Le nouveau mot de passe doit contenir au moins 6 caractères');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/change_password`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        account_key: currentUser.account_key,
+                        old_password: oldPassword,
+                        new_password: newPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Mot de passe changé avec succès');
+                    document.getElementById('oldPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                } else {
+                    showError(data.message || 'Erreur lors du changement');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Erreur de connexion');
+            }
+        }
+
+        // Afficher le modal de suppression Mikrotik
+        function showDeleteMikrotikModal(mikId, hostname) {
+            currentMikrotikToDelete = mikId;
+            document.getElementById('deleteMikrotikName').textContent = `Supprimer ${hostname} ?`;
+            document.getElementById('deleteMikrotikModal').classList.add('active');
+        }
+
+        function hideDeleteMikrotikModal() {
+            document.getElementById('deleteMikrotikModal').classList.remove('active');
+            currentMikrotikToDelete = null;
+        }
+
+        // Confirmer la suppression du Mikrotik
+        async function confirmDeleteMikrotik() {
+            if (!currentMikrotikToDelete) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/delete_mikrotik/${currentMikrotikToDelete}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        account_key: currentUser.account_key
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Mikrotik supprimé avec succès');
+                    hideDeleteMikrotikModal();
+                    loadDashboardData(); // Recharger
+                } else {
+                    showError(data.message || 'Erreur lors de la suppression');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Erreur de connexion');
+            }
+        }
+
+        // Supprimer le compte
+        async function deleteAccount() {
+            const password = document.getElementById('deletePassword').value;
+            const confirmText = document.getElementById('confirmDeleteText').value;
+
+            if (!password) {
+                showWarning('Veuillez entrer votre mot de passe');
+                return;
+            }
+
+            if (confirmText !== 'SUPPRIMER') {
+                showWarning('Veuillez taper SUPPRIMER pour confirmer');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/delete_account`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        account_key: currentUser.account_key,
+                        password: password,
+                        confirm_text: confirmText
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess('Compte supprimé. Redirection...');
+                    setTimeout(() => {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        window.location.href = 'index.html';
+                    }, 2000);
+                } else {
+                    showError(data.message || 'Erreur lors de la suppression');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Erreur de connexion');
+            }
+        }
+
+        // Charger les notifications
+        async function loadNotifications() {
+            if (!currentUser) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/notifications/${currentUser.account_key}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('notificationCount').textContent = data.count;
+
+                    let notificationsHtml = '';
+                    if (data.notifications.length === 0) {
+                        notificationsHtml = '<p style="text-align: center; color: #A0B3D9;">Aucune notification</p>';
+                    } else {
+                        data.notifications.forEach(notif => {
+                            notificationsHtml += `
+                                <div class="notification-item">
+                                    <span>${notif.icon}</span>
+                                    <div>
+                                        <strong style="color: #FFFFFF;">${notif.title}</strong>
+                                        <p style="color: #A0B3D9; font-size: 0.8rem;">${notif.message}</p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                    document.getElementById('notificationsList').innerHTML = notificationsHtml;
+                }
+            } catch (error) {
+                console.error('Erreur notifications:', error);
+            }
+        }
+
+        // Toggle notifications panel
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationsPanel');
+            panel.classList.toggle('show');
         }
 
         // Produits du market
@@ -1239,7 +1727,7 @@
         function commanderProduit(productId) {
             const product = products.find(p => p.id === productId);
             if (product) {
-                const message = `Bonjour, je souhaite commander :\n\n${product.name}\nPrix: ${product.price.toLocaleString('fr-FR')} FCFA\n\nNom: ${currentUser?.name}\nTéléphone: ${currentUser?.whatsapp_number || ''}`;
+                const message = `Bonjour, je souhaite commander :\n\n${product.name}\nPrix: ${product.price.toLocaleString('fr-FR')} FCFA\n\nNom: ${currentUser?.name}\nTéléphone: ${currentUser?.whatsapp || ''}`;
                 
                 // Ouvrir WhatsApp avec le message pré-rempli
                 window.open(`https://wa.me/22670000000?text=${encodeURIComponent(message)}`, '_blank');
@@ -1296,23 +1784,28 @@
 
         function hideDeleteModal() {
             document.getElementById('deleteAccountModal').classList.remove('active');
+            document.getElementById('deletePassword').value = '';
             document.getElementById('confirmDeleteText').value = '';
-            document.getElementById('confirmDeleteBtn').disabled = true;
-        }
-
-        // Supprimer le compte
-        async function deleteAccount() {
-            // TODO: Implémenter la suppression du compte
-            // Nécessite un endpoint API supplémentaire
-            showWarning('Fonctionnalité à implémenter côté serveur');
-            hideDeleteModal();
         }
 
         // Déconnexion
-        function logout() {
-            localStorage.removeItem('user');
-            sessionStorage.removeItem('user');
-            window.location.href = 'index.html';
+        async function logout() {
+            try {
+                // Appeler l'API de déconnexion (optionnel)
+                await fetch(`${API_BASE_URL}/logout`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        account_key: currentUser?.account_key
+                    })
+                });
+            } catch (error) {
+                console.error('Erreur déconnexion:', error);
+            } finally {
+                localStorage.removeItem('user');
+                sessionStorage.removeItem('user');
+                window.location.href = 'index.html';
+            }
         }
 
         // Gestion des alertes
@@ -1343,6 +1836,13 @@
 
         function hideLoader() {
             // Optionnel: cacher le loader
+        }
+
+        // Fermer les modals en cliquant en dehors
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
         }
     </script>
 </body>
