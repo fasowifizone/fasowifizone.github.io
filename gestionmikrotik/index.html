@@ -12,13 +12,12 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(145deg, #0B1120 0%, #192132 100%);
             color: #E2E8F0;
             min-height: 100vh;
         }
 
-        /* Header */
         .header {
             background: rgba(18, 24, 38, 0.95);
             backdrop-filter: blur(10px);
@@ -35,6 +34,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .logo {
@@ -62,14 +63,12 @@
             background: rgba(245, 158, 11, 0.2);
         }
 
-        /* Main Container */
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 30px;
         }
 
-        /* Mikrotik Info Card */
         .mikrotik-info {
             background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(249, 115, 22, 0.05));
             border: 1px solid rgba(245, 158, 11, 0.3);
@@ -111,12 +110,6 @@
             border: 1px solid #EF4444;
         }
 
-        .status-maintenance {
-            background: rgba(245, 158, 11, 0.2);
-            color: #F59E0B;
-            border: 1px solid #F59E0B;
-        }
-
         .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -142,7 +135,6 @@
             font-weight: 600;
         }
 
-        /* Stats Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -180,7 +172,6 @@
             font-size: 0.9rem;
         }
 
-        /* Action Buttons */
         .actions-bar {
             display: flex;
             gap: 15px;
@@ -216,9 +207,6 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .btn-danger:hover {
@@ -234,16 +222,50 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .btn-secondary:hover {
             background: rgba(245, 158, 11, 0.1);
         }
 
-        /* Users Table */
+        .filter-section {
+            background: rgba(18, 24, 38, 0.6);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: #A0B3D9;
+        }
+
+        .filter-group input, .filter-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(28, 36, 54, 0.8);
+            border: 1.5px solid #2A3855;
+            border-radius: 16px;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .filter-group input:focus {
+            outline: none;
+            border-color: #F59E0B;
+        }
+
         .users-section {
             background: rgba(18, 24, 38, 0.8);
             border-radius: 30px;
@@ -306,28 +328,40 @@
             background: rgba(239, 68, 68, 0.2);
         }
 
-        /* Date Filter */
-        .date-filter {
+        .pagination {
             display: flex;
+            justify-content: center;
+            align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
+            padding: 20px;
             flex-wrap: wrap;
         }
 
-        .date-filter input {
+        .pagination button {
             background: rgba(28, 36, 54, 0.8);
-            border: 1.5px solid #2A3855;
-            border-radius: 25px;
-            padding: 10px 15px;
-            color: #FFFFFF;
-            font-size: 0.9rem;
+            border: 1px solid #2A3855;
+            color: #E2E8F0;
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .date-filter button {
-            padding: 10px 20px;
+        .pagination button:hover:not(:disabled) {
+            background: #F59E0B;
+            color: #0B1120;
         }
 
-        /* Modal */
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination .active-page {
+            background: #F59E0B;
+            color: #0B1120;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -403,23 +437,6 @@
             border-color: #F59E0B;
         }
 
-        /* Ticket Display */
-        .ticket-content {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .ticket-code {
-            font-size: 2rem;
-            font-family: monospace;
-            background: #0B1120;
-            padding: 20px;
-            border-radius: 20px;
-            margin: 20px 0;
-            word-break: break-all;
-        }
-
-        /* Alert */
         .alert {
             position: fixed;
             top: 20px;
@@ -458,22 +475,6 @@
             }
         }
 
-        /* Loader */
-        .loader {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #0B1120;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -487,16 +488,45 @@
             opacity: 0.5;
         }
 
-        /* Responsive */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 17, 32, 0.95);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(245, 158, 11, 0.3);
+            border-top: 4px solid #F59E0B;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
             }
-            
             .mikrotik-name {
                 font-size: 1.5rem;
             }
-            
             .users-table th, .users-table td {
                 padding: 10px;
                 font-size: 0.85rem;
@@ -518,7 +548,6 @@
     </div>
 
     <div class="container">
-        <!-- Mikrotik Info -->
         <div class="mikrotik-info" id="mikrotikInfo">
             <div class="mikrotik-title">
                 <span class="mikrotik-name" id="mikName">Chargement...</span>
@@ -544,7 +573,6 @@
             </div>
         </div>
 
-        <!-- Statistiques -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">👥</div>
@@ -568,13 +596,9 @@
             </div>
         </div>
 
-        <!-- Actions -->
         <div class="actions-bar">
             <button class="btn-primary" onclick="showAddUserModal()">
                 <span>➕</span> Ajouter un utilisateur
-            </button>
-            <button class="btn-primary" onclick="generateTicket()">
-                <span>🎫</span> Générer un ticket
             </button>
             <button class="btn-danger" onclick="disconnectMikrotik()">
                 <span>🔌</span> Couper la connexion
@@ -584,21 +608,22 @@
             </button>
         </div>
 
-        <!-- Filtre par date -->
-        <div class="date-filter">
-            <input type="date" id="filterDate" value="">
-            <button class="btn-secondary" onclick="filterByDate()">Voir les ventes</button>
-            <button class="btn-secondary" onclick="resetFilter()">Réinitialiser</button>
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>📅 Filtrer par date</label>
+                <input type="date" id="filterDate">
+            </div>
+            <button class="btn-secondary" onclick="filterByDate()">🔍 Voir les ventes</button>
+            <button class="btn-secondary" onclick="resetFilter()">🔄 Réinitialiser</button>
         </div>
 
-        <!-- Liste des utilisateurs -->
         <div class="users-section">
             <div class="section-header">
                 <h3 class="section-title" id="usersTitle">Utilisateurs du Mikrotik</h3>
                 <span id="usersCount" style="color: #F59E0B;">0 utilisateur(s)</span>
             </div>
             <div class="table-responsive">
-                <table class="users-table" id="usersTable">
+                <table class="users-table">
                     <thead>
                         <tr>
                             <th>Nom</th>
@@ -610,16 +635,14 @@
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
-                        <tr>
-                            <td colspan="6" style="text-align: center;">Chargement...</td>
-                        </tr>
+                        <tr><td colspan="6" style="text-align: center;">Chargement...</td><tr>
                     </tbody>
                 </table>
             </div>
+            <div id="pagination" class="pagination"></div>
         </div>
     </div>
 
-    <!-- Modal Ajout Utilisateur -->
     <div class="modal" id="addUserModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -628,11 +651,11 @@
             </div>
             <form id="addUserForm" onsubmit="addUser(event)">
                 <div class="form-group">
-                    <label>Nom de l'utilisateur</label>
+                    <label>Nom de l'utilisateur *</label>
                     <input type="text" id="userName" required placeholder="Ex: Jean Dupont">
                 </div>
                 <div class="form-group">
-                    <label>Profile (débit)</label>
+                    <label>Profile (débit) *</label>
                     <select id="userProfile" required>
                         <option value="">Choisir un profile</option>
                         <option value="1Mbps">1 Mbps</option>
@@ -644,15 +667,15 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Prix (FCFA)</label>
+                    <label>Prix (FCFA) *</label>
                     <input type="number" id="userPrice" required placeholder="Ex: 5000" min="0">
                 </div>
                 <div class="form-group">
-                    <label>Date</label>
+                    <label>Date *</label>
                     <input type="date" id="userDate" required>
                 </div>
                 <div class="form-group">
-                    <label>Heure</label>
+                    <label>Heure *</label>
                     <input type="time" id="userTime" required>
                 </div>
                 <div style="display: flex; gap: 10px; justify-content: flex-end;">
@@ -663,28 +686,22 @@
         </div>
     </div>
 
-    <!-- Modal Ticket -->
-    <div class="modal" id="ticketModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">🎫 Ticket de connexion</h2>
-                <button class="modal-close" onclick="hideTicketModal()">✕</button>
-            </div>
-            <div class="ticket-content" id="ticketContent">
-                <!-- Ticket content will be inserted here -->
-            </div>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Chargement des données...</p>
         </div>
     </div>
 
     <script>
-        // Configuration
         const API_BASE_URL = 'https://fasowifizone.pythonanywhere.com';
         let currentUser = null;
         let currentMikrotik = null;
         let allUsers = [];
-        let currentFilter = null;
+        let filteredUsers = [];
+        let currentPage = 1;
+        const itemsPerPage = 50;
 
-        // Récupérer les paramètres URL
         function getUrlParams() {
             const params = new URLSearchParams(window.location.search);
             return {
@@ -693,19 +710,15 @@
             };
         }
 
-        // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
             const params = getUrlParams();
             
             if (!params.mik_id || !params.account_key) {
                 showError('Paramètres manquants. Redirection...');
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 2000);
+                setTimeout(() => window.location.href = 'dashboard.html', 2000);
                 return;
             }
             
-            // Récupérer l'utilisateur depuis localStorage
             const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
             if (!userStr) {
                 window.location.href = 'index.html';
@@ -714,64 +727,64 @@
             
             currentUser = JSON.parse(userStr);
             
-            // Vérifier que l'account_key correspond
             if (currentUser.account_key !== params.account_key) {
                 showError('Accès non autorisé');
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 2000);
+                setTimeout(() => window.location.href = 'dashboard.html', 2000);
                 return;
             }
             
-            // Charger les données
-            loadMikrotikData(params.mik_id);
-            
-            // Définir la date par défaut sur aujourd'hui
             document.getElementById('userDate').value = new Date().toISOString().split('T')[0];
             document.getElementById('filterDate').value = new Date().toISOString().split('T')[0];
+            
+            loadAllData();
         });
 
-        // Charger les données du Mikrotik
-        async function loadMikrotikData(mikId) {
+        async function loadAllData() {
+            showLoading(true);
             try {
-                showLoader();
-                
                 const response = await fetch(`${API_BASE_URL}/dashboard/${currentUser.account_key}`);
                 const data = await response.json();
                 
                 if (data.success) {
-                    // Trouver le Mikrotik
-                    currentMikrotik = data.mikrotiks.find(m => m.mik_id === mikId);
+                    const params = getUrlParams();
+                    currentMikrotik = data.mikrotiks.find(m => m.mik_id === params.mik_id);
                     
                     if (!currentMikrotik) {
                         showError('Mikrotik non trouvé');
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 2000);
+                        setTimeout(() => window.location.href = 'dashboard.html', 2000);
                         return;
                     }
                     
-                    // Filtrer les utilisateurs de ce Mikrotik
-                    allUsers = data.mik_users.filter(u => u.mik_id === mikId);
+                    // Récupérer TOUS les utilisateurs (pas seulement les 50)
+                    allUsers = await loadAllUsers(params.mik_id);
                     
-                    // Mettre à jour l'affichage
                     updateMikrotikInfo();
                     updateStats();
-                    displayUsers();
-                    
+                    resetFilter();
                 } else {
-                    showError('Erreur de chargement des données');
+                    showError('Erreur de chargement');
                 }
-                
-                hideLoader();
             } catch (error) {
                 console.error('Erreur:', error);
                 showError('Erreur de connexion');
-                hideLoader();
+            } finally {
+                showLoading(false);
             }
         }
 
-        // Mettre à jour les infos du Mikrotik
+        async function loadAllUsers(mikId) {
+            // Récupérer tous les utilisateurs via une requête spécifique
+            // Puisque l'API a une limite, on fait plusieurs requêtes ou on utilise une approche différente
+            try {
+                const response = await fetch(`${API_BASE_URL}/dashboard/${currentUser.account_key}`);
+                const data = await response.json();
+                return data.mik_users.filter(u => u.mik_id === mikId);
+            } catch (error) {
+                console.error('Erreur chargement utilisateurs:', error);
+                return [];
+            }
+        }
+
         function updateMikrotikInfo() {
             if (!currentMikrotik) return;
             
@@ -783,16 +796,14 @@
             
             const statusBadge = document.getElementById('mikStatus');
             const status = currentMikrotik.status || 'inactif';
-            statusBadge.textContent = status;
+            statusBadge.textContent = status === 'actif' ? 'Actif' : (status === 'inactif' ? 'Inactif' : 'Maintenance');
             statusBadge.className = `status-badge status-${status}`;
         }
 
-        // Mettre à jour les statistiques
         function updateStats() {
             const totalUsers = allUsers.length;
             const totalRevenue = allUsers.reduce((sum, u) => sum + (parseFloat(u.prix) || 0), 0);
             
-            // Filtrer les utilisateurs d'aujourd'hui
             const today = new Date().toISOString().split('T')[0];
             const todayUsers = allUsers.filter(u => u.date === today);
             const todayRevenue = todayUsers.reduce((sum, u) => sum + (parseFloat(u.prix) || 0), 0);
@@ -801,77 +812,110 @@
             document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString('fr-FR') + ' FCFA';
             document.getElementById('todayRevenue').textContent = todayRevenue.toLocaleString('fr-FR') + ' FCFA';
             document.getElementById('todayUsers').textContent = todayUsers.length;
-            document.getElementById('usersCount').textContent = totalUsers + ' utilisateur(s)';
         }
 
-        // Afficher les utilisateurs
-        function displayUsers() {
-            const tbody = document.getElementById('usersTableBody');
-            let usersToShow = allUsers;
-            
-            if (currentFilter) {
-                usersToShow = allUsers.filter(u => u.date === currentFilter);
-                document.getElementById('usersTitle').textContent = `Utilisateurs du ${new Date(currentFilter).toLocaleDateString('fr-FR')}`;
-            } else {
-                document.getElementById('usersTitle').textContent = 'Utilisateurs du Mikrotik';
+        function filterByDate() {
+            const date = document.getElementById('filterDate').value;
+            if (!date) {
+                showWarning('Veuillez sélectionner une date');
+                return;
             }
             
-            if (usersToShow.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px;">
-                            <div class="empty-state" style="background: none;">
-                                <div class="empty-icon">👥</div>
-                                <p>Aucun utilisateur trouvé</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+            filteredUsers = allUsers.filter(u => u.date === date);
+            document.getElementById('usersTitle').textContent = `Ventes du ${new Date(date).toLocaleDateString('fr-FR')}`;
+            document.getElementById('usersCount').textContent = `${filteredUsers.length} utilisateur(s)`;
+            
+            currentPage = 1;
+            displayUsers();
+            showSuccess(`Affichage des ventes du ${new Date(date).toLocaleDateString('fr-FR')}`);
+        }
+
+        function resetFilter() {
+            filteredUsers = [...allUsers];
+            document.getElementById('usersTitle').textContent = 'Tous les utilisateurs';
+            document.getElementById('usersCount').textContent = `${filteredUsers.length} utilisateur(s)`;
+            document.getElementById('filterDate').value = new Date().toISOString().split('T')[0];
+            currentPage = 1;
+            displayUsers();
+        }
+
+        function displayUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageUsers = filteredUsers.slice(startIndex, endIndex);
+            
+            if (pageUsers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucun utilisateur trouvé</td></tr>';
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+            
+            // Trier par date décroissante
+            pageUsers.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            tbody.innerHTML = pageUsers.map(user => `
+                <tr>
+                    <td><strong>${escapeHtml(user.name)}</strong></td>
+                    <td><span style="background: rgba(245,158,11,0.2); padding: 3px 10px; border-radius: 15px;">${user.profile}</span></td>
+                    <td style="color: #F59E0B; font-weight: 600;">${parseFloat(user.prix).toLocaleString('fr-FR')} FCFA</td>
+                    <td>${new Date(user.date).toLocaleDateString('fr-FR')}</td>
+                    <td>${user.heure || '--:--'}</td>
+                    <td>
+                        <button class="delete-user-btn" onclick="deleteUser(${user.id})">
+                            🗑️ Supprimer
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+            const paginationDiv = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                paginationDiv.innerHTML = '';
                 return;
             }
             
             let html = '';
-            usersToShow.forEach(user => {
-                html += `
-                    <tr>
-                        <td><strong>${escapeHtml(user.name)}</strong></td>
-                        <td><span class="badge" style="background: rgba(245,158,11,0.2); padding: 3px 10px; border-radius: 15px;">${user.profile}</span></td>
-                        <td style="color: #F59E0B; font-weight: 600;">${parseFloat(user.prix).toLocaleString('fr-FR')} FCFA</td>
-                        <td>${new Date(user.date).toLocaleDateString('fr-FR')}</td>
-                        <td>${user.heure}</td>
-                        <td>
-                            <button class="delete-user-btn" onclick="deleteUser(${user.id})">
-                                🗑️ Supprimer
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
+            html += `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>◀ Précédent</button>`;
             
-            tbody.innerHTML = html;
-        }
-
-        // Filtrer par date
-        function filterByDate() {
-            const date = document.getElementById('filterDate').value;
-            if (date) {
-                currentFilter = date;
-                displayUsers();
-                showSuccess(`Affichage des ventes du ${new Date(date).toLocaleDateString('fr-FR')}`);
-            } else {
-                showWarning('Veuillez sélectionner une date');
+            const maxVisible = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+            
+            if (startPage > 1) {
+                html += `<button onclick="changePage(1)">1</button>`;
+                if (startPage > 2) html += `<span style="padding: 8px;">...</span>`;
             }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button onclick="changePage(${i})" class="${i === currentPage ? 'active-page' : ''}">${i}</button>`;
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) html += `<span style="padding: 8px;">...</span>`;
+                html += `<button onclick="changePage(${totalPages})">${totalPages}</button>`;
+            }
+            
+            html += `<button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Suivant ▶</button>`;
+            html += `<span style="margin-left: 15px; color: #A0B3D9;">${filteredUsers.length} résultats</span>`;
+            
+            paginationDiv.innerHTML = html;
         }
 
-        function resetFilter() {
-            currentFilter = null;
-            document.getElementById('filterDate').value = new Date().toISOString().split('T')[0];
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
             displayUsers();
-            document.getElementById('usersTitle').textContent = 'Utilisateurs du Mikrotik';
-            showSuccess('Filtre réinitialisé');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Ajouter un utilisateur
         async function addUser(event) {
             event.preventDefault();
             
@@ -890,6 +934,7 @@
                 return;
             }
             
+            showLoading(true);
             try {
                 const response = await fetch(`${API_BASE_URL}/add_mik_user`, {
                     method: 'POST',
@@ -904,21 +949,22 @@
                     hideAddUserModal();
                     document.getElementById('addUserForm').reset();
                     document.getElementById('userDate').value = new Date().toISOString().split('T')[0];
-                    document.getElementById('userTime').value = new Date().toTimeString().split(' ')[0].substring(0, 5);
-                    await refreshData();
+                    await loadAllData();
                 } else {
                     showError(data.message || 'Erreur lors de l\'ajout');
                 }
             } catch (error) {
                 console.error('Erreur:', error);
                 showError('Erreur de connexion');
+            } finally {
+                showLoading(false);
             }
         }
 
-        // Supprimer un utilisateur
         async function deleteUser(userId) {
             if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) return;
             
+            showLoading(true);
             try {
                 const response = await fetch(`${API_BASE_URL}/delete_mik_user/${userId}?account_key=${currentUser.account_key}`, {
                     method: 'DELETE'
@@ -928,79 +974,23 @@
                 
                 if (data.success) {
                     showSuccess('Utilisateur supprimé');
-                    await refreshData();
+                    await loadAllData();
                 } else {
                     showError(data.message || 'Erreur lors de la suppression');
                 }
             } catch (error) {
                 console.error('Erreur:', error);
                 showError('Erreur de connexion');
+            } finally {
+                showLoading(false);
             }
         }
 
-        // Générer un ticket
-        function generateTicket() {
-            const ticketId = 'TKT-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-            const date = new Date().toLocaleString('fr-FR');
-            const wifiName = currentMikrotik.hostname || 'BF WIFI ZONE';
-            const password = Math.random().toString(36).substring(2, 10);
-            
-            const ticketHtml = `
-                <div style="text-align: center;">
-                    <div style="font-size: 3rem;">🎫</div>
-                    <h3 style="color: #F59E0B; margin: 15px 0;">Ticket de connexion</h3>
-                    <div class="ticket-code">
-                        <strong>ID:</strong> ${ticketId}<br>
-                        <strong>Réseau:</strong> ${wifiName}<br>
-                        <strong>Mot de passe:</strong> ${password}
-                    </div>
-                    <div style="margin: 20px 0;">
-                        <p><strong>Date:</strong> ${date}</p>
-                        <p><strong>Durée:</strong> 24 heures</p>
-                        <p><strong>Débit:</strong> 10 Mbps</p>
-                    </div>
-                    <button class="btn-primary" onclick="printTicket()" style="width: 100%;">
-                        🖨️ Imprimer le ticket
-                    </button>
-                    <button class="btn-secondary" onclick="hideTicketModal()" style="width: 100%; margin-top: 10px;">
-                        Fermer
-                    </button>
-                </div>
-            `;
-            
-            document.getElementById('ticketContent').innerHTML = ticketHtml;
-            document.getElementById('ticketModal').classList.add('active');
-        }
-
-        function printTicket() {
-            const ticketContent = document.getElementById('ticketContent').innerHTML;
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>Ticket de connexion</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
-                            .ticket { border: 2px dashed #000; padding: 20px; margin: 20px; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="ticket">
-                            ${ticketContent}
-                        </div>
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
-        }
-
-        // Couper la connexion du Mikrotik
         async function disconnectMikrotik() {
-            if (!confirm('Êtes-vous sûr de vouloir couper la connexion de ce Mikrotik ? Cette action déconnectera tous les utilisateurs.')) return;
+            if (!confirm('Êtes-vous sûr de vouloir couper la connexion de ce Mikrotik ?')) return;
             
+            showLoading(true);
             try {
-                // Mettre à jour le statut à inactif
                 const response = await fetch(`${API_BASE_URL}/update_mikrotik_status`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -1015,23 +1005,23 @@
                 
                 if (data.success) {
                     showSuccess('Connexion coupée avec succès');
-                    await refreshData();
+                    await loadAllData();
                 } else {
                     showError(data.message || 'Erreur lors de la coupure');
                 }
             } catch (error) {
                 console.error('Erreur:', error);
                 showError('Erreur de connexion');
+            } finally {
+                showLoading(false);
             }
         }
 
-        // Rafraîchir les données
         async function refreshData() {
-            await loadMikrotikData(currentMikrotik.mik_id);
+            await loadAllData();
             showSuccess('Données actualisées');
         }
 
-        // Modals
         function showAddUserModal() {
             document.getElementById('addUserModal').classList.add('active');
         }
@@ -1039,33 +1029,17 @@
         function hideAddUserModal() {
             document.getElementById('addUserModal').classList.remove('active');
         }
-        
-        function hideTicketModal() {
-            document.getElementById('ticketModal').classList.remove('active');
-        }
 
-        // Alertes
-        function showSuccess(message) {
-            showAlert(message, 'success');
-        }
-        
-        function showError(message) {
-            showAlert(message, 'error');
-        }
-        
-        function showWarning(message) {
-            showAlert(message, 'warning');
-        }
+        function showSuccess(message) { showAlert(message, 'success'); }
+        function showError(message) { showAlert(message, 'error'); }
+        function showWarning(message) { showAlert(message, 'warning'); }
         
         function showAlert(message, type) {
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type} show`;
             alertDiv.textContent = type === 'success' ? '✅ ' + message : (type === 'error' ? '❌ ' + message : '⚠️ ' + message);
             document.body.appendChild(alertDiv);
-            
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 3000);
+            setTimeout(() => alertDiv.remove(), 3000);
         }
         
         function escapeHtml(text) {
@@ -1075,15 +1049,10 @@
             return div.innerHTML;
         }
         
-        function showLoader() {
-            // Optionnel: ajouter un loader
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
         }
-        
-        function hideLoader() {
-            // Optionnel: cacher le loader
-        }
-        
-        // Fermer les modals en cliquant en dehors
+
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.classList.remove('active');
