@@ -464,6 +464,12 @@
             color: #FCA5A5;
         }
 
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid #F59E0B;
+            color: #FCD34D;
+        }
+
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
@@ -635,7 +641,7 @@
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
-                        <tr><td colspan="6" style="text-align: center;">Chargement...</td><tr>
+                        <tr><td colspan="6" style="text-align: center;">Chargement...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -755,8 +761,11 @@
                         return;
                     }
                     
-                    // Récupérer TOUS les utilisateurs (pas seulement les 50)
-                    allUsers = await loadAllUsers(params.mik_id);
+                    // Récupérer TOUS les utilisateurs de ce Mikrotik (pas seulement les 50 premiers)
+                    allUsers = data.mik_users.filter(u => u.mik_id === params.mik_id);
+                    
+                    // Trier par date décroissante (les plus récents d'abord)
+                    allUsers.sort((a, b) => new Date(b.date) - new Date(a.date));
                     
                     updateMikrotikInfo();
                     updateStats();
@@ -772,19 +781,6 @@
             }
         }
 
-        async function loadAllUsers(mikId) {
-            // Récupérer tous les utilisateurs via une requête spécifique
-            // Puisque l'API a une limite, on fait plusieurs requêtes ou on utilise une approche différente
-            try {
-                const response = await fetch(`${API_BASE_URL}/dashboard/${currentUser.account_key}`);
-                const data = await response.json();
-                return data.mik_users.filter(u => u.mik_id === mikId);
-            } catch (error) {
-                console.error('Erreur chargement utilisateurs:', error);
-                return [];
-            }
-        }
-
         function updateMikrotikInfo() {
             if (!currentMikrotik) return;
             
@@ -796,18 +792,30 @@
             
             const statusBadge = document.getElementById('mikStatus');
             const status = currentMikrotik.status || 'inactif';
-            statusBadge.textContent = status === 'actif' ? 'Actif' : (status === 'inactif' ? 'Inactif' : 'Maintenance');
+            let statusText = status === 'actif' ? 'Actif' : (status === 'inactif' ? 'Inactif' : 'Maintenance');
+            statusBadge.textContent = statusText;
             statusBadge.className = `status-badge status-${status}`;
         }
 
         function updateStats() {
+            // Calcul du total des utilisateurs
             const totalUsers = allUsers.length;
-            const totalRevenue = allUsers.reduce((sum, u) => sum + (parseFloat(u.prix) || 0), 0);
             
+            // Calcul du revenu total
+            const totalRevenue = allUsers.reduce((sum, u) => {
+                const prix = parseFloat(u.prix) || 0;
+                return sum + prix;
+            }, 0);
+            
+            // Calcul pour aujourd'hui
             const today = new Date().toISOString().split('T')[0];
             const todayUsers = allUsers.filter(u => u.date === today);
-            const todayRevenue = todayUsers.reduce((sum, u) => sum + (parseFloat(u.prix) || 0), 0);
+            const todayRevenue = todayUsers.reduce((sum, u) => {
+                const prix = parseFloat(u.prix) || 0;
+                return sum + prix;
+            }, 0);
             
+            // Mise à jour des affichages
             document.getElementById('totalUsers').textContent = totalUsers;
             document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString('fr-FR') + ' FCFA';
             document.getElementById('todayRevenue').textContent = todayRevenue.toLocaleString('fr-FR') + ' FCFA';
@@ -825,9 +833,12 @@
             document.getElementById('usersTitle').textContent = `Ventes du ${new Date(date).toLocaleDateString('fr-FR')}`;
             document.getElementById('usersCount').textContent = `${filteredUsers.length} utilisateur(s)`;
             
+            // Calculer le montant total pour cette date
+            const dateRevenue = filteredUsers.reduce((sum, u) => sum + (parseFloat(u.prix) || 0), 0);
+            showSuccess(`Ventes du ${new Date(date).toLocaleDateString('fr-FR')}: ${dateRevenue.toLocaleString('fr-FR')} FCFA`);
+            
             currentPage = 1;
             displayUsers();
-            showSuccess(`Affichage des ventes du ${new Date(date).toLocaleDateString('fr-FR')}`);
         }
 
         function resetFilter() {
@@ -851,9 +862,6 @@
                 return;
             }
             
-            // Trier par date décroissante
-            pageUsers.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
             tbody.innerHTML = pageUsers.map(user => `
                 <tr>
                     <td><strong>${escapeHtml(user.name)}</strong></td>
@@ -866,7 +874,7 @@
                             🗑️ Supprimer
                         </button>
                     </td>
-                </tr>
+                </table>
             `).join('');
             
             updatePagination();
@@ -1037,7 +1045,8 @@
         function showAlert(message, type) {
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type} show`;
-            alertDiv.textContent = type === 'success' ? '✅ ' + message : (type === 'error' ? '❌ ' + message : '⚠️ ' + message);
+            const icon = type === 'success' ? '✅' : (type === 'error' ? '❌' : '⚠️');
+            alertDiv.textContent = `${icon} ${message}`;
             document.body.appendChild(alertDiv);
             setTimeout(() => alertDiv.remove(), 3000);
         }
