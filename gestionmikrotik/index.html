@@ -64,25 +64,43 @@
         .status-badge { padding: 6px 18px; border-radius: 40px; font-weight: 600; font-size: 0.85rem; }
         .status-actif { background: rgba(16, 185, 129, 0.2); color: #10B981; border: 1px solid #10B981; }
         .status-inactif { background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid #EF4444; }
+        .status-maintenance { background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid #F59E0B; }
         .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 8px; }
         .info-item { background: rgba(0, 0, 0, 0.3); padding: 12px 16px; border-radius: 20px; }
         .info-label { color: #94A3B8; font-size: 0.75rem; margin-bottom: 4px; }
         .info-value { color: #FFFFFF; font-size: 1rem; font-weight: 600; word-break: break-word; }
         
-        /* Stats */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 28px; }
-        .stat-card { background: rgba(18, 24, 38, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(52, 69, 104, 0.5); border-radius: 28px; padding: 22px; transition: all 0.2s ease; }
-        .stat-card:hover { transform: translateY(-3px); border-color: rgba(245, 158, 11, 0.4); }
-        .stat-icon { font-size: 2rem; margin-bottom: 12px; }
-        .stat-value { font-size: 1.8rem; font-weight: 800; color: #F59E0B; margin-bottom: 5px; }
-        .stat-label { color: #94A3B8; font-size: 0.8rem; }
+        /* Stats principales */
+        .main-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        .main-stat-card {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(249, 115, 22, 0.05));
+            border: 2px solid rgba(245, 158, 11, 0.4);
+            border-radius: 32px;
+            padding: 28px;
+            text-align: center;
+        }
+        .main-stat-card .stat-icon { font-size: 2.5rem; margin-bottom: 12px; }
+        .main-stat-card .stat-value { font-size: 2.5rem; font-weight: 800; color: #F59E0B; }
+        .main-stat-card .stat-label { color: #94A3B8; margin-top: 8px; font-size: 0.9rem; }
+        .today-badge { background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; display: inline-block; margin-top: 8px; }
         
-        /* Graphique */
+        /* Stats secondaires */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+        .stat-card { background: rgba(18, 24, 38, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(52, 69, 104, 0.5); border-radius: 24px; padding: 18px; transition: all 0.2s ease; }
+        .stat-card:hover { transform: translateY(-2px); border-color: rgba(245, 158, 11, 0.4); }
+        .stat-icon { font-size: 1.8rem; margin-bottom: 8px; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: #F59E0B; }
+        .stat-label { color: #94A3B8; font-size: 0.75rem; margin-top: 5px; }
+        
         .chart-container { background: rgba(18, 24, 38, 0.6); border-radius: 28px; padding: 20px; margin-bottom: 28px; }
         .chart-title { font-size: 1.1rem; margin-bottom: 15px; color: #F59E0B; }
-        canvas { max-height: 300px; }
+        canvas { max-height: 280px; }
         
-        /* Actions */
         .actions-bar { display: flex; gap: 14px; margin-bottom: 28px; flex-wrap: wrap; }
         .btn { padding: 10px 22px; border-radius: 40px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; border: none; display: inline-flex; align-items: center; gap: 8px; }
         .btn-primary { background: linear-gradient(135deg, #F59E0B, #F97316); color: #0B1120; box-shadow: 0 4px 12px rgba(245,158,11,0.3); }
@@ -92,22 +110,20 @@
         .btn-secondary { background: rgba(255,255,255,0.05); color: #F59E0B; border: 1px solid #F59E0B; }
         .btn-secondary:hover { background: rgba(245,158,11,0.15); }
         
-        /* Filtres */
         .filter-section { background: rgba(18, 24, 38, 0.6); border-radius: 28px; padding: 20px; margin-bottom: 28px; }
-        .filter-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid #2A3855; padding-bottom: 15px; }
-        .filter-tab { background: transparent; border: none; color: #94A3B8; padding: 8px 20px; border-radius: 30px; cursor: pointer; transition: 0.2s; font-weight: 500; }
+        .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid #2A3855; padding-bottom: 15px; }
+        .filter-tab { background: transparent; border: none; color: #94A3B8; padding: 8px 18px; border-radius: 30px; cursor: pointer; transition: 0.2s; font-weight: 500; }
         .filter-tab.active { background: rgba(245, 158, 11, 0.2); color: #F59E0B; }
         .filter-tab:hover { background: rgba(245, 158, 11, 0.1); }
         .date-range { display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; }
         .filter-group { flex: 1; min-width: 160px; }
         .filter-group label { display: block; margin-bottom: 6px; font-size: 0.75rem; color: #94A3B8; }
-        .filter-group input, .filter-group select { width: 100%; padding: 10px 14px; background: rgba(28, 36, 54, 0.9); border: 1px solid #2A3855; border-radius: 24px; color: white; font-size: 0.9rem; }
+        .filter-group input { width: 100%; padding: 10px 14px; background: rgba(28, 36, 54, 0.9); border: 1px solid #2A3855; border-radius: 24px; color: white; font-size: 0.9rem; }
         .filter-group input:focus { outline: none; border-color: #F59E0B; }
         
-        /* Table */
         .users-section { background: rgba(18, 24, 38, 0.7); border-radius: 32px; padding: 24px; overflow-x: auto; }
         .section-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
-        .section-title { font-size: 1.3rem; font-weight: 600; }
+        .section-title { font-size: 1.2rem; font-weight: 600; }
         .users-table { width: 100%; border-collapse: collapse; min-width: 550px; }
         .users-table th { text-align: left; padding: 14px 12px; background: rgba(245, 158, 11, 0.1); color: #F59E0B; font-weight: 600; font-size: 0.85rem; }
         .users-table td { padding: 12px; border-bottom: 1px solid #2A3855; font-size: 0.9rem; }
@@ -121,7 +137,6 @@
         .pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
         .pagination .active-page { background: #F59E0B; color: #0B1120; border-color: #F59E0B; }
         
-        /* Modals */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; }
         .modal.active { display: flex; }
         .modal-content { background: #121826; border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 44px; padding: 28px; max-width: 480px; width: 90%; max-height: 85vh; overflow-y: auto; }
@@ -144,7 +159,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .empty-state { text-align: center; padding: 50px 20px; color: #64748B; }
         
-        @media (max-width: 640px) { .container { padding: 16px; } .mikrotik-name { font-size: 1.4rem; } .stat-value { font-size: 1.4rem; } .btn { padding: 8px 16px; font-size: 0.8rem; } }
+        @media (max-width: 640px) { .container { padding: 16px; } .mikrotik-name { font-size: 1.4rem; } .main-stat-card .stat-value { font-size: 1.8rem; } .stat-value { font-size: 1.2rem; } .btn { padding: 8px 14px; font-size: 0.75rem; } }
     </style>
 </head>
 <body>
@@ -156,7 +171,7 @@
 </div>
 
 <div class="container">
-    <div class="mikrotik-card" id="mikrotikCard">
+    <div class="mikrotik-card">
         <div class="mikrotik-header">
             <span class="mikrotik-name" id="mikName">---</span>
             <span class="status-badge" id="mikStatus">---</span>
@@ -169,29 +184,48 @@
         </div>
     </div>
 
+    <!-- Statistiques du jour - Mise en avant -->
+    <div class="main-stats">
+        <div class="main-stat-card">
+            <div class="stat-icon">🎫</div>
+            <div class="stat-value" id="todayTickets">0</div>
+            <div class="stat-label">Tickets vendus aujourd'hui</div>
+            <div class="today-badge" id="todayDate">--/--/----</div>
+        </div>
+        <div class="main-stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value" id="todayRevenue">0 FCFA</div>
+            <div class="stat-label">Chiffre d'affaires aujourd'hui</div>
+            <div class="today-badge">🔥 Ventes du jour</div>
+        </div>
+    </div>
+
+    <!-- Statistiques globales -->
     <div class="stats-grid">
         <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="totalUsers">0</div><div class="stat-label">Total tickets</div></div>
-        <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value" id="totalRevenue">0 FCFA</div><div class="stat-label">Chiffre d'affaires</div></div>
-        <div class="stat-card"><div class="stat-icon">📈</div><div class="stat-value" id="avgTicket">0 FCFA</div><div class="stat-label">Ticket moyen</div></div>
-        <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-value" id="bestProfile">-</div><div class="stat-label">Profil le plus vendu</div></div>
+        <div class="stat-card"><div class="stat-icon">💵</div><div class="stat-value" id="totalRevenue">0 FCFA</div><div class="stat-label">CA total</div></div>
+        <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-value" id="avgTicket">0 FCFA</div><div class="stat-label">Ticket moyen</div></div>
+        <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-value" id="bestProfile">-</div><div class="stat-label">Profil star</div></div>
+        <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value" id="bestDay">-</div><div class="stat-label">Meilleur jour</div></div>
     </div>
 
     <div class="chart-container">
-        <div class="chart-title">📊 Évolution des ventes (7 derniers jours)</div>
+        <div class="chart-title">📈 Évolution des ventes (7 derniers jours)</div>
         <canvas id="salesChart"></canvas>
     </div>
 
     <div class="actions-bar">
-        <button class="btn btn-primary" onclick="openAddUserModal()">➕ Ajouter utilisateur</button>
-        <button class="btn btn-danger" onclick="openDisconnectModal()">🔌 Couper la connexion</button>
+        <button class="btn btn-primary" onclick="openAddUserModal()">➕ Ajouter ticket</button>
+        <button class="btn btn-danger" onclick="openDisconnectModal()">🔌 Couper connexion</button>
         <button class="btn btn-secondary" onclick="refreshAll()">🔄 Actualiser</button>
     </div>
 
     <div class="filter-section">
         <div class="filter-tabs">
-            <button class="filter-tab active" data-filter="day" onclick="setFilterPeriod('day')">📅 Aujourd'hui</button>
+            <button class="filter-tab active" data-filter="today" onclick="setFilterPeriod('today')">📅 Aujourd'hui</button>
             <button class="filter-tab" data-filter="week" onclick="setFilterPeriod('week')">📆 Cette semaine</button>
             <button class="filter-tab" data-filter="month" onclick="setFilterPeriod('month')">🗓️ Ce mois</button>
+            <button class="filter-tab" data-filter="all" onclick="setFilterPeriod('all')">📋 Tous</button>
             <button class="filter-tab" data-filter="custom" onclick="setFilterPeriod('custom')">⚙️ Personnalisé</button>
         </div>
         <div class="date-range" id="customDateRange" style="display: none;">
@@ -203,8 +237,8 @@
 
     <div class="users-section">
         <div class="section-header">
-            <h3 class="section-title" id="usersTitle">Tous les utilisateurs</h3>
-            <span id="usersCount" style="color:#F59E0B; font-weight:600;">0</span>
+            <h3 class="section-title" id="usersTitle">Tickets</h3>
+            <span id="usersCount" style="color:#F59E0B; font-weight:600;">0 ticket(s)</span>
         </div>
         <div class="table-responsive">
             <table class="users-table">
@@ -219,7 +253,7 @@
 <!-- MODALS -->
 <div id="addUserModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header"><h2 class="modal-title">➕ Nouvel utilisateur</h2><button class="modal-close" onclick="closeAddUserModal()">✕</button></div>
+        <div class="modal-header"><h2 class="modal-title">➕ Nouveau ticket</h2><button class="modal-close" onclick="closeAddUserModal()">✕</button></div>
         <form id="addUserForm">
             <div class="form-group"><label>Nom complet *</label><input type="text" id="userName" required placeholder="Ex: Jean Ouedraogo"></div>
             <div class="form-group"><label>Profil *</label><select id="userProfile" required><option value="">Sélectionner</option><option value="1Mbps">1 Mbps</option><option value="2Mbps">2 Mbps</option><option value="5Mbps">5 Mbps</option><option value="10Mbps">10 Mbps</option><option value="20Mbps">20 Mbps</option><option value="50Mbps">50 Mbps</option></select></div>
@@ -234,9 +268,9 @@
 <div id="passwordModal" class="modal">
     <div class="modal-content">
         <div class="modal-header"><h2 class="modal-title">🔐 Confirmation requise</h2><button class="modal-close" onclick="closePasswordModal()">✕</button></div>
-        <p style="margin-bottom: 20px;">Entrez le <strong>mot de passe du Mikrotik</strong> pour supprimer cet utilisateur.</p>
+        <p style="margin-bottom: 20px;">Entrez le <strong>mot de passe du Mikrotik</strong> pour supprimer ce ticket.</p>
         <div class="form-group"><label>Mot de passe Mikrotik</label><input type="password" id="mikPasswordInput" placeholder="Mot de passe"></div>
-        <div style="display:flex; gap:12px; justify-content:flex-end;"><button class="btn btn-secondary" onclick="closePasswordModal()">Annuler</button><button class="btn btn-danger" id="confirmDeleteBtn">Confirmer</button></div>
+        <div style="display:flex; gap:12px; justify-content:flex-end;"><button class="btn btn-secondary" onclick="closePasswordModal()">Annuler</button><button class="btn btn-danger" id="confirmDeleteBtn">Confirmer suppression</button></div>
     </div>
 </div>
 
@@ -245,7 +279,7 @@
         <div class="modal-header"><h2 class="modal-title">⚠️ Couper la connexion</h2><button class="modal-close" onclick="closeDisconnectModal()">✕</button></div>
         <p style="margin-bottom: 20px;">Entrez le mot de passe du Mikrotik pour le désactiver.</p>
         <div class="form-group"><label>Mot de passe Mikrotik</label><input type="password" id="disconnectPasswordInput" placeholder="Mot de passe"></div>
-        <div style="display:flex; gap:12px; justify-content:flex-end;"><button class="btn btn-secondary" onclick="closeDisconnectModal()">Annuler</button><button class="btn btn-danger" id="confirmDisconnectBtn">Confirmer</button></div>
+        <div style="display:flex; gap:12px; justify-content:flex-end;"><button class="btn btn-secondary" onclick="closeDisconnectModal()">Annuler</button><button class="btn btn-danger" id="confirmDisconnectBtn">Confirmer coupure</button></div>
     </div>
 </div>
 
@@ -257,10 +291,67 @@
     let allUsers = [], filteredUsers = [];
     let currentPage = 1, itemsPerPage = 50;
     let pendingDeleteUserId = null;
-    let currentFilterPeriod = 'day';
+    let currentFilterPeriod = 'today';
     let salesChart = null;
 
-    function getUrlParams() { return { mik_id: new URLSearchParams(window.location.search).get('mik_id'), account_key: new URLSearchParams(window.location.search).get('account_key') }; }
+    // Fonction normalisée de comparaison de dates - Résout tous les problèmes de format
+    function normalizeDate(dateStr) {
+        if (!dateStr) return null;
+        // Supprimer les espaces
+        dateStr = String(dateStr).trim();
+        
+        // Essayer différents formats
+        // Format YYYY-MM-DD
+        let match = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+        if (match) return `${match[1]}-${match[2].padStart(2,'0')}-${match[3].padStart(2,'0')}`;
+        
+        // Format DD/MM/YYYY
+        match = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (match) return `${match[3]}-${match[2].padStart(2,'0')}-${match[1].padStart(2,'0')}`;
+        
+        // Format DD-MM-YYYY
+        match = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+        if (match) return `${match[3]}-${match[2].padStart(2,'0')}-${match[1].padStart(2,'0')}`;
+        
+        // Format MM/DD/YYYY
+        match = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (match) return `${match[3]}-${match[1].padStart(2,'0')}-${match[2].padStart(2,'0')}`;
+        
+        // Si c'est déjà un objet Date valide
+        const d = new Date(dateStr);
+        if (!isNaN(d.getTime())) {
+            return d.toISOString().slice(0,10);
+        }
+        
+        return dateStr;
+    }
+
+    // Comparer deux dates (YYYY-MM-DD)
+    function isSameDate(date1, date2) {
+        const d1 = normalizeDate(date1);
+        const d2 = normalizeDate(date2);
+        return d1 === d2;
+    }
+
+    // Obtenir la date d'aujourd'hui au format YYYY-MM-DD
+    function getTodayStr() {
+        return new Date().toISOString().slice(0,10);
+    }
+
+    // Formater une date pour affichage
+    function formatDisplayDate(dateStr) {
+        const normalized = normalizeDate(dateStr);
+        if (!normalized) return dateStr;
+        const [year, month, day] = normalized.split('-');
+        return `${day}/${month}/${year}`;
+    }
+
+    function getUrlParams() { 
+        return { 
+            mik_id: new URLSearchParams(window.location.search).get('mik_id'), 
+            account_key: new URLSearchParams(window.location.search).get('account_key') 
+        }; 
+    }
 
     async function loadAllData() {
         showLoading(true);
@@ -271,12 +362,22 @@
             const params = getUrlParams();
             currentMikrotik = data.mikrotiks.find(m => m.mik_id === params.mik_id);
             if (!currentMikrotik) throw new Error("Mikrotik non trouvé");
+            
+            // Récupérer tous les utilisateurs et normaliser leurs dates
             allUsers = data.mik_users.filter(u => u.mik_id === params.mik_id);
-            allUsers.sort((a,b) => new Date(b.date) - new Date(a.date));
+            allUsers = allUsers.map(u => ({
+                ...u,
+                normalizedDate: normalizeDate(u.date),
+                originalDate: u.date
+            }));
+            allUsers.sort((a,b) => (b.normalizedDate || '').localeCompare(a.normalizedDate || ''));
+            
             updateUI();
-            updateGlobalStats();
+            updateAllStats();
             updateChart();
-            applyFilterByPeriod();
+            
+            // Appliquer le filtre par défaut (aujourd'hui)
+            setFilterPeriod('today');
         } catch(e) { showError(e.message); }
         finally { showLoading(false); }
     }
@@ -286,37 +387,85 @@
         document.getElementById('mikIp').innerText = currentMikrotik.ip_address || '-';
         document.getElementById('mikModel').innerText = currentMikrotik.model || '-';
         document.getElementById('mikId').innerText = currentMikrotik.mik_id ? currentMikrotik.mik_id.slice(0,16)+'…' : '-';
-        document.getElementById('mikDate').innerText = currentMikrotik.date_added ? new Date(currentMikrotik.date_added).toLocaleDateString('fr-FR') : '-';
+        document.getElementById('mikDate').innerText = currentMikrotik.date_added ? formatDisplayDate(currentMikrotik.date_added) : '-';
         const status = currentMikrotik.status || 'inactif';
         const statusEl = document.getElementById('mikStatus');
         statusEl.innerText = status === 'actif' ? 'Actif' : (status === 'inactif' ? 'Inactif' : 'Maintenance');
         statusEl.className = `status-badge status-${status}`;
+        document.getElementById('todayDate').innerText = formatDisplayDate(getTodayStr());
     }
 
-    function updateGlobalStats() {
+    function updateAllStats() {
+        // Statistiques globales
         const total = allUsers.length;
-        const revenue = allUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
-        const avg = total > 0 ? revenue / total : 0;
+        const totalRevenue = allUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
+        const avgTicket = total > 0 ? totalRevenue / total : 0;
+        
+        // Profil le plus vendu
         const profileCount = {};
         allUsers.forEach(u => { profileCount[u.profile] = (profileCount[u.profile] || 0) + 1; });
         let bestProfile = '-', maxCount = 0;
         for(let [p,c] of Object.entries(profileCount)) if(c > maxCount) { maxCount = c; bestProfile = p; }
+        
+        // Meilleur jour
+        const dayRevenue = {};
+        allUsers.forEach(u => { 
+            const day = u.normalizedDate;
+            if(day) dayRevenue[day] = (dayRevenue[day] || 0) + (parseFloat(u.prix)||0);
+        });
+        let bestDay = '-', bestRevenue = 0;
+        for(let [d,rev] of Object.entries(dayRevenue)) if(rev > bestRevenue) { bestRevenue = rev; bestDay = formatDisplayDate(d); }
+        
+        // Statistiques du jour (avec normalisation)
+        const todayStr = getTodayStr();
+        const todayUsers = allUsers.filter(u => isSameDate(u.date, todayStr));
+        const todayTickets = todayUsers.length;
+        const todayRev = todayUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
+        
+        document.getElementById('todayTickets').innerText = todayTickets;
+        document.getElementById('todayRevenue').innerText = todayRev.toLocaleString('fr-FR') + ' FCFA';
         document.getElementById('totalUsers').innerText = total;
-        document.getElementById('totalRevenue').innerText = revenue.toLocaleString('fr-FR') + ' FCFA';
-        document.getElementById('avgTicket').innerText = Math.round(avg).toLocaleString('fr-FR') + ' FCFA';
+        document.getElementById('totalRevenue').innerText = totalRevenue.toLocaleString('fr-FR') + ' FCFA';
+        document.getElementById('avgTicket').innerText = Math.round(avgTicket).toLocaleString('fr-FR') + ' FCFA';
         document.getElementById('bestProfile').innerText = bestProfile;
+        document.getElementById('bestDay').innerText = bestDay !== '-' ? `${bestDay} (${bestRevenue.toLocaleString('fr-FR')} FCFA)` : '-';
     }
 
     function updateChart() {
         const last7Days = [];
-        for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); last7Days.push(d.toISOString().slice(0,10)); }
-        const dailyRevenue = last7Days.map(date => allUsers.filter(u => u.date === date).reduce((s,u) => s + (parseFloat(u.prix)||0), 0));
+        for(let i=6; i>=0; i--) { 
+            let d = new Date(); 
+            d.setDate(d.getDate() - i); 
+            last7Days.push(d.toISOString().slice(0,10));
+        }
+        
+        const dailyRevenue = last7Days.map(date => 
+            allUsers.filter(u => isSameDate(u.date, date)).reduce((s,u) => s + (parseFloat(u.prix)||0), 0)
+        );
+        
         const ctx = document.getElementById('salesChart').getContext('2d');
         if(salesChart) salesChart.destroy();
         salesChart = new Chart(ctx, {
             type: 'line',
-            data: { labels: last7Days.map(d => new Date(d).toLocaleDateString('fr-FR', {day:'2-digit',month:'short'})), datasets: [{ label: 'CA (FCFA)', data: dailyRevenue, borderColor: '#F59E0B', backgroundColor: 'rgba(245,158,11,0.1)', tension: 0.3, fill: true }] },
-            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#E2E8F0' } } } }
+            data: { 
+                labels: last7Days.map(d => formatDisplayDate(d)), 
+                datasets: [{ 
+                    label: 'CA (FCFA)', 
+                    data: dailyRevenue, 
+                    borderColor: '#F59E0B', 
+                    backgroundColor: 'rgba(245,158,11,0.1)', 
+                    tension: 0.3, 
+                    fill: true 
+                }] 
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: true, 
+                plugins: { 
+                    legend: { labels: { color: '#E2E8F0' } },
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toLocaleString('fr-FR')} FCFA` } }
+                } 
+            }
         });
     }
 
@@ -325,37 +474,47 @@
         document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelector(`.filter-tab[data-filter="${period}"]`).classList.add('active');
         document.getElementById('customDateRange').style.display = period === 'custom' ? 'flex' : 'none';
-        if(period !== 'custom') applyFilterByPeriod();
-    }
-
-    function applyFilterByPeriod() {
-        const today = new Date().toISOString().slice(0,10);
-        let filtered = [...allUsers];
-        if(currentFilterPeriod === 'day') filtered = allUsers.filter(u => u.date === today);
-        else if(currentFilterPeriod === 'week') {
-            const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
-            filtered = allUsers.filter(u => new Date(u.date) >= weekAgo);
-        } else if(currentFilterPeriod === 'month') {
-            const monthAgo = new Date(); monthAgo.setMonth(monthAgo.getMonth() - 1);
-            filtered = allUsers.filter(u => new Date(u.date) >= monthAgo);
+        
+        if(period !== 'custom') {
+            const todayStr = getTodayStr();
+            let filtered = [...allUsers];
+            
+            if(period === 'today') {
+                filtered = allUsers.filter(u => isSameDate(u.date, todayStr));
+                document.getElementById('usersTitle').innerHTML = "📅 Tickets d'aujourd'hui";
+            } else if(period === 'week') {
+                const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+                const weekAgoStr = weekAgo.toISOString().slice(0,10);
+                filtered = allUsers.filter(u => (u.normalizedDate || '') >= weekAgoStr);
+                document.getElementById('usersTitle').innerHTML = "📆 Tickets de cette semaine";
+            } else if(period === 'month') {
+                const monthAgo = new Date(); monthAgo.setMonth(monthAgo.getMonth() - 1);
+                const monthAgoStr = monthAgo.toISOString().slice(0,10);
+                filtered = allUsers.filter(u => (u.normalizedDate || '') >= monthAgoStr);
+                document.getElementById('usersTitle').innerHTML = "🗓️ Tickets de ce mois";
+            } else if(period === 'all') {
+                filtered = [...allUsers];
+                document.getElementById('usersTitle').innerHTML = "📋 Tous les tickets";
+            }
+            
+            filteredUsers = filtered;
+            document.getElementById('usersCount').innerText = `${filteredUsers.length} ticket(s)`;
+            currentPage = 1;
+            displayUsers();
+            
+            const sum = filteredUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
+            if(filteredUsers.length > 0) showSuccess(`Période: ${sum.toLocaleString('fr-FR')} FCFA`);
         }
-        filteredUsers = filtered;
-        const periodNames = { day: "Aujourd'hui", week: "Cette semaine", month: "Ce mois" };
-        document.getElementById('usersTitle').innerHTML = periodNames[currentFilterPeriod] || 'Tous les utilisateurs';
-        document.getElementById('usersCount').innerText = `${filteredUsers.length} utilisateur(s)`;
-        currentPage = 1;
-        displayUsers();
-        const sum = filteredUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
-        if(filteredUsers.length > 0) showSuccess(`${periodNames[currentFilterPeriod] || 'Période'}: ${sum.toLocaleString('fr-FR')} FCFA`);
     }
 
     function applyCustomFilter() {
         const start = document.getElementById('startDate').value;
         const end = document.getElementById('endDate').value;
         if(!start || !end) { showWarning("Sélectionnez les dates"); return; }
-        filteredUsers = allUsers.filter(u => u.date >= start && u.date <= end);
-        document.getElementById('usersTitle').innerHTML = `Ventes du ${new Date(start).toLocaleDateString('fr-FR')} au ${new Date(end).toLocaleDateString('fr-FR')}`;
-        document.getElementById('usersCount').innerText = `${filteredUsers.length} utilisateur(s)`;
+        
+        filteredUsers = allUsers.filter(u => (u.normalizedDate || '') >= start && (u.normalizedDate || '') <= end);
+        document.getElementById('usersTitle').innerHTML = `📅 Ventes du ${formatDisplayDate(start)} au ${formatDisplayDate(end)}`;
+        document.getElementById('usersCount').innerText = `${filteredUsers.length} ticket(s)`;
         currentPage = 1;
         displayUsers();
         const sum = filteredUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
@@ -366,8 +525,23 @@
         const tbody = document.getElementById('usersTableBody');
         const start = (currentPage-1)*itemsPerPage;
         const pageUsers = filteredUsers.slice(start, start+itemsPerPage);
-        if(pageUsers.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucun utilisateur</td></tr>'; document.getElementById('pagination').innerHTML = ''; return; }
-        tbody.innerHTML = pageUsers.map(u => `<tr><td><strong>${escapeHtml(u.name)}</strong></td><td><span style="background:#F59E0B20; padding:4px 12px; border-radius:20px;">${u.profile}</span></td><td style="color:#F59E0B; font-weight:700;">${parseFloat(u.prix).toLocaleString('fr-FR')} FCFA</td><td>${new Date(u.date).toLocaleDateString('fr-FR')}</td><td>${u.heure || '--:--'}</td><td><button class="delete-user-btn" onclick="askPasswordForDelete(${u.id})">🗑️ Supprimer</button></td></tr>`).join('');
+        
+        if(pageUsers.length === 0) { 
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">📭 Aucun ticket trouvé</td></tr>'; 
+            document.getElementById('pagination').innerHTML = ''; 
+            return; 
+        }
+        
+        tbody.innerHTML = pageUsers.map(u => `
+            <tr>
+                <td><strong>${escapeHtml(u.name)}</strong></td>
+                <td><span style="background:#F59E0B20; padding:4px 12px; border-radius:20px;">${u.profile}</span></td>
+                <td style="color:#F59E0B; font-weight:700;">${parseFloat(u.prix).toLocaleString('fr-FR')} FCFA</td>
+                <td>${formatDisplayDate(u.date)}</td>
+                <td>${u.heure || '--:--'}</td>
+                <td><button class="delete-user-btn" onclick="askPasswordForDelete(${u.id})">🗑️ Supprimer</button></td>
+            </tr>
+        `).join('');
         updatePagination();
     }
 
@@ -385,23 +559,42 @@
         div.innerHTML = html;
     }
 
-    function changePage(p) { if(p>=1 && p<=Math.ceil(filteredUsers.length/itemsPerPage)) { currentPage=p; displayUsers(); window.scrollTo({top:0,behavior:'smooth'}); } }
+    function changePage(p) { 
+        if(p>=1 && p<=Math.ceil(filteredUsers.length/itemsPerPage)) { 
+            currentPage=p; 
+            displayUsers(); 
+            window.scrollTo({top:0,behavior:'smooth'}); 
+        } 
+    }
 
     async function addUser(event) {
         event.preventDefault();
-        const data = { mik_id: currentMikrotik.mik_id, name: document.getElementById('userName').value.trim(), profile: document.getElementById('userProfile').value, prix: parseFloat(document.getElementById('userPrice').value), date: document.getElementById('userDate').value, heure: document.getElementById('userTime').value, account_key: currentUser.account_key };
+        const data = { 
+            mik_id: currentMikrotik.mik_id, 
+            name: document.getElementById('userName').value.trim(), 
+            profile: document.getElementById('userProfile').value, 
+            prix: parseFloat(document.getElementById('userPrice').value), 
+            date: document.getElementById('userDate').value, 
+            heure: document.getElementById('userTime').value, 
+            account_key: currentUser.account_key 
+        };
         if(!data.name || !data.profile || !data.prix) { showWarning("Tous les champs obligatoires"); return; }
         showLoading(true);
         try {
             const resp = await fetch(`${API_BASE}/add_mik_user`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
             const result = await resp.json();
-            if(result.success) { showSuccess("Utilisateur ajouté"); closeAddUserModal(); await loadAllData(); }
+            if(result.success) { showSuccess("Ticket ajouté avec succès"); closeAddUserModal(); await loadAllData(); }
             else showError(result.message);
-        } catch(e) { showError("Erreur connexion"); }
+        } catch(e) { showError("Erreur de connexion"); }
         finally { showLoading(false); }
     }
 
-    function askPasswordForDelete(userId) { pendingDeleteUserId = userId; document.getElementById('mikPasswordInput').value = ''; document.getElementById('passwordModal').classList.add('active'); }
+    function askPasswordForDelete(userId) { 
+        pendingDeleteUserId = userId; 
+        document.getElementById('mikPasswordInput').value = ''; 
+        document.getElementById('passwordModal').classList.add('active'); 
+    }
+    
     async function confirmDeleteWithPassword() {
         const password = document.getElementById('mikPasswordInput').value;
         if(!password) { showWarning("Mot de passe requis"); return; }
@@ -410,7 +603,7 @@
         try {
             const resp = await fetch(`${API_BASE}/delete_mik_user/${pendingDeleteUserId}?account_key=${currentUser.account_key}`, { method:'DELETE' });
             const result = await resp.json();
-            if(result.success) { showSuccess("Utilisateur supprimé"); closePasswordModal(); await loadAllData(); }
+            if(result.success) { showSuccess("Ticket supprimé"); closePasswordModal(); await loadAllData(); }
             else showError(result.message);
         } catch(e) { showError("Erreur"); }
         finally { showLoading(false); pendingDeleteUserId=null; }
@@ -431,16 +624,27 @@
     }
 
     function refreshAll() { loadAllData(); }
-    function openAddUserModal() { document.getElementById('userDate').value = new Date().toISOString().slice(0,10); document.getElementById('userTime').value = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); document.getElementById('addUserModal').classList.add('active'); }
+    function openAddUserModal() { 
+        document.getElementById('userDate').value = getTodayStr(); 
+        document.getElementById('userTime').value = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); 
+        document.getElementById('addUserModal').classList.add('active'); 
+    }
     function closeAddUserModal() { document.getElementById('addUserModal').classList.remove('active'); }
     function closePasswordModal() { document.getElementById('passwordModal').classList.remove('active'); pendingDeleteUserId=null; }
     function openDisconnectModal() { document.getElementById('disconnectPasswordInput').value=''; document.getElementById('disconnectModal').classList.add('active'); }
     function closeDisconnectModal() { document.getElementById('disconnectModal').classList.remove('active'); }
+    
     function showSuccess(m) { showAlert(m,'success'); }
     function showError(m) { showAlert(m,'error'); }
     function showWarning(m) { showAlert(m,'warning'); }
-    function showAlert(msg,type) { let div=document.createElement('div'); div.className=`alert alert-${type}`; div.innerHTML=msg; document.body.appendChild(div); setTimeout(()=>div.remove(),3000); }
-    function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    function showAlert(msg,type) { 
+        const div = document.createElement('div'); 
+        div.className = `alert alert-${type}`; 
+        div.innerHTML = msg; 
+        document.body.appendChild(div); 
+        setTimeout(() => div.remove(), 3000); 
+    }
+    function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
     function showLoading(v) { document.getElementById('loadingOverlay').style.display = v ? 'flex' : 'none'; }
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -450,8 +654,12 @@
         if(!userStr) { window.location.href='index.html'; return; }
         currentUser = JSON.parse(userStr);
         if(currentUser.account_key !== params.account_key) { showError("Accès non autorisé"); setTimeout(()=>window.location.href='dashboard.html',1500); return; }
-        document.getElementById('startDate').value = new Date(Date.now() - 7*86400000).toISOString().slice(0,10);
-        document.getElementById('endDate').value = new Date().toISOString().slice(0,10);
+        
+        const today = getTodayStr();
+        const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+        document.getElementById('startDate').value = weekAgo.toISOString().slice(0,10);
+        document.getElementById('endDate').value = today;
+        
         await loadAllData();
         document.getElementById('addUserForm').addEventListener('submit', addUser);
         document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDeleteWithPassword);
