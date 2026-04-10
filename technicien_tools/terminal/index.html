@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BF WIFI ZONE - Contrôle MikroTik à Distance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        /* Configuration Panel */
+        .config-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .config-panel h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 20px;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .config-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .config-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .config-group input {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: monospace;
+        }
+
+        .config-group input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .save-config-btn {
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        /* Command Panel */
+        .command-panel, .response-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .command-panel h2, .response-panel h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .command-type {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .type-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .priority-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .priority-btn {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .priority-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .send-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Response Area */
+        .response-area {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .command-history {
+            margin-top: 20px;
+        }
+
+        .history-item {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            background: #e8e8e8;
+            transform: translateX(5px);
+        }
+
+        .history-command {
+            font-family: monospace;
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .history-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-executing {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .refresh-btn {
+            padding: 8px 16px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎛️ BF WIFI ZONE - Contrôle à distance MikroTik</h1>
+            <p>Envoyez des commandes et visualisez les résultats en temps réel</p>
+        </div>
+
+        <!-- Configuration Panel -->
+        <div class="config-panel">
+            <h2>⚙️ Configuration du MikroTik</h2>
+            <div class="config-grid">
+                <div class="config-group">
+                    <label>🔑 Account Key</label>
+                    <input type="text" id="accountKey" placeholder="689872a3-a221-4842-9aaa-761eff2eee05" value="689872a3-a221-4842-9aaa-761eff2eee05">
+                </div>
+                <div class="config-group">
+                    <label>🆔 MikroTik ID</label>
+                    <input type="text" id="mikId" placeholder="f5b4edea-a263-4b7a-866e-eb97da411f26" value="f5b4edea-a263-4b7a-866e-eb97da411f26">
+                </div>
+            </div>
+            <button class="save-config-btn" onclick="saveConfig()">💾 Sauvegarder la configuration</button>
+            <span id="connectionStatus" style="margin-left: 15px;"></span>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel: Send Command -->
+            <div class="command-panel">
+                <h2>📟 Envoyer une commande</h2>
+                
+                <div class="command-type">
+                    <button class="type-btn active" data-type="script" onclick="setCommandType('script')">📜 Script</button>
+                    <button class="type-btn" data-type="api" onclick="setCommandType('api')">🔌 API</button>
+                    <button class="type-btn" data-type="config" onclick="setCommandType('config')">⚙️ Config</button>
+                </div>
+
+                <div class="priority-buttons">
+                    <button class="priority-btn" data-priority="0" onclick="setPriority(0)">🟢 Normal</button>
+                    <button class="priority-btn active" data-priority="1" onclick="setPriority(1)">🟡 Haute</button>
+                    <button class="priority-btn" data-priority="2" onclick="setPriority(2)">🔴 Urgente</button>
+                </div>
+
+                <div class="form-group">
+                    <label>📝 Commande RouterOS</label>
+                    <textarea id="commandText" rows="6" placeholder="Exemples:
+/interface print
+/ip hotspot active print
+/system resource print
+/ip hotspot user print
+/log print where topics~&quot;hotspot&quot;">/system resource print</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>💡 Commandes prédéfinies</label>
+                    <select id="presetCommands" onchange="loadPresetCommand()">
+                        <option value="">-- Sélectionner une commande --</option>
+                        <option value="/system resource print">📊 État du système</option>
+                        <option value="/interface print">🌐 Liste des interfaces</option>
+                        <option value="/ip hotspot active print">👥 Utilisateurs hotspot actifs</option>
+                        <option value="/ip hotspot user print">📋 Liste des utilisateurs hotspot</option>
+                        <option value="/log print where topics~&quot;hotspot&quot;">📝 Logs hotspot</option>
+                        <option value="/system script print">📜 Liste des scripts</option>
+                        <option value="/system scheduler print">⏰ Liste des schedulers</option>
+                        <option value="/ip address print">🌍 Adresses IP</option>
+                        <option value="/queue simple print">📊 Queues simple</option>
+                    </select>
+                </div>
+
+                <button class="send-btn" onclick="sendCommand()">🚀 Envoyer la commande</button>
+            </div>
+
+            <!-- Right Panel: Response -->
+            <div class="response-panel">
+                <h2>📡 Réponse en direct
+                    <button class="refresh-btn" onclick="checkPendingCommands()" style="float: right; background: #17a2b8;">🔄 Vérifier commandes</button>
+                </h2>
+                <div id="responseArea" class="response-area">
+                    <div style="color: #888; text-align: center;">
+                        ⏳ En attente de commande...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Panel -->
+        <div class="config-panel" style="margin-top: 30px;">
+            <h2>📜 Historique des commandes
+                <button class="refresh-btn" onclick="loadHistory()" style="float: right;">🔄 Rafraîchir</button>
+            </h2>
+            <div id="historyList" style="max-height: 400px; overflow-y: auto;">
+                <div class="loading">Chargement de l'historique...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        let currentAccountKey = localStorage.getItem('accountKey') || '689872a3-a221-4842-9aaa-761eff2eee05';
+        let currentMikId = localStorage.getItem('mikId') || 'f5b4edea-a263-4b7a-866e-eb97da411f26';
+        let currentCommandType = 'script';
+        let currentPriority = 1;
+        let refreshTimer = null;
+        let lastCommandId = null;
+
+        const API_BASE = 'https://fasowifizone.pythonanywhere.com';
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('accountKey').value = currentAccountKey;
+            document.getElementById('mikId').value = currentMikId;
+            loadHistory();
+            startAutoRefresh();
+            checkMikrotikStatus();
+        });
+
+        // Sauvegarder configuration
+        function saveConfig() {
+            currentAccountKey = document.getElementById('accountKey').value;
+            currentMikId = document.getElementById('mikId').value;
+            localStorage.setItem('accountKey', currentAccountKey);
+            localStorage.setItem('mikId', currentMikId);
+            showNotification('Configuration sauvegardée !', 'success');
+            loadHistory();
+            checkMikrotikStatus();
+        }
+
+        // Vérifier statut MikroTik
+        async function checkMikrotikStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/mik/commands/pending/${currentMikId}?account_key=${currentAccountKey}`);
+                const data = await response.json();
+                const statusSpan = document.getElementById('connectionStatus');
+                if (data.success) {
+                    statusSpan.innerHTML = '<span class="status-badge online">● Connecté</span>';
+                    statusSpan.title = `${data.pending_commands || 0} commande(s) en attente`;
+                } else {
+                    statusSpan.innerHTML = '<span class="status-badge offline">● Déconnecté</span>';
+                }
+            } catch (error) {
+                document.getElementById('connectionStatus').innerHTML = '<span class="status-badge offline">● Erreur connexion</span>';
+            }
+        }
+
+        // Définir type commande
+        function setCommandType(type) {
+            currentCommandType = type;
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-type') === type) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Définir priorité
+        function setPriority(priority) {
+            currentPriority = priority;
+            document.querySelectorAll('.priority-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.getAttribute('data-priority')) === priority) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Charger commande prédéfinie
+        function loadPresetCommand() {
+            const select = document.getElementById('presetCommands');
+            const command = select.value;
+            if (command) {
+                document.getElementById('commandText').value = command;
+                select.value = '';
+            }
+        }
+
+        // Envoyer commande
+        async function sendCommand() {
+            const commandText = document.getElementById('commandText').value.trim();
+            
+            if (!commandText) {
+                showNotification('Veuillez entrer une commande', 'error');
+                return;
+            }
+
+            if (!currentAccountKey || !currentMikId) {
+                showNotification('Veuillez configurer Account Key et MikroTik ID', 'error');
+                return;
+            }
+
+            const sendBtn = document.querySelector('.send-btn');
+            sendBtn.disabled = true;
+            sendBtn.textContent = '⏳ Envoi en cours...';
+
+            try {
+                const response = await fetch(`${API_BASE}/mik/commands/push`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        mik_id: currentMikId,
+                        account_key: currentAccountKey,
+                        command: commandText,
+                        type: currentCommandType,
+                        priority: currentPriority
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('✅ Commande envoyée avec succès !', 'success');
+                    document.getElementById('responseArea').innerHTML = `
+                        <div style="color: #4caf50;">
+                            ✅ Commande envoyée !<br>
+                            ID: ${data.command_id}<br>
+                            En attente d'exécution par le MikroTik...
+                        </div>
+                    `;
+                    lastCommandId = data.command_id;
+                    loadHistory();
+                    // Attendre la réponse
+                    waitForResponse(data.command_id);
+                } else {
+                    showNotification('❌ Erreur: ' + data.message, 'error');
+                    document.getElementById('responseArea').innerHTML = `
+                        <div style="color: #f44336;">
+                            ❌ Erreur: ${data.message}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                showNotification('❌ Erreur de connexion: ' + error.message, 'error');
+                document.getElementById('responseArea').innerHTML = `
+                    <div style="color: #f44336;">
+                        ❌ Erreur de connexion: ${error.message}
+                    </div>
+                `;
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = '🚀 Envoyer la commande';
+            }
+        }
+
+        // Attendre la réponse
+        async function waitForResponse(commandId, attempts = 0) {
+            if (attempts > 30) { // 30 secondes max
+                document.getElementById('responseArea').innerHTML = `
+                    <div style="color: #ff9800;">
+                        ⏰ Délai dépassé, la commande est toujours en attente
+                    </div>
+                `;
+                return;
+            }
+
+            setTimeout(async () => {
+                try {
+                    const response = await fetch(`${API_BASE}/mik/commands/status/${commandId}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const status = data.command.status;
+                        
+                        if (status === 'completed') {
+                            displayResponse(data);
+                        } else if (status === 'failed') {
+                            document.getElementById('responseArea').innerHTML = `
+                                <div style="color: #f44336;">
+                                    ❌ Commande échouée<br>
+                                    Erreur: ${data.command.error_message || 'Erreur inconnue'}
+                                </div>
+                            `;
+                        } else if (status === 'executing') {
+                            document.getElementById('responseArea').innerHTML = `
+                                <div style="color: #2196f3;">
+                                    🔄 Commande en cours d'exécution...
+                                </div>
+                            `;
+                            waitForResponse(commandId, attempts + 1);
+                        } else {
+                            document.getElementById('responseArea').innerHTML = `
+                                <div style="color: #ff9800;">
+                                    ⏳ Commande en attente (${status})...
+                                </div>
+                            `;
+                            waitForResponse(commandId, attempts + 1);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error waiting for response:', error);
+                    waitForResponse(commandId, attempts + 1);
+                }
+            }, 1000);
+        }
+
+        // Afficher réponse
+        function displayResponse(data) {
+            const responseData = data.response || {};
+            const command = data.command;
+            
+            let html = `
+                <div style="margin-bottom: 15px;">
+                    <div style="color: #4caf50; font-weight: bold;">✅ Commande exécutée</div>
+                    <div style="color: #888; font-size: 11px;">ID: ${command.id}</div>
+                    <div style="color: #888; font-size: 11px;">Temps: ${responseData.execution_time_ms || 0}ms</div>
+                </div>
+                <div style="border-top: 1px solid #333; margin: 10px 0; padding-top: 10px;">
+                    <div style="color: #aaa; margin-bottom: 5px;">📝 Commande:</div>
+                    <div style="background: #2d2d2d; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px;">
+                        ${escapeHtml(command.text)}
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <div style="color: #aaa; margin-bottom: 5px;">📡 Réponse:</div>
+                    <div style="background: #2d2d2d; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; white-space: pre-wrap;">
+                        ${escapeHtml(responseData.response || 'Pas de réponse')}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('responseArea').innerHTML = html;
+        }
+
+        // Charger historique
+        async function loadHistory() {
+            if (!currentAccountKey || !currentMikId) {
+                document.getElementById('historyList').innerHTML = '<div class="loading">⚠️ Configurez Account Key et MikroTik ID</div>';
+                return;
+            }
+
+            document.getElementById('historyList').innerHTML = '<div class="loading">⏳ Chargement...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/mik/commands/history/${currentMikId}?account_key=${currentAccountKey}&limit=20`);
+                const data = await response.json();
+
+                if (data.success && data.commands) {
+                    displayHistory(data.commands);
+                } else {
+                    document.getElementById('historyList').innerHTML = '<div class="loading">📭 Aucune commande trouvée</div>';
+                }
+            } catch (error) {
+                document.getElementById('historyList').innerHTML = `<div class="loading">❌ Erreur: ${error.message}</div>`;
+            }
+        }
+
+        // Afficher historique
+        function displayHistory(commands) {
+            if (!commands || commands.length === 0) {
+                document.getElementById('historyList').innerHTML = '<div class="loading">📭 Aucune commande trouvée</div>';
+                return;
+            }
+
+            let html = '';
+            for (const cmd of commands) {
+                const statusClass = `status-${cmd.status}`;
+                const statusText = {
+                    'pending': '⏳ En attente',
+                    'executing': '🔄 En cours',
+                    'completed': '✅ Complété',
+                    'failed': '❌ Échoué',
+                    'cancelled': '🚫 Annulé'
+                }[cmd.status] || cmd.status;
+
+                html += `
+                    <div class="history-item" onclick="viewCommandDetail('${cmd.command_id}')">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="history-status ${statusClass}">${statusText}</span>
+                                <span style="font-size: 11px; color: #888; margin-left: 10px;">${cmd.created_at || ''}</span>
+                            </div>
+                            <span style="font-size: 11px; color: #888;">Priorité: ${cmd.priority || 0}</span>
+                        </div>
+                        <div class="history-command" style="margin-top: 8px;">
+                            ${escapeHtml(cmd.command_text).substring(0, 100)}${cmd.command_text.length > 100 ? '...' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('historyList').innerHTML = html;
+        }
+
+        // Voir détail commande
+        async function viewCommandDetail(commandId) {
+            try {
+                const response = await fetch(`${API_BASE}/mik/commands/status/${commandId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayResponse(data);
+                }
+            } catch (error) {
+                showNotification('Erreur chargement détail', 'error');
+            }
+        }
+
+        // Vérifier commandes en attente
+        async function checkPendingCommands() {
+            if (!currentAccountKey || !currentMikId) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/mik/commands/pending/${currentMikId}?account_key=${currentAccountKey}`);
+                const data = await response.json();
+                
+                if (data.success && data.pending_commands > 0) {
+                    showNotification(`${data.pending_commands} commande(s) en attente`, 'info');
+                    loadHistory();
+                } else {
+                    showNotification('Aucune commande en attente', 'info');
+                }
+            } catch (error) {
+                console.error('Error checking pending:', error);
+            }
+        }
+
+        // Auto refresh
+        function startAutoRefresh() {
+            if (refreshTimer) clearInterval(refreshTimer);
+            refreshTimer = setInterval(() => {
+                loadHistory();
+                checkMikrotikStatus();
+            }, 10000);
+        }
+
+        // Notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'};
+                color: white;
+                border-radius: 8px;
+                z-index: 9999;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Style animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
