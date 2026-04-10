@@ -580,29 +580,20 @@
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">👥</div>
-                <div class="stat-value" id="totalUsers">0</div>
-                <div class="stat-label">Total utilisateurs</div>
-            </div>
+
             <div class="stat-card">
                 <div class="stat-icon">💰</div>
-                <div class="stat-value" id="totalRevenue">0 FCFA</div>
-                <div class="stat-label">Revenu total</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📅</div>
                 <div class="stat-value" id="todayRevenue">0 FCFA</div>
-                <div class="stat-label">Revenu aujourd'hui</div>
+                <div class="stat-label">Ventes d'aujourd'hui</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon">⚡</div>
                 <div class="stat-value" id="todayUsers">0</div>
-                <div class="stat-label">Utilisateurs aujourd'hui</div>
+                <div class="stat-label">Nombre de ticket vendu</div>
             </div>
         </div>
 
-        <div class="actions-bar">
+        < class="actions-bar">
             <button class="btn-primary" onclick="showAddUserModal()">
                 <span>➕</span> Ajouter un utilisateur
             </button>
@@ -624,7 +615,7 @@
         </div>
 
         <div class="users-section">
-            <div class="section-header">
+            <ddiviv class="section-header">
                 <h3 class="section-title" id="usersTitle">Utilisateurs du Mikrotik</h3>
                 <span id="usersCount" style="color: #F59E0B;">0 utilisateur(s)</span>
             </div>
@@ -655,7 +646,7 @@
                 <h2 class="modal-title">Ajouter un utilisateur</h2>
                 <button class="modal-close" onclick="hideAddUserModal()">✕</button>
             </div>
-            <form id="addUserForm" onsubmit="addUser(event)">
+            <form id="addUserForm" onsubmit="">
                 <div class="form-group">
                     <label>Nom de l'utilisateur *</label>
                     <input type="text" id="userName" required placeholder="Ex: Jean Dupont">
@@ -809,11 +800,8 @@
             
             // Calcul pour aujourd'hui
             const today = new Date().toISOString().split('T')[0];
-            const todayUsers = allUsers.filter(u => u.date === today);
-            const todayRevenue = todayUsers.reduce((sum, u) => {
-                const prix = parseFloat(u.prix) || 0;
-                return sum + prix;
-            }, 0);
+            const todayUsers = totalUsers;
+            const todayRevenue = totalUsers;
             
             // Mise à jour des affichages
             document.getElementById('totalUsers').textContent = totalUsers;
