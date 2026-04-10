@@ -966,7 +966,7 @@
 
                     <div style="border-top: 1px solid #2A3855; padding-top: 30px;">
                         <h3 style="color: #FFFFFF; margin-bottom: 20px;">Zone de danger</h3>
-                        <button class="btn-danger" onclick="confirmDeleteAccount()">
+                        <button class="btn-danger" onclick="">
                             🗑️ Supprimer définitivement mon compte
                         </button>
                         <p style="color: #A0B3D9; font-size: 0.9rem; margin-top: 15px;">
@@ -1051,7 +1051,7 @@
 
                 <div style="display: flex; gap: 10px; justify-content: center;">
                     <button class="btn-secondary" onclick="hideDeleteModal()">Annuler</button>
-                    <button class="btn-danger" onclick="deleteAccount()" id="confirmDeleteBtn">
+                    <button class="btn-danger" onclick="" id="confirmDeleteBtn">
                         Supprimer définitivement
                     </button>
                 </div>
@@ -1077,7 +1077,7 @@
 
                 <div style="display: flex; gap: 10px; justify-content: center;">
                     <button class="btn-secondary" onclick="hideDeleteMikrotikModal()">Annuler</button>
-                    <button class="btn-danger" onclick="confirmDeleteMikrotik()">
+                    <button class="btn-danger" onclick="">
                         Supprimer
                     </button>
                 </div>
@@ -1400,7 +1400,7 @@ function displayMikrotiks() {
                                     <span>📅 ${new Date(user.date).toLocaleDateString('fr-FR')}</span>
                                     <span>⏰ ${user.heure}</span>
                                 </div>
-                                <button class="delete-btn" style="width: 100%;" onclick="deleteMikrotikUser(${user.id}, '${mikId}')">
+                                <button class="delete-btn" style="width: 100%;" onclick="">
                                     Supprimer cet utilisateur
                                 </button>
                             </div>
