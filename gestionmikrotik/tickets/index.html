@@ -3,62 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BF WIFI ZONE - Ticket Generator Ultimate</title>
+    <title>BF WIFI ZONE - Ticket Generator v3</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
-            --bg: #0a0a14; --panel: #12122a; --accent: #1a1a4a;
-            --highlight: #e94560; --green: #00ff88; --yellow: #ffd700;
-            --orange: #ff8c00; --blue: #4da6ff; --text: #e0e0e0;
-            --text-dim: #888; --border: #2a2a4a; --gold: #c9a84c;
+            --bg: #0a0a14; --panel: #12122a; --gold: #c9a84c;
+            --green: #00ff88; --red: #ff4444; --blue: #4da6ff;
+            --text: #e0e0e0; --text-dim: #888; --border: #2a2a4a;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg); color: var(--text); min-height: 100vh; padding: 10px;
+            background: var(--bg); color: var(--text); min-height: 100vh; padding: 15px;
         }
-        .app-container { max-width: 1400px; margin: 0 auto; }
-        
+        .container { max-width: 1300px; margin: 0 auto; }
+
         .topbar {
-            background: linear-gradient(135deg, #1a1a3e 0%, #2a1a4e 100%);
+            background: linear-gradient(135deg, #1a1a3e, #2a1a4e);
             border-radius: 15px; padding: 15px 25px; margin-bottom: 15px;
             display: flex; align-items: center; justify-content: space-between;
             flex-wrap: wrap; gap: 10px; border: 1px solid var(--border);
         }
-        .topbar-left h1 { font-size: 22px; background: linear-gradient(90deg, var(--gold), #f0d060); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .topbar-left p { font-size: 11px; color: var(--text-dim); }
+        .topbar h1 { font-size: 20px; background: linear-gradient(90deg, var(--gold), #f0d060); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .topbar-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .topbar-right input {
             background: var(--bg); border: 1px solid var(--border); color: var(--text);
-            padding: 8px 12px; border-radius: 6px; font-size: 12px; font-family: monospace; width: 200px;
+            padding: 8px 12px; border-radius: 6px; font-size: 12px; font-family: monospace; width: 190px;
         }
         .btn {
             padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
             font-weight: 600; font-size: 12px; transition: all 0.2s;
         }
-        .btn-gold { background: linear-gradient(135deg, var(--gold), #f0d060); color: #000; font-weight: bold; }
+        .btn-gold { background: linear-gradient(135deg, var(--gold), #f0d060); color: #000; }
         .btn-gold:hover { box-shadow: 0 0 20px rgba(201,168,76,0.4); }
         .btn-green { background: var(--green); color: #000; }
         .btn-blue { background: var(--blue); color: #000; }
-        .btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .status-pill {
+        .pill {
             display: inline-flex; align-items: center; gap: 6px;
             padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
         }
         .pill-on { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
-        .pill-off { background: rgba(255,68,68,0.1); color: #ff4444; border: 1px solid rgba(255,68,68,0.3); }
-        .pill-busy { background: rgba(255,200,0,0.1); color: var(--yellow); border: 1px solid rgba(255,200,0,0.3); }
+        .pill-off { background: rgba(255,68,68,0.1); color: var(--red); border: 1px solid rgba(255,68,68,0.3); }
+        .pill-busy { background: rgba(255,200,0,0.1); color: #ffd700; border: 1px solid rgba(255,200,0,0.3); }
 
         .main-grid { display: grid; grid-template-columns: 380px 1fr; gap: 15px; }
-        
-        .config-panel {
+
+        .panel {
             background: var(--panel); border-radius: 12px; padding: 18px;
             border: 1px solid var(--border);
         }
-        .config-panel h3 { font-size: 15px; margin-bottom: 15px; color: var(--gold); }
+        .panel h3 { font-size: 15px; margin-bottom: 15px; color: var(--gold); }
         .form-group { margin-bottom: 12px; }
         .form-group label {
             display: block; font-size: 10px; color: var(--text-dim); margin-bottom: 4px;
@@ -71,64 +68,46 @@
         }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        .type-selector { display: flex; gap: 8px; margin-bottom: 15px; }
-        .type-card {
-            flex: 1; padding: 12px 8px; background: var(--bg);
-            border: 2px solid var(--border); border-radius: 10px; cursor: pointer;
-            text-align: center; transition: all 0.2s;
-        }
-        .type-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.1); }
-        .type-card .icon { font-size: 24px; }
-        .type-card .label { font-size: 11px; font-weight: 600; margin-top: 4px; }
-        .type-card .hint { font-size: 9px; color: var(--text-dim); }
-
-        .profiles-list { max-height: 180px; overflow-y: auto; margin-top: 8px; }
+        .profiles-list { max-height: 180px; overflow-y: auto; margin-top: 6px; }
         .profile-chip {
-            display: inline-block; padding: 4px 10px; background: var(--bg);
+            display: inline-block; padding: 5px 10px; background: var(--bg);
             border: 1px solid var(--border); border-radius: 15px; margin: 3px;
             font-size: 11px; cursor: pointer; transition: all 0.2s;
         }
         .profile-chip.selected { background: var(--gold); color: #000; border-color: var(--gold); font-weight: bold; }
-        .profile-chip .time-badge {
+        .profile-chip .badge {
             background: rgba(0,255,136,0.2); color: var(--green);
             padding: 2px 6px; border-radius: 10px; font-size: 9px; margin-left: 4px;
         }
 
-        .btn-generate {
-            width: 100%; padding: 14px;
+        .btn-big {
+            width: 100%; padding: 16px;
             background: linear-gradient(135deg, var(--gold), #f0d060);
             color: #000; border: none; border-radius: 10px;
-            font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px;
+            font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px;
             transition: all 0.3s;
         }
-        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(201,168,76,0.3); }
-        .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-big:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(201,168,76,0.3); }
+        .btn-big:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        .tickets-panel {
-            background: var(--panel); border-radius: 12px; padding: 18px;
-            border: 1px solid var(--border);
-        }
         .tickets-header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 15px; flex-wrap: wrap; gap: 10px;
         }
-        .tickets-header h3 { font-size: 15px; color: var(--gold); }
-        .tickets-actions { display: flex; gap: 6px; }
-
         .tickets-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 12px; max-height: 60vh; overflow-y: auto; padding: 5px;
+            gap: 12px; max-height: 55vh; overflow-y: auto; padding: 3px;
         }
 
-        .ticket-card {
+        .ticket {
             background: white; border-radius: 12px; overflow: hidden;
             font-family: 'Arial', sans-serif; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
             transition: all 0.3s; color: #000;
         }
-        .ticket-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .ticket:hover { transform: translateY(-3px); }
         .ticket-top {
-            background: linear-gradient(135deg, #1a3a5c 0%, #0d2137 100%);
+            background: linear-gradient(135deg, #1a3a5c, #0d2137);
             color: white; padding: 12px 15px; display: flex; align-items: center; gap: 10px;
         }
         .ticket-logo {
@@ -140,7 +119,7 @@
         .ticket-subtitle { font-size: 9px; opacity: 0.7; }
         .ticket-body {
             padding: 15px; text-align: center;
-            background: linear-gradient(180deg, #fff 0%, #f8f9fa 100%);
+            background: linear-gradient(180deg, #fff, #f8f9fa);
         }
         .ticket-label {
             font-size: 9px; color: #888; text-transform: uppercase;
@@ -152,9 +131,6 @@
             background: #f0f0f0; padding: 8px 15px; border-radius: 6px;
             display: inline-block; word-break: break-all;
         }
-        .ticket-password {
-            font-size: 13px; color: #555; font-family: 'Courier New', monospace; margin-top: 3px;
-        }
         .ticket-details {
             display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
             margin-top: 12px; text-align: left;
@@ -162,12 +138,12 @@
         .ticket-detail {
             background: #f0f4f8; padding: 8px 10px; border-radius: 6px;
         }
-        .ticket-detail .dt-label { font-size: 8px; color: #888; text-transform: uppercase; }
-        .ticket-detail .dt-value { font-size: 13px; font-weight: bold; color: #1a3a5c; }
+        .ticket-detail .l { font-size: 8px; color: #888; text-transform: uppercase; }
+        .ticket-detail .v { font-size: 13px; font-weight: bold; color: #1a3a5c; }
         .ticket-bottom {
             background: #1a3a5c; color: white; padding: 8px 15px;
-            text-align: center; font-size: 9px;
             display: flex; justify-content: space-between; align-items: center;
+            font-size: 9px;
         }
         .ticket-validity { color: var(--gold); font-weight: bold; font-size: 11px; }
         .ticket-price {
@@ -175,14 +151,14 @@
             padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 12px;
         }
 
-        .progress-overlay {
+        .overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.8); display: flex;
             justify-content: center; align-items: center; z-index: 1000;
         }
-        .progress-box {
+        .overlay-box {
             background: var(--panel); padding: 30px; border-radius: 15px;
-            text-align: center; border: 1px solid var(--border); max-width: 400px;
+            text-align: center; border: 1px solid var(--border);
         }
         .spinner {
             width: 50px; height: 50px;
@@ -197,33 +173,33 @@
             padding: 12px 20px; background: var(--panel);
             border: 1px solid var(--border); border-radius: 8px;
             z-index: 2000; font-size: 13px;
-            animation: slideRight 0.3s ease;
+            animation: slideIn 0.3s ease;
         }
-        @keyframes slideRight {
+        @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
 
-        .stats-row { display: flex; gap: 15px; margin-bottom: 15px; display: none; }
-        .stat-box {
+        .stats { display: flex; gap: 15px; margin-bottom: 15px; display: none; }
+        .stat {
             flex: 1; background: var(--bg); padding: 12px;
             border-radius: 8px; text-align: center; border: 1px solid var(--border);
         }
-        .stat-box .stat-num { font-size: 28px; font-weight: bold; }
-        .stat-box .stat-lbl { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
-        .stat-ok .stat-num { color: var(--green); }
-        .stat-fail .stat-num { color: #ff4444; }
-        .stat-time .stat-num { color: var(--blue); }
+        .stat .num { font-size: 28px; font-weight: bold; }
+        .stat .lbl { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+        .stat .num.g { color: var(--green); }
+        .stat .num.r { color: var(--red); }
+        .stat .num.b { color: var(--blue); }
 
-        .json-section {
-            margin-top: 20px; background: #0a0a14; border-radius: 8px;
+        .json-box {
+            margin-top: 15px; background: #0a0a14; border-radius: 8px;
             padding: 15px; border: 1px solid var(--border); display: none;
         }
-        .json-section pre {
+        .json-box pre {
             font-family: monospace; font-size: 11px; color: var(--green);
             max-height: 200px; overflow: auto; white-space: pre-wrap;
         }
-        .batch-info {
+        .info-box {
             background: #0a1a0a; border: 1px solid #1a3a1a; border-radius: 8px;
             padding: 10px; margin-top: 10px; font-size: 10px;
             color: var(--green); font-family: monospace; display: none;
@@ -231,44 +207,29 @@
 
         @media (max-width: 900px) {
             .main-grid { grid-template-columns: 1fr; }
-            .tickets-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <div class="container">
         <div class="topbar">
-            <div class="topbar-left">
-                <h1>🎫 BF WIFI ZONE • Ticket Generator Pro</h1>
-                <p>Commandes Terminal Réelles • Batch ID Intelligent • Vérification • PDF</p>
-            </div>
+            <h1>🎫 BF WIFI ZONE • Ticket Generator</h1>
             <div class="topbar-right">
                 <input type="text" id="mikIdInput" placeholder="MikroTik ID">
                 <input type="text" id="accountKeyInput" placeholder="Account Key">
-                <button class="btn btn-gold" onclick="connectAndAnalyze()">🔌 Connecter</button>
-                <span id="connectionPill" class="status-pill pill-off">● Déconnecté</span>
+                <button class="btn btn-gold" onclick="connect()">🔌 Connecter</button>
+                <span id="pill" class="pill pill-off">● Déconnecté</span>
             </div>
         </div>
 
         <div class="main-grid">
-            <div class="config-panel">
-                <h3>⚙️ Configuration Tickets</h3>
-
-                <div class="type-selector">
-                    <div class="type-card selected" id="typeVoucher" onclick="setType('voucher')">
-                        <div class="icon">🎟️</div><div class="label">Voucher</div>
-                        <div class="hint">Code = Password</div>
-                    </div>
-                    <div class="type-card" id="typeCompte" onclick="setType('compte')">
-                        <div class="icon">👤</div><div class="label">Compte</div>
-                        <div class="hint">Nom + Pass</div>
-                    </div>
-                </div>
+            <div class="panel">
+                <h3>⚙️ Configuration</h3>
 
                 <div class="form-group">
-                    <label>📋 Profils détectés</label>
+                    <label>📋 Profil</label>
                     <div class="profiles-list" id="profilesList">
-                        <span style="color:var(--text-dim);font-size:12px;">Connectez-vous...</span>
+                        <span style="color:var(--text-dim);">Connectez-vous...</span>
                     </div>
                 </div>
                 <input type="hidden" id="selectedProfile">
@@ -276,7 +237,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>⏱️ Time Limit</label>
-                        <input type="text" id="timeLimit" readonly style="background:#0a1a0a;border-color:#1a3a1a;color:var(--green);">
+                        <input type="text" id="timeLimit" readonly style="background:#0a1a0a;color:var(--green);">
                     </div>
                     <div class="form-group">
                         <label>💰 Prix (FCFA)</label>
@@ -297,31 +258,31 @@
 
                 <div class="form-group">
                     <label>🖥️ Nom MikroTik</label>
-                    <input type="text" id="mikName" readonly style="background:#0a1a1a;border-color:#1a3a3a;color:var(--blue);">
+                    <input type="text" id="mikName" readonly style="background:#0a1a1a;color:var(--blue);">
                 </div>
 
-                <button class="btn-generate" id="btnGenerate" onclick="generateTickets()" disabled>
+                <button class="btn-big" id="btnGenerate" onclick="generate()" disabled>
                     ⚡ GÉNÉRER LES TICKETS
                 </button>
-                <div class="batch-info" id="batchInfo">
-                    🔖 Batch: <span id="batchIdDisplay"></span>
+                <div class="info-box" id="infoBox">
+                    🔖 <span id="batchIdDisplay"></span>
                 </div>
             </div>
 
-            <div class="tickets-panel">
+            <div class="panel">
                 <div class="tickets-header">
                     <h3>📊 Tickets <span id="ticketCount" style="color:var(--text-dim);">(0)</span></h3>
-                    <div class="tickets-actions">
-                        <button class="btn btn-outline" onclick="verifyBatch()">🔍 Vérifier</button>
-                        <button class="btn btn-blue" onclick="downloadAllPDF()">📥 PDF</button>
+                    <div style="display:flex;gap:6px;">
+                        <button class="btn btn-gold" onclick="verify()">🔍 Vérifier</button>
+                        <button class="btn btn-blue" onclick="downloadPDF()">📥 PDF</button>
                         <button class="btn btn-green" onclick="copyJSON()">📋 JSON</button>
                     </div>
                 </div>
 
-                <div class="stats-row" id="statsRow">
-                    <div class="stat-box stat-ok"><div class="stat-num" id="statOk">0</div><div class="stat-lbl">Créés</div></div>
-                    <div class="stat-box stat-fail"><div class="stat-num" id="statFail">0</div><div class="stat-lbl">Échecs</div></div>
-                    <div class="stat-box stat-time"><div class="stat-num" id="statTime">0s</div><div class="stat-lbl">Temps</div></div>
+                <div class="stats" id="statsRow">
+                    <div class="stat"><div class="num g" id="statOk">0</div><div class="lbl">Créés</div></div>
+                    <div class="stat"><div class="num r" id="statFail">0</div><div class="lbl">Échecs</div></div>
+                    <div class="stat"><div class="num b" id="statTime">0s</div><div class="lbl">Temps</div></div>
                 </div>
 
                 <div class="tickets-grid" id="ticketsGrid">
@@ -331,7 +292,7 @@
                     </div>
                 </div>
 
-                <div class="json-section" id="jsonSection">
+                <div class="json-box" id="jsonBox">
                     <h4 style="color:var(--gold);margin-bottom:8px;">📄 JSON</h4>
                     <pre id="jsonOutput"></pre>
                 </div>
@@ -339,23 +300,20 @@
         </div>
     </div>
 
-    <div class="progress-overlay" id="progressOverlay" style="display:none;">
-        <div class="progress-box">
+    <div class="overlay" id="overlay" style="display:none;">
+        <div class="overlay-box">
             <div class="spinner"></div>
-            <p id="progressText">Génération...</p>
-            <p style="font-size:11px;color:var(--text-dim);" id="progressStep"></p>
+            <p id="overlayText">Traitement...</p>
+            <p style="font-size:11px;color:var(--text-dim);" id="overlayStep"></p>
         </div>
     </div>
 
     <script>
-        const API_BASE = 'https://fasowifizone.pythonanywhere.com';
+        const API = 'https://fasowifizone.pythonanywhere.com';
         let mikId = '', accountKey = '', connected = false;
-        let profiles = [], selectedProfileData = null;
-        let ticketType = 'voucher';
-        let allTickets = [];
-        let mikrotikName = '';
-        let currentBatchId = '';
-        let generationStartTime = 0;
+        let profiles = [], selectedProfile = null;
+        let allTickets = [], mikrotikName = '', currentBatchId = '';
+        let startTime = 0;
 
         // INIT
         document.addEventListener('DOMContentLoaded', () => {
@@ -365,293 +323,220 @@
             document.getElementById('accountKeyInput').value = accountKey;
         });
 
-        function setType(type) {
-            ticketType = type;
-            document.getElementById('typeVoucher').classList.toggle('selected', type === 'voucher');
-            document.getElementById('typeCompte').classList.toggle('selected', type === 'compte');
-        }
-
         // ==================== ANALYSE PROFILS ====================
         function analyzeProfile(name) {
-            const match = name.match(/^(\d+)\s*([hHdDwWmMjJ])/);
-            if (!match) return null;
-            const number = parseInt(match[1]);
-            const letter = match[2].toLowerCase();
-            let timeLimit = '', unit = '';
-            switch(letter) {
-                case 'h': timeLimit = number + 'h'; unit = 'Heure(s)'; break;
-                case 'm': timeLimit = number + 'm'; unit = 'Minute(s)'; break;
-                case 'd': timeLimit = number + 'd'; unit = 'Jour(s)'; break;
-                case 'w': timeLimit = number + 'w'; unit = 'Semaine(s)'; break;
-                case 'j': timeLimit = number + 'd'; unit = 'Jour(s)'; break;
-                default: return null;
-            }
-            return { number, letter, timeLimit, unit, display: number + letter.toUpperCase() + ' - ' + number + ' ' + unit };
+            const m = name.match(/^(\d+)\s*([hHdDwWmMjJ])/);
+            if (!m) return null;
+            const n = parseInt(m[1]), l = m[2].toLowerCase();
+            let tl = '', u = '';
+            switch(l) { case 'h': tl=n+'h'; u='H'; break; case 'm': tl=n+'m'; u='Min'; break; case 'd': tl=n+'d'; u='J'; break; case 'w': tl=n+'w'; u='S'; break; case 'j': tl=n+'d'; u='J'; break; default: return null; }
+            return { number:n, letter:l, timeLimit:tl, unit:u, display:n+l.toUpperCase()+' - '+n+u };
         }
 
         function parseProfiles(raw) {
-            const profs = [];
-            if (!raw || raw === 'OK') return profs;
-            const lines = raw.split('\n');
-            for (let i = 1; i < lines.length; i++) {
-                const line = lines[i].trim();
-                if (!line) continue;
-                const nameMatch = line.match(/name="([^"]+)"/);
-                if (!nameMatch) continue;
-                const name = nameMatch[1];
-                const analysis = analyzeProfile(name);
-                if (analysis) profs.push({ name, isDefault: line.includes('*'), ...analysis });
-            }
-            const unitOrder = { 'm': 1, 'h': 2, 'd': 3, 'w': 4, 'j': 3 };
-            profs.sort((a, b) => (unitOrder[a.letter] || 99) - (unitOrder[b.letter] || 99) || a.number - b.number);
-            return profs;
+            const p = [];
+            if (!raw || raw === 'OK') return p;
+            raw.split('\n').forEach(line => {
+                const nm = line.match(/name="([^"]+)"/);
+                if (nm) { const a = analyzeProfile(nm[1]); if (a) p.push({ name:nm[1], isDefault:line.includes('*'), ...a }); }
+            });
+            const o = { m:1, h:2, d:3, w:4, j:3 };
+            p.sort((a,b) => (o[a.letter]||99)-(o[b.letter]||99) || a.number-b.number);
+            return p;
         }
 
         function renderProfiles() {
-            const container = document.getElementById('profilesList');
-            if (profiles.length === 0) {
-                container.innerHTML = '<span style="color:#ff8c00;font-size:12px;">⚠️ Aucun profil détecté (format: chiffre+h/d/w/m)</span>';
-                return;
-            }
-            container.innerHTML = profiles.map((p, idx) => 
-                `<span class="profile-chip ${idx === 0 ? 'selected' : ''}" onclick="selectProfile('${p.name}', this)">${p.name}<span class="time-badge">${p.display}</span></span>`
-            ).join('');
-            if (profiles.length > 0) selectProfile(profiles[0].name, container.querySelector('.profile-chip'));
+            const c = document.getElementById('profilesList');
+            if (!profiles.length) { c.innerHTML = '<span style="color:#ff8c00;">⚠️ Aucun profil détecté</span>'; return; }
+            c.innerHTML = profiles.map((p,i) => `<span class="profile-chip ${i===0?'selected':''}" onclick="selectProfile('${p.name}',this)">${p.name}<span class="badge">${p.display}</span></span>`).join('');
+            selectProfile(profiles[0].name, c.querySelector('.profile-chip'));
         }
 
-        function selectProfile(profileName, element) {
+        function selectProfile(name, el) {
             document.querySelectorAll('.profile-chip').forEach(c => c.classList.remove('selected'));
-            if (element) element.classList.add('selected');
-            document.getElementById('selectedProfile').value = profileName;
-            selectedProfileData = profiles.find(p => p.name === profileName);
-            if (selectedProfileData) {
-                document.getElementById('timeLimit').value = selectedProfileData.timeLimit;
-            }
+            if (el) el.classList.add('selected');
+            document.getElementById('selectedProfile').value = name;
+            selectedProfile = profiles.find(p => p.name === name);
+            if (selectedProfile) document.getElementById('timeLimit').value = selectedProfile.timeLimit;
         }
 
         // ==================== CONNEXION ====================
-        async function connectAndAnalyze() {
+        async function connect() {
             mikId = document.getElementById('mikIdInput').value.trim();
             accountKey = document.getElementById('accountKeyInput').value.trim();
-            if (!mikId || !accountKey) { showToast('❌ Remplissez ID et Key', 'error'); return; }
+            if (!mikId || !accountKey) { toast('❌ ID et Key requis', 'error'); return; }
             localStorage.setItem('mikId', mikId); localStorage.setItem('accountKey', accountKey);
-            updatePill('busy', 'Analyse...');
+            pill('busy', 'Analyse...');
             try {
-                const rawProfiles = await executeCommand('/ip hotspot user profile print');
-                profiles = parseProfiles(rawProfiles);
+                const raw = await exec('/ip hotspot user profile print');
+                profiles = parseProfiles(raw);
                 renderProfiles();
-                try {
-                    const identityRaw = await executeCommand('/system identity print');
-                    const idMatch = identityRaw.match(/name="([^"]+)"/);
-                    mikrotikName = idMatch ? idMatch[1] : 'MikroTik';
-                } catch { mikrotikName = 'MikroTik'; }
+                try { const ir = await exec('/system identity print'); const im = ir.match(/name="([^"]+)"/); mikrotikName = im ? im[1] : 'MikroTik'; } catch {}
                 document.getElementById('mikName').value = mikrotikName;
                 connected = true;
                 document.getElementById('btnGenerate').disabled = false;
-                updatePill('on', 'Connecté • ' + profiles.length + ' profils');
-                showToast('✅ Connecté ! ' + profiles.length + ' profils', 'success');
-            } catch (e) {
-                connected = false;
-                document.getElementById('btnGenerate').disabled = true;
-                updatePill('off', 'Échec');
-                showToast('❌ ' + e.message, 'error');
+                pill('on', 'OK • '+profiles.length+' profils');
+                toast('✅ Connecté ! '+profiles.length+' profils', 'success');
+            } catch(e) {
+                connected = false; document.getElementById('btnGenerate').disabled = true;
+                pill('off', 'Échec'); toast('❌ '+e.message, 'error');
             }
         }
 
-        function updatePill(status, text) {
-            const pill = document.getElementById('connectionPill');
-            pill.className = 'status-pill ' + (status === 'on' ? 'pill-on' : status === 'off' ? 'pill-off' : 'pill-busy');
-            pill.innerHTML = (status === 'busy' ? '⏳ ' : '● ') + text;
+        function pill(s, t) {
+            const p = document.getElementById('pill');
+            p.className = 'pill ' + (s==='on'?'pill-on':s==='off'?'pill-off':'pill-busy');
+            p.innerHTML = (s==='busy'?'⏳ ':'● ') + t;
         }
 
-        // ==================== EXECUTE COMMAND ====================
-        async function executeCommand(command) {
-            const pushRes = await fetch(API_BASE + '/mik/commands/push', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mik_id: mikId, account_key: accountKey, command: command, type: 'script', priority: 1 })
+        // ==================== EXEC ====================
+        async function exec(cmd) {
+            const pr = await fetch(API+'/mik/commands/push', {
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({ mik_id:mikId, account_key:accountKey, command:cmd, type:'script', priority:1 })
             });
-            const pushData = await pushRes.json();
-            if (!pushData.success) throw new Error(pushData.message);
-            for (let i = 0; i < 60; i++) {
+            const pd = await pr.json();
+            if (!pd.success) throw new Error(pd.message);
+            for (let i=0;i<90;i++) {
                 await sleep(1000);
-                const statusRes = await fetch(API_BASE + '/mik/commands/status/' + pushData.command_id);
-                const statusData = await statusRes.json();
-                if (statusData.success && statusData.command) {
-                    if (statusData.command.status === 'completed') return statusData.response ? statusData.response.text : 'OK';
-                    if (statusData.command.status === 'failed') throw new Error('Échec');
+                const sr = await fetch(API+'/mik/commands/status/'+pd.command_id);
+                const sd = await sr.json();
+                if (sd.success && sd.command) {
+                    if (sd.command.status==='completed') return sd.response ? sd.response.text : 'OK';
+                    if (sd.command.status==='failed') throw new Error('Échec');
                 }
             }
             throw new Error('Timeout');
         }
 
-        // ==================== GÉNÉRATION PAR COMMANDES INDIVIDUELLES ====================
-        async function generateTickets() {
-            if (!connected) { showToast('❌ Connectez-vous !', 'error'); return; }
+        // ==================== GÉNÉRATION ====================
+        async function generate() {
+            if (!connected) { toast('❌ Connectez-vous', 'error'); return; }
             const profile = document.getElementById('selectedProfile').value;
             const timeLimit = document.getElementById('timeLimit').value;
-            const price = parseInt(document.getElementById('price').value) || 100;
-            const quantity = parseInt(document.getElementById('quantity').value) || 5;
+            const price = document.getElementById('price').value;
+            const quantity = document.getElementById('quantity').value;
             const prefix = document.getElementById('prefix').value.trim() || 'BF';
-            if (!profile) { showToast('❌ Sélectionnez un profil', 'error'); return; }
+            if (!profile) { toast('❌ Profil requis', 'error'); return; }
 
-            // Générer batch_id
-            const now = new Date();
-            currentBatchId = 'BTCH' + 
-                String(now.getFullYear()).substring(2) +
-                String(now.getMonth()+1).padStart(2,'0') +
-                String(now.getDate()).padStart(2,'0') +
-                String(now.getHours()).padStart(2,'0') +
-                String(now.getMinutes()).padStart(2,'0') +
-                String(now.getSeconds()).padStart(2,'0');
-
+            // Batch ID
+            const d = new Date();
+            currentBatchId = 'B' + String(d.getFullYear()).substring(2) + 
+                String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0') +
+                String(d.getHours()).padStart(2,'0') + String(d.getMinutes()).padStart(2,'0') +
+                String(d.getSeconds()).padStart(2,'0');
             document.getElementById('batchIdDisplay').textContent = currentBatchId;
-            document.getElementById('batchInfo').style.display = 'block';
-            generationStartTime = Date.now();
+            document.getElementById('infoBox').style.display = 'block';
+            startTime = Date.now();
 
-            document.getElementById('progressOverlay').style.display = 'flex';
+            overlay(true, '⚡ Génération en cours...', 'Création des tickets sur le MikroTik');
             document.getElementById('btnGenerate').disabled = true;
-            allTickets = [];
-            let success = 0, fail = 0;
+            pill('busy', 'Génération...');
 
-            for (let i = 0; i < quantity; i++) {
-                document.getElementById('progressText').textContent = 'Génération ' + (i+1) + '/' + quantity;
-                document.getElementById('progressStep').textContent = success + ' réussis • ' + fail + ' échecs';
+            try {
+                // UNE SEULE COMMANDE : script temporaire sur MikroTik
+                const scriptSource = ':local p "' + profile + '"; :local t "' + timeLimit + '"; :local q ' + quantity + '; :local x "' + prefix + '"; :local r ' + price + '; :local b "' + currentBatchId + '"; :local s 0; :local c "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; :while ($s < $q) do={:local d ""; :for i from=1 to=6 do={:set $d ($d . [:pick $c ([:rndnum from=0 to=31])])}; :local n ($x . $d); :do {/ip hotspot user add name=$n password=$n profile=$p limit-uptime=$t comment=("type=voucher|profile=" . $p . "|limit=" . $t . "|price=" . $r . "|batch=" . $b)} on-error={:set $q ($q + 1)}; :set $s ($s + 1)}; :put ($s . " tickets created")';
+                
+                await exec('/system script add name="BFGEN" source="' + scriptSource.replace(/"/g, '\\"') + '"');
+                const result = await exec('/system script run BFGEN');
+                await exec('/system script remove BFGEN');
 
-                // Générer un code aléatoire via une commande MikroTik
-                let name, password;
-                try {
-                    const randomCode = await executeCommand(
-                        ':put ([:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])])'
-                    );
-                    const code = randomCode.trim();
-                    
-                    if (ticketType === 'voucher') {
-                        name = prefix + code;
-                        password = name;
-                    } else {
-                        name = prefix + '_' + code;
-                        const passCode = await executeCommand(
-                            ':put ([:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])])'
-                        );
-                        password = prefix + 'P' + passCode.trim();
-                    }
+                // Récupérer les users créés
+                overlay(true, '📥 Récupération...', 'Recherche par batch_id');
+                const rawUsers = await exec('/ip hotspot user print detail where comment~"' + currentBatchId + '"');
+                
+                // Parser
+                allTickets = parseUsers(rawUsers, price, timeLimit, profile);
+                
+                const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 
-                    // Créer le user AVEC le batch_id dans le commentaire
-                    const comment = 'type=' + ticketType + '|profile=' + profile + '|limit=' + timeLimit + '|price=' + price + '|batch=' + currentBatchId;
-                    const addCmd = '/ip hotspot user add name="' + name + '" password="' + password + '" profile="' + profile + '" limit-uptime="' + timeLimit + '" comment="' + comment + '"';
-                    
-                    await executeCommand(addCmd);
-                    
-                    success++;
-                    allTickets.push({ name, password, profile, timeLimit, price, type: ticketType });
-                } catch (e) {
-                    fail++;
-                }
-                await sleep(300);
+                overlay(false);
+                document.getElementById('btnGenerate').disabled = false;
+                pill('on', 'OK • ' + allTickets.length + ' tickets');
+
+                document.getElementById('statsRow').style.display = 'flex';
+                document.getElementById('statOk').textContent = allTickets.length;
+                document.getElementById('statFail').textContent = quantity - allTickets.length;
+                document.getElementById('statTime').textContent = elapsed + 's';
+                document.getElementById('ticketCount').textContent = '(' + allTickets.length + ')';
+
+                renderTickets();
+                document.getElementById('jsonBox').style.display = 'block';
+                document.getElementById('jsonOutput').textContent = JSON.stringify({
+                    batch_id: currentBatchId,
+                    mikrotik: mikrotikName,
+                    profile, timeLimit, price,
+                    requested: parseInt(quantity),
+                    created: allTickets.length,
+                    elapsed_seconds: parseFloat(elapsed),
+                    tickets: allTickets
+                }, null, 2);
+
+                toast('✅ ' + allTickets.length + ' tickets en ' + elapsed + 's !', 'success');
+            } catch(e) {
+                overlay(false);
+                document.getElementById('btnGenerate').disabled = false;
+                pill('on', 'Erreur');
+                toast('❌ ' + e.message, 'error');
             }
+        }
 
-            const elapsed = ((Date.now() - generationStartTime) / 1000).toFixed(1);
-
-            document.getElementById('progressOverlay').style.display = 'none';
-            document.getElementById('btnGenerate').disabled = false;
-            updatePill('on', 'Terminé • ' + success + ' tickets');
-
-            document.getElementById('statsRow').style.display = 'flex';
-            document.getElementById('statOk').textContent = success;
-            document.getElementById('statFail').textContent = fail;
-            document.getElementById('statTime').textContent = elapsed + 's';
-            document.getElementById('ticketCount').textContent = '(' + allTickets.length + ')';
-
-            renderTickets();
-            document.getElementById('jsonSection').style.display = 'block';
-            document.getElementById('jsonOutput').textContent = JSON.stringify({
-                batch_id: currentBatchId,
-                mikrotik: mikrotikName,
-                profile, timeLimit, price, type: ticketType,
-                requested: quantity, created: success, failed: fail,
-                elapsed_seconds: parseFloat(elapsed),
-                tickets: allTickets
-            }, null, 2);
-
-            showToast('✅ ' + success + '/' + quantity + ' tickets en ' + elapsed + 's', 'success');
+        function parseUsers(raw, price, timeLimit, profile) {
+            const tickets = [];
+            if (!raw || raw === 'OK') return tickets;
+            const blocks = raw.split(/\n\s*\d+\s+/);
+            blocks.forEach(block => {
+                if (!block.trim()) return;
+                const nm = block.match(/name="([^"]+)"/);
+                const pm = block.match(/password="([^"]+)"/);
+                const lm = block.match(/limit-uptime="?([^"\s]+)"?/);
+                if (nm) tickets.push({
+                    name: nm[1],
+                    password: pm ? pm[1] : nm[1],
+                    profile: profile,
+                    timeLimit: lm ? lm[1] : timeLimit,
+                    price: parseInt(price),
+                    type: 'voucher'
+                });
+            });
+            return tickets;
         }
 
         // ==================== VÉRIFICATION ====================
-        async function verifyBatch() {
-            if (!currentBatchId) { showToast('❌ Générez d\'abord', 'error'); return; }
-            if (!connected) { showToast('❌ Connectez-vous', 'error'); return; }
-            
-            document.getElementById('progressOverlay').style.display = 'flex';
-            document.getElementById('progressText').textContent = '🔍 Vérification...';
-            
+        async function verify() {
+            if (!currentBatchId) { toast('❌ Générez d\'abord', 'error'); return; }
+            if (!connected) { toast('❌ Connectez-vous', 'error'); return; }
+            overlay(true, '🔍 Vérification...');
             try {
-                const rawUsers = await executeCommand('/ip hotspot user print detail where comment~"' + currentBatchId + '"');
-                const price = parseInt(document.getElementById('price').value) || 100;
-                const timeLimit = document.getElementById('timeLimit').value;
-                const profile = document.getElementById('selectedProfile').value;
-                
-                allTickets = parseUsersFromOutput(rawUsers, price, timeLimit, profile);
-                
-                document.getElementById('progressOverlay').style.display = 'none';
-                document.getElementById('statsRow').style.display = 'flex';
+                const raw = await exec('/ip hotspot user print detail where comment~"' + currentBatchId + '"');
+                allTickets = parseUsers(raw, document.getElementById('price').value, document.getElementById('timeLimit').value, document.getElementById('selectedProfile').value);
+                overlay(false);
                 document.getElementById('statOk').textContent = allTickets.length;
+                document.getElementById('statsRow').style.display = 'flex';
                 document.getElementById('ticketCount').textContent = '(' + allTickets.length + ')';
                 renderTickets();
-                document.getElementById('jsonSection').style.display = 'block';
-                document.getElementById('jsonOutput').textContent = JSON.stringify({
-                    batch_id: currentBatchId, tickets: allTickets
-                }, null, 2);
-                showToast('✅ ' + allTickets.length + ' tickets trouvés', 'success');
-            } catch (e) {
-                document.getElementById('progressOverlay').style.display = 'none';
-                showToast('❌ ' + e.message, 'error');
-            }
-        }
-
-        function parseUsersFromOutput(raw, price, timeLimit, profile) {
-            const tickets = [];
-            if (!raw || raw === 'OK') return tickets;
-            const userBlocks = raw.split(/\n\s*\d+\s+/);
-            for (const block of userBlocks) {
-                if (!block.trim()) continue;
-                const nameMatch = block.match(/name="([^"]+)"/);
-                const passMatch = block.match(/password="([^"]+)"/);
-                const profMatch = block.match(/profile="([^"]+)"/);
-                const limitMatch = block.match(/limit-uptime="?([^"\s]+)"?/);
-                if (nameMatch) {
-                    tickets.push({
-                        name: nameMatch[1],
-                        password: passMatch ? passMatch[1] : nameMatch[1],
-                        profile: profMatch ? profMatch[1] : profile,
-                        timeLimit: limitMatch ? limitMatch[1] : timeLimit,
-                        price: price, type: ticketType
-                    });
-                }
-            }
-            return tickets;
+                document.getElementById('jsonBox').style.display = 'block';
+                document.getElementById('jsonOutput').textContent = JSON.stringify({ batch_id: currentBatchId, tickets: allTickets }, null, 2);
+                toast('✅ ' + allTickets.length + ' tickets trouvés', 'success');
+            } catch(e) { overlay(false); toast('❌ '+e.message, 'error'); }
         }
 
         // ==================== RENDER ====================
         function renderTickets() {
-            const grid = document.getElementById('ticketsGrid');
-            if (allTickets.length === 0) {
-                grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);">Aucun ticket</div>';
-                return;
-            }
-            grid.innerHTML = allTickets.map((t, idx) => `
-                <div class="ticket-card" id="ticket-${idx}">
+            const g = document.getElementById('ticketsGrid');
+            if (!allTickets.length) { g.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);">Aucun ticket</div>'; return; }
+            g.innerHTML = allTickets.map((t,i) => `
+                <div class="ticket" id="t-${i}">
                     <div class="ticket-top">
                         <div class="ticket-logo">📶</div>
-                        <div><div class="ticket-company">${esc(mikrotikName || 'BF WIFI ZONE')}</div><div class="ticket-subtitle">Accès Internet Haut Débit</div></div>
+                        <div><div class="ticket-company">${esc(mikrotikName||'BF WIFI ZONE')}</div><div class="ticket-subtitle">Internet Haut Débit</div></div>
                     </div>
                     <div class="ticket-body">
                         <div class="ticket-label">Code d'accès</div>
                         <div class="ticket-code">${esc(t.name)}</div>
-                        ${t.type === 'compte' ? '<div class="ticket-password">Mot de passe: ' + esc(t.password) + '</div>' : ''}
                         <div class="ticket-details">
-                            <div class="ticket-detail"><div class="dt-label">⏱️ Validité</div><div class="dt-value">${esc(t.timeLimit)}</div></div>
-                            <div class="ticket-detail"><div class="dt-label">📋 Profil</div><div class="dt-value">${esc(t.profile)}</div></div>
+                            <div class="ticket-detail"><div class="l">⏱️ Validité</div><div class="v">${esc(t.timeLimit)}</div></div>
+                            <div class="ticket-detail"><div class="l">📋 Profil</div><div class="v">${esc(t.profile)}</div></div>
                         </div>
                     </div>
                     <div class="ticket-bottom">
@@ -663,36 +548,43 @@
         }
 
         // ==================== PDF ====================
-        async function downloadAllPDF() {
-            if (allTickets.length === 0) { showToast('❌ Aucun ticket', 'error'); return; }
+        async function downloadPDF() {
+            if (!allTickets.length) { toast('❌ Aucun ticket', 'error'); return; }
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
-            for (let i = 0; i < allTickets.length; i++) {
-                const el = document.getElementById('ticket-' + i);
+            for (let i=0;i<allTickets.length;i++) {
+                const el = document.getElementById('t-'+i);
                 if (!el) continue;
-                if (i > 0) pdf.addPage();
-                const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff' });
-                const imgData = canvas.toDataURL('image/png');
-                const w = pdf.internal.pageSize.getWidth() - 20;
-                const h = (canvas.height * w) / canvas.width;
-                pdf.addImage(imgData, 'PNG', 10, (pdf.internal.pageSize.getHeight() - h) / 2, w, h);
+                if (i>0) pdf.addPage();
+                const canvas = await html2canvas(el, { scale:2, backgroundColor:'#ffffff' });
+                const img = canvas.toDataURL('image/png');
+                const w = pdf.internal.pageSize.getWidth()-20;
+                const h = (canvas.height*w)/canvas.width;
+                pdf.addImage(img, 'PNG', 10, (pdf.internal.pageSize.getHeight()-h)/2, w, h);
             }
-            pdf.save('BF_WIFI_Tickets_' + currentBatchId + '.pdf');
-            showToast('📥 PDF téléchargé !', 'success');
+            pdf.save('BF_WIFI_Tickets_'+currentBatchId+'.pdf');
+            toast('📥 PDF téléchargé !', 'success');
         }
 
         function copyJSON() {
-            const json = document.getElementById('jsonOutput').textContent;
-            navigator.clipboard.writeText(json).then(() => showToast('📋 JSON copié !', 'success'));
+            navigator.clipboard.writeText(document.getElementById('jsonOutput').textContent)
+                .then(() => toast('📋 JSON copié !', 'success'));
         }
 
         // ==================== UTILS ====================
+        function overlay(show, text, step) {
+            document.getElementById('overlay').style.display = show ? 'flex' : 'none';
+            if (show) {
+                document.getElementById('overlayText').textContent = text || '';
+                document.getElementById('overlayStep').textContent = step || '';
+            }
+        }
         function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
         function esc(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
-        function showToast(msg, type) {
+        function toast(msg, type) {
             const t = document.createElement('div');
             t.className = 'toast';
-            t.style.cssText = 'background:' + (type==='success'?'#0d3d0d':type==='error'?'#3d0d0d':'#1a1a3a') + ';border-color:' + (type==='success'?'var(--green)':'#ff4444') + ';';
+            t.style.cssText = 'background:'+(type==='success'?'#0d3d0d':'#3d0d0d')+';';
             t.textContent = msg;
             document.body.appendChild(t);
             setTimeout(() => t.remove(), 3000);
