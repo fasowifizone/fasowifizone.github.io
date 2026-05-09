@@ -8,281 +8,152 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
-            --bg: #0a0a14;
-            --panel: #12122a;
-            --accent: #1a1a4a;
-            --highlight: #e94560;
-            --green: #00ff88;
-            --yellow: #ffd700;
-            --orange: #ff8c00;
-            --blue: #4da6ff;
-            --text: #e0e0e0;
-            --text-dim: #888;
-            --border: #2a2a4a;
-            --gold: #c9a84c;
+            --bg: #0a0a14; --panel: #12122a; --accent: #1a1a4a;
+            --highlight: #e94560; --green: #00ff88; --yellow: #ffd700;
+            --orange: #ff8c00; --blue: #4da6ff; --text: #e0e0e0;
+            --text-dim: #888; --border: #2a2a4a; --gold: #c9a84c;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 10px;
+            background: var(--bg); color: var(--text); min-height: 100vh; padding: 10px;
         }
-
         .app-container { max-width: 1400px; margin: 0 auto; }
-
-        /* TOP BAR */
+        
         .topbar {
             background: linear-gradient(135deg, #1a1a3e 0%, #2a1a4e 100%);
-            border-radius: 15px;
-            padding: 15px 25px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            border: 1px solid var(--border);
+            border-radius: 15px; padding: 15px 25px; margin-bottom: 15px;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 10px; border: 1px solid var(--border);
         }
         .topbar-left h1 { font-size: 22px; background: linear-gradient(90deg, var(--gold), #f0d060); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .topbar-left p { font-size: 11px; color: var(--text-dim); }
         .topbar-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .topbar-right input {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-family: monospace;
-            width: 200px;
+            background: var(--bg); border: 1px solid var(--border); color: var(--text);
+            padding: 8px 12px; border-radius: 6px; font-size: 12px; font-family: monospace; width: 200px;
         }
         .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 12px;
-            transition: all 0.2s;
+            padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-weight: 600; font-size: 12px; transition: all 0.2s;
         }
         .btn-gold { background: linear-gradient(135deg, var(--gold), #f0d060); color: #000; font-weight: bold; }
         .btn-gold:hover { box-shadow: 0 0 20px rgba(201,168,76,0.4); }
         .btn-green { background: var(--green); color: #000; }
         .btn-blue { background: var(--blue); color: #000; }
-        .btn-red { background: var(--highlight); color: white; }
         .btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
         }
         .pill-on { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
         .pill-off { background: rgba(255,68,68,0.1); color: #ff4444; border: 1px solid rgba(255,68,68,0.3); }
         .pill-busy { background: rgba(255,200,0,0.1); color: var(--yellow); border: 1px solid rgba(255,200,0,0.3); }
 
-        /* MAIN GRID */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            gap: 15px;
-        }
-
-        /* LEFT PANEL */
+        .main-grid { display: grid; grid-template-columns: 380px 1fr; gap: 15px; }
+        
         .config-panel {
-            background: var(--panel);
-            border-radius: 12px;
-            padding: 18px;
+            background: var(--panel); border-radius: 12px; padding: 18px;
             border: 1px solid var(--border);
         }
-        .config-panel h3 {
-            font-size: 15px;
-            margin-bottom: 15px;
-            color: var(--gold);
-        }
+        .config-panel h3 { font-size: 15px; margin-bottom: 15px; color: var(--gold); }
         .form-group { margin-bottom: 12px; }
         .form-group label {
-            display: block;
-            font-size: 10px;
-            color: var(--text-dim);
-            margin-bottom: 4px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            display: block; font-size: 10px; color: var(--text-dim); margin-bottom: 4px;
+            font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
         }
         .form-group select, .form-group input {
-            width: 100%;
-            padding: 10px 12px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            color: var(--text);
-            border-radius: 8px;
-            font-size: 13px;
-            font-family: inherit;
+            width: 100%; padding: 10px 12px; background: var(--bg);
+            border: 1px solid var(--border); color: var(--text); border-radius: 8px;
+            font-size: 13px; font-family: inherit;
         }
-        .form-group select:focus, .form-group input:focus { border-color: var(--gold); outline: none; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        /* TYPE SELECTOR */
         .type-selector { display: flex; gap: 8px; margin-bottom: 15px; }
         .type-card {
-            flex: 1;
-            padding: 12px 8px;
-            background: var(--bg);
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
+            flex: 1; padding: 12px 8px; background: var(--bg);
+            border: 2px solid var(--border); border-radius: 10px; cursor: pointer;
+            text-align: center; transition: all 0.2s;
         }
-        .type-card:hover { border-color: var(--text-dim); }
         .type-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.1); }
         .type-card .icon { font-size: 24px; }
         .type-card .label { font-size: 11px; font-weight: 600; margin-top: 4px; }
         .type-card .hint { font-size: 9px; color: var(--text-dim); }
 
-        /* PROFILES */
-        .profiles-list {
-            max-height: 180px;
-            overflow-y: auto;
-            margin-top: 8px;
-        }
+        .profiles-list { max-height: 180px; overflow-y: auto; margin-top: 8px; }
         .profile-chip {
-            display: inline-block;
-            padding: 4px 10px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            margin: 3px;
-            font-size: 11px;
-            cursor: pointer;
-            transition: all 0.2s;
+            display: inline-block; padding: 4px 10px; background: var(--bg);
+            border: 1px solid var(--border); border-radius: 15px; margin: 3px;
+            font-size: 11px; cursor: pointer; transition: all 0.2s;
         }
-        .profile-chip:hover { border-color: var(--gold); }
         .profile-chip.selected { background: var(--gold); color: #000; border-color: var(--gold); font-weight: bold; }
         .profile-chip .time-badge {
-            background: rgba(0,255,136,0.2);
-            color: var(--green);
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-size: 9px;
-            margin-left: 4px;
+            background: rgba(0,255,136,0.2); color: var(--green);
+            padding: 2px 6px; border-radius: 10px; font-size: 9px; margin-left: 4px;
         }
 
         .btn-generate {
-            width: 100%;
-            padding: 14px;
+            width: 100%; padding: 14px;
             background: linear-gradient(135deg, var(--gold), #f0d060);
-            color: #000;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
+            color: #000; border: none; border-radius: 10px;
+            font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px;
             transition: all 0.3s;
         }
         .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(201,168,76,0.3); }
         .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* BATCH INFO */
-        .batch-info {
-            background: #0a1a0a;
-            border: 1px solid #1a3a1a;
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 10px;
-            font-size: 10px;
-            color: var(--green);
-            font-family: monospace;
-            word-break: break-all;
-        }
-
-        /* RIGHT PANEL */
         .tickets-panel {
-            background: var(--panel);
-            border-radius: 12px;
-            padding: 18px;
+            background: var(--panel); border-radius: 12px; padding: 18px;
             border: 1px solid var(--border);
         }
         .tickets-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; flex-wrap: wrap; gap: 10px;
         }
         .tickets-header h3 { font-size: 15px; color: var(--gold); }
         .tickets-actions { display: flex; gap: 6px; }
 
         .tickets-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 12px;
-            max-height: 65vh;
-            overflow-y: auto;
-            padding: 5px;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 12px; max-height: 60vh; overflow-y: auto; padding: 5px;
         }
 
-        /* TICKET CARD */
         .ticket-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            font-family: 'Arial', sans-serif;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            transition: all 0.3s;
-            color: #000;
+            background: white; border-radius: 12px; overflow: hidden;
+            font-family: 'Arial', sans-serif; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s; color: #000;
         }
         .ticket-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .ticket-top {
             background: linear-gradient(135deg, #1a3a5c 0%, #0d2137 100%);
-            color: white;
-            padding: 12px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            color: white; padding: 12px 15px; display: flex; align-items: center; gap: 10px;
         }
         .ticket-logo {
-            width: 36px; height: 36px;
-            background: var(--gold);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            color: #000;
-            font-weight: bold;
+            width: 36px; height: 36px; background: var(--gold); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: #000; font-weight: bold;
         }
         .ticket-company { font-weight: bold; font-size: 14px; }
         .ticket-subtitle { font-size: 9px; opacity: 0.7; }
         .ticket-body {
-            padding: 15px;
-            text-align: center;
+            padding: 15px; text-align: center;
             background: linear-gradient(180deg, #fff 0%, #f8f9fa 100%);
         }
-        .ticket-code-section { margin: 8px 0; }
         .ticket-label {
-            font-size: 9px; color: #888;
-            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 3px;
+            font-size: 9px; color: #888; text-transform: uppercase;
+            letter-spacing: 2px; margin-bottom: 3px;
         }
         .ticket-code {
-            font-size: 24px; font-weight: 900; color: #1a3a5c;
-            letter-spacing: 4px; font-family: 'Courier New', monospace;
+            font-size: 22px; font-weight: 900; color: #1a3a5c;
+            letter-spacing: 3px; font-family: 'Courier New', monospace;
             background: #f0f0f0; padding: 8px 15px; border-radius: 6px;
-            display: inline-block;
+            display: inline-block; word-break: break-all;
         }
         .ticket-password {
-            font-size: 14px; color: #555; font-family: 'Courier New', monospace; margin-top: 3px;
+            font-size: 13px; color: #555; font-family: 'Courier New', monospace; margin-top: 3px;
         }
         .ticket-details {
             display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
@@ -304,44 +175,28 @@
             padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 12px;
         }
 
-        /* PROGRESS */
         .progress-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); display: flex;
+            justify-content: center; align-items: center; z-index: 1000;
         }
         .progress-box {
-            background: var(--panel);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            border: 1px solid var(--border);
-            max-width: 400px;
+            background: var(--panel); padding: 30px; border-radius: 15px;
+            text-align: center; border: 1px solid var(--border); max-width: 400px;
         }
-        .progress-box .spinner {
+        .spinner {
             width: 50px; height: 50px;
-            border: 3px solid var(--border);
-            border-top: 3px solid var(--gold);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            border: 3px solid var(--border); border-top: 3px solid var(--gold);
+            border-radius: 50%; animation: spin 0.8s linear infinite;
             margin: 0 auto 15px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* TOAST */
         .toast {
-            position: fixed;
-            top: 20px; right: 20px;
-            padding: 12px 20px;
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            z-index: 2000;
-            font-size: 13px;
+            position: fixed; top: 20px; right: 20px;
+            padding: 12px 20px; background: var(--panel);
+            border: 1px solid var(--border); border-radius: 8px;
+            z-index: 2000; font-size: 13px;
             animation: slideRight 0.3s ease;
         }
         @keyframes slideRight {
@@ -349,41 +204,30 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        .json-section {
-            margin-top: 20px;
-            background: #0a0a14;
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px solid var(--border);
-            display: none;
-        }
-        .json-section pre {
-            font-family: monospace;
-            font-size: 11px;
-            color: var(--green);
-            max-height: 200px;
-            overflow: auto;
-            white-space: pre-wrap;
-        }
-
-        .stats-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
+        .stats-row { display: flex; gap: 15px; margin-bottom: 15px; display: none; }
         .stat-box {
-            flex: 1;
-            background: var(--bg);
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid var(--border);
+            flex: 1; background: var(--bg); padding: 12px;
+            border-radius: 8px; text-align: center; border: 1px solid var(--border);
         }
         .stat-box .stat-num { font-size: 28px; font-weight: bold; }
         .stat-box .stat-lbl { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
         .stat-ok .stat-num { color: var(--green); }
         .stat-fail .stat-num { color: #ff4444; }
         .stat-time .stat-num { color: var(--blue); }
+
+        .json-section {
+            margin-top: 20px; background: #0a0a14; border-radius: 8px;
+            padding: 15px; border: 1px solid var(--border); display: none;
+        }
+        .json-section pre {
+            font-family: monospace; font-size: 11px; color: var(--green);
+            max-height: 200px; overflow: auto; white-space: pre-wrap;
+        }
+        .batch-info {
+            background: #0a1a0a; border: 1px solid #1a3a1a; border-radius: 8px;
+            padding: 10px; margin-top: 10px; font-size: 10px;
+            color: var(--green); font-family: monospace; display: none;
+        }
 
         @media (max-width: 900px) {
             .main-grid { grid-template-columns: 1fr; }
@@ -393,11 +237,10 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- TOP BAR -->
         <div class="topbar">
             <div class="topbar-left">
-                <h1>🎫 BF WIFI ZONE • Ticket Generator Ultimate</h1>
-                <p>Batch intelligent • Génération locale MikroTik • Vérification & PDF</p>
+                <h1>🎫 BF WIFI ZONE • Ticket Generator Pro</h1>
+                <p>Commandes Terminal Réelles • Batch ID Intelligent • Vérification • PDF</p>
             </div>
             <div class="topbar-right">
                 <input type="text" id="mikIdInput" placeholder="MikroTik ID">
@@ -407,39 +250,32 @@
             </div>
         </div>
 
-        <!-- MAIN GRID -->
         <div class="main-grid">
-            <!-- LEFT: CONFIG -->
             <div class="config-panel">
-                <h3>⚙️ Configuration</h3>
+                <h3>⚙️ Configuration Tickets</h3>
 
-                <!-- Type -->
                 <div class="type-selector">
                     <div class="type-card selected" id="typeVoucher" onclick="setType('voucher')">
-                        <div class="icon">🎟️</div>
-                        <div class="label">Voucher</div>
+                        <div class="icon">🎟️</div><div class="label">Voucher</div>
                         <div class="hint">Code = Password</div>
                     </div>
                     <div class="type-card" id="typeCompte" onclick="setType('compte')">
-                        <div class="icon">👤</div>
-                        <div class="label">Compte</div>
+                        <div class="icon">👤</div><div class="label">Compte</div>
                         <div class="hint">Nom + Pass</div>
                     </div>
                 </div>
 
-                <!-- Profils -->
                 <div class="form-group">
-                    <label>📋 Profils intelligents</label>
+                    <label>📋 Profils détectés</label>
                     <div class="profiles-list" id="profilesList">
                         <span style="color:var(--text-dim);font-size:12px;">Connectez-vous...</span>
                     </div>
                 </div>
                 <input type="hidden" id="selectedProfile">
 
-                <!-- Détails auto -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label>⏱️ Time Limit (auto)</label>
+                        <label>⏱️ Time Limit</label>
                         <input type="text" id="timeLimit" readonly style="background:#0a1a0a;border-color:#1a3a1a;color:var(--green);">
                     </div>
                     <div class="form-group">
@@ -451,11 +287,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>🔢 Quantité</label>
-                        <input type="number" id="quantity" value="10" min="1" max="500">
+                        <input type="number" id="quantity" value="5" min="1" max="500">
                     </div>
                     <div class="form-group">
                         <label>🏷️ Préfixe</label>
-                        <input type="text" id="prefix" value="BF" maxlength="8">
+                        <input type="text" id="prefix" value="BF" maxlength="6">
                     </div>
                 </div>
 
@@ -464,19 +300,17 @@
                     <input type="text" id="mikName" readonly style="background:#0a1a1a;border-color:#1a3a3a;color:var(--blue);">
                 </div>
 
-                <button class="btn-generate" id="btnGenerate" onclick="generateTicketsBatch()" disabled>
-                    ⚡ GÉNÉRER EN BATCH
+                <button class="btn-generate" id="btnGenerate" onclick="generateTickets()" disabled>
+                    ⚡ GÉNÉRER LES TICKETS
                 </button>
-
-                <div class="batch-info" id="batchInfo" style="display:none;">
-                    <div>🔖 Batch ID: <span id="batchIdDisplay"></span></div>
+                <div class="batch-info" id="batchInfo">
+                    🔖 Batch: <span id="batchIdDisplay"></span>
                 </div>
             </div>
 
-            <!-- RIGHT: TICKETS -->
             <div class="tickets-panel">
                 <div class="tickets-header">
-                    <h3>📊 Tickets</h3>
+                    <h3>📊 Tickets <span id="ticketCount" style="color:var(--text-dim);">(0)</span></h3>
                     <div class="tickets-actions">
                         <button class="btn btn-outline" onclick="verifyBatch()">🔍 Vérifier</button>
                         <button class="btn btn-blue" onclick="downloadAllPDF()">📥 PDF</button>
@@ -484,8 +318,7 @@
                     </div>
                 </div>
 
-                <!-- Stats -->
-                <div class="stats-row" id="statsRow" style="display:none;">
+                <div class="stats-row" id="statsRow">
                     <div class="stat-box stat-ok"><div class="stat-num" id="statOk">0</div><div class="stat-lbl">Créés</div></div>
                     <div class="stat-box stat-fail"><div class="stat-num" id="statFail">0</div><div class="stat-lbl">Échecs</div></div>
                     <div class="stat-box stat-time"><div class="stat-num" id="statTime">0s</div><div class="stat-lbl">Temps</div></div>
@@ -494,24 +327,22 @@
                 <div class="tickets-grid" id="ticketsGrid">
                     <div style="text-align:center;padding:40px;color:var(--text-dim);">
                         <div style="font-size:60px;">🎫</div>
-                        <p>Prêt à générer vos tickets</p>
+                        <p>Prêt pour la génération</p>
                     </div>
                 </div>
 
-                <!-- JSON -->
                 <div class="json-section" id="jsonSection">
-                    <h4 style="color:var(--gold);margin-bottom:8px;">📄 Export JSON</h4>
+                    <h4 style="color:var(--gold);margin-bottom:8px;">📄 JSON</h4>
                     <pre id="jsonOutput"></pre>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- PROGRESS OVERLAY -->
     <div class="progress-overlay" id="progressOverlay" style="display:none;">
         <div class="progress-box">
             <div class="spinner"></div>
-            <p id="progressText">Génération en cours...</p>
+            <p id="progressText">Génération...</p>
             <p style="font-size:11px;color:var(--text-dim);" id="progressStep"></p>
         </div>
     </div>
@@ -526,6 +357,7 @@
         let currentBatchId = '';
         let generationStartTime = 0;
 
+        // INIT
         document.addEventListener('DOMContentLoaded', () => {
             mikId = localStorage.getItem('mikId') || 'f5b4edea-a263-4b7a-866e-eb97da411f26';
             accountKey = localStorage.getItem('accountKey') || '689872a3-a221-4842-9aaa-761eff2eee05';
@@ -547,14 +379,14 @@
             const letter = match[2].toLowerCase();
             let timeLimit = '', unit = '';
             switch(letter) {
-                case 'h': timeLimit = `${number}h`; unit = 'Heure(s)'; break;
-                case 'm': timeLimit = `${number}m`; unit = 'Minute(s)'; break;
-                case 'd': timeLimit = `${number}d`; unit = 'Jour(s)'; break;
-                case 'w': timeLimit = `${number}w`; unit = 'Semaine(s)'; break;
-                case 'j': timeLimit = `${number}d`; unit = 'Jour(s)'; break;
+                case 'h': timeLimit = number + 'h'; unit = 'Heure(s)'; break;
+                case 'm': timeLimit = number + 'm'; unit = 'Minute(s)'; break;
+                case 'd': timeLimit = number + 'd'; unit = 'Jour(s)'; break;
+                case 'w': timeLimit = number + 'w'; unit = 'Semaine(s)'; break;
+                case 'j': timeLimit = number + 'd'; unit = 'Jour(s)'; break;
                 default: return null;
             }
-            return { number, letter, timeLimit, unit, display: `${number}${letter.toUpperCase()} - ${number} ${unit}` };
+            return { number, letter, timeLimit, unit, display: number + letter.toUpperCase() + ' - ' + number + ' ' + unit };
         }
 
         function parseProfiles(raw) {
@@ -578,17 +410,12 @@
         function renderProfiles() {
             const container = document.getElementById('profilesList');
             if (profiles.length === 0) {
-                container.innerHTML = '<span style="color:#ff8c00;font-size:12px;">⚠️ Aucun profil intelligent détecté</span>';
+                container.innerHTML = '<span style="color:#ff8c00;font-size:12px;">⚠️ Aucun profil détecté (format: chiffre+h/d/w/m)</span>';
                 return;
             }
-            container.innerHTML = profiles.map((p, idx) => `
-                <span class="profile-chip ${idx === 0 ? 'selected' : ''}" 
-                      onclick="selectProfile('${p.name}', this)" 
-                      data-profile="${p.name}">
-                    ${p.name}
-                    <span class="time-badge">${p.display}</span>
-                </span>
-            `).join('');
+            container.innerHTML = profiles.map((p, idx) => 
+                `<span class="profile-chip ${idx === 0 ? 'selected' : ''}" onclick="selectProfile('${p.name}', this)">${p.name}<span class="time-badge">${p.display}</span></span>`
+            ).join('');
             if (profiles.length > 0) selectProfile(profiles[0].name, container.querySelector('.profile-chip'));
         }
 
@@ -607,8 +434,7 @@
             mikId = document.getElementById('mikIdInput').value.trim();
             accountKey = document.getElementById('accountKeyInput').value.trim();
             if (!mikId || !accountKey) { showToast('❌ Remplissez ID et Key', 'error'); return; }
-            localStorage.setItem('mikId', mikId);
-            localStorage.setItem('accountKey', accountKey);
+            localStorage.setItem('mikId', mikId); localStorage.setItem('accountKey', accountKey);
             updatePill('busy', 'Analyse...');
             try {
                 const rawProfiles = await executeCommand('/ip hotspot user profile print');
@@ -622,8 +448,8 @@
                 document.getElementById('mikName').value = mikrotikName;
                 connected = true;
                 document.getElementById('btnGenerate').disabled = false;
-                updatePill('on', `Connecté • ${profiles.length} profils`);
-                showToast(`✅ Connecté ! ${profiles.length} profils`, 'success');
+                updatePill('on', 'Connecté • ' + profiles.length + ' profils');
+                showToast('✅ Connecté ! ' + profiles.length + ' profils', 'success');
             } catch (e) {
                 connected = false;
                 document.getElementById('btnGenerate').disabled = true;
@@ -640,218 +466,173 @@
 
         // ==================== EXECUTE COMMAND ====================
         async function executeCommand(command) {
-            const pushRes = await fetch(`${API_BASE}/mik/commands/push`, {
+            const pushRes = await fetch(API_BASE + '/mik/commands/push', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mik_id: mikId, account_key: accountKey, command, type: 'script', priority: 1 })
+                body: JSON.stringify({ mik_id: mikId, account_key: accountKey, command: command, type: 'script', priority: 1 })
             });
             const pushData = await pushRes.json();
             if (!pushData.success) throw new Error(pushData.message);
             for (let i = 0; i < 60; i++) {
                 await sleep(1000);
-                const statusRes = await fetch(`${API_BASE}/mik/commands/status/${pushData.command_id}`);
+                const statusRes = await fetch(API_BASE + '/mik/commands/status/' + pushData.command_id);
                 const statusData = await statusRes.json();
                 if (statusData.success && statusData.command) {
                     if (statusData.command.status === 'completed') return statusData.response ? statusData.response.text : 'OK';
-                    if (statusData.command.status === 'failed') throw new Error('Échec exécution');
+                    if (statusData.command.status === 'failed') throw new Error('Échec');
                 }
             }
             throw new Error('Timeout');
         }
 
-        // ==================== GÉNÉRATION BATCH ====================
-        async function generateTicketsBatch() {
+        // ==================== GÉNÉRATION PAR COMMANDES INDIVIDUELLES ====================
+        async function generateTickets() {
             if (!connected) { showToast('❌ Connectez-vous !', 'error'); return; }
             const profile = document.getElementById('selectedProfile').value;
             const timeLimit = document.getElementById('timeLimit').value;
             const price = parseInt(document.getElementById('price').value) || 100;
-            const quantity = parseInt(document.getElementById('quantity').value) || 10;
+            const quantity = parseInt(document.getElementById('quantity').value) || 5;
             const prefix = document.getElementById('prefix').value.trim() || 'BF';
             if (!profile) { showToast('❌ Sélectionnez un profil', 'error'); return; }
-            if (!timeLimit) { showToast('❌ Time limit requis', 'error'); return; }
 
-            // Générer le batch_id unique
+            // Générer batch_id
             const now = new Date();
-            currentBatchId = 'BATCH_' + 
-                now.getFullYear().toString().substring(2) +
-                String(now.getMonth() + 1).padStart(2, '0') +
-                String(now.getDate()).padStart(2, '0') + '_' +
-                String(now.getHours()).padStart(2, '0') +
-                String(now.getMinutes()).padStart(2, '0') +
-                String(now.getSeconds()).padStart(2, '0') + '_' +
-                Math.random().toString(36).substring(2, 6).toUpperCase();
+            currentBatchId = 'BTCH' + 
+                String(now.getFullYear()).substring(2) +
+                String(now.getMonth()+1).padStart(2,'0') +
+                String(now.getDate()).padStart(2,'0') +
+                String(now.getHours()).padStart(2,'0') +
+                String(now.getMinutes()).padStart(2,'0') +
+                String(now.getSeconds()).padStart(2,'0');
 
             document.getElementById('batchIdDisplay').textContent = currentBatchId;
             document.getElementById('batchInfo').style.display = 'block';
             generationStartTime = Date.now();
 
-            // Afficher progression
             document.getElementById('progressOverlay').style.display = 'flex';
-            document.getElementById('progressText').textContent = '📤 Étape 1/2 : Envoi script au MikroTik...';
-            document.getElementById('progressStep').textContent = 'Génération de ' + quantity + ' tickets en local';
             document.getElementById('btnGenerate').disabled = true;
-            updatePill('busy', 'Génération...');
+            allTickets = [];
+            let success = 0, fail = 0;
 
-            // Construire le script MikroTik
-            const script = buildBatchScript(profile, timeLimit, quantity, prefix, price, currentBatchId);
+            for (let i = 0; i < quantity; i++) {
+                document.getElementById('progressText').textContent = 'Génération ' + (i+1) + '/' + quantity;
+                document.getElementById('progressStep').textContent = success + ' réussis • ' + fail + ' échecs';
 
+                // Générer un code aléatoire via une commande MikroTik
+                let name, password;
+                try {
+                    const randomCode = await executeCommand(
+                        ':put ([:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])])'
+                    );
+                    const code = randomCode.trim();
+                    
+                    if (ticketType === 'voucher') {
+                        name = prefix + code;
+                        password = name;
+                    } else {
+                        name = prefix + '_' + code;
+                        const passCode = await executeCommand(
+                            ':put ([:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])] . [:pick "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" ([:rndnum from=0 to=31])])'
+                        );
+                        password = prefix + 'P' + passCode.trim();
+                    }
+
+                    // Créer le user AVEC le batch_id dans le commentaire
+                    const comment = 'type=' + ticketType + '|profile=' + profile + '|limit=' + timeLimit + '|price=' + price + '|batch=' + currentBatchId;
+                    const addCmd = '/ip hotspot user add name="' + name + '" password="' + password + '" profile="' + profile + '" limit-uptime="' + timeLimit + '" comment="' + comment + '"';
+                    
+                    await executeCommand(addCmd);
+                    
+                    success++;
+                    allTickets.push({ name, password, profile, timeLimit, price, type: ticketType });
+                } catch (e) {
+                    fail++;
+                }
+                await sleep(300);
+            }
+
+            const elapsed = ((Date.now() - generationStartTime) / 1000).toFixed(1);
+
+            document.getElementById('progressOverlay').style.display = 'none';
+            document.getElementById('btnGenerate').disabled = false;
+            updatePill('on', 'Terminé • ' + success + ' tickets');
+
+            document.getElementById('statsRow').style.display = 'flex';
+            document.getElementById('statOk').textContent = success;
+            document.getElementById('statFail').textContent = fail;
+            document.getElementById('statTime').textContent = elapsed + 's';
+            document.getElementById('ticketCount').textContent = '(' + allTickets.length + ')';
+
+            renderTickets();
+            document.getElementById('jsonSection').style.display = 'block';
+            document.getElementById('jsonOutput').textContent = JSON.stringify({
+                batch_id: currentBatchId,
+                mikrotik: mikrotikName,
+                profile, timeLimit, price, type: ticketType,
+                requested: quantity, created: success, failed: fail,
+                elapsed_seconds: parseFloat(elapsed),
+                tickets: allTickets
+            }, null, 2);
+
+            showToast('✅ ' + success + '/' + quantity + ' tickets en ' + elapsed + 's', 'success');
+        }
+
+        // ==================== VÉRIFICATION ====================
+        async function verifyBatch() {
+            if (!currentBatchId) { showToast('❌ Générez d\'abord', 'error'); return; }
+            if (!connected) { showToast('❌ Connectez-vous', 'error'); return; }
+            
+            document.getElementById('progressOverlay').style.display = 'flex';
+            document.getElementById('progressText').textContent = '🔍 Vérification...';
+            
             try {
-                // Étape 1 : Exécuter le script batch
-                await executeCommand(script);
+                const rawUsers = await executeCommand('/ip hotspot user print detail where comment~"' + currentBatchId + '"');
+                const price = parseInt(document.getElementById('price').value) || 100;
+                const timeLimit = document.getElementById('timeLimit').value;
+                const profile = document.getElementById('selectedProfile').value;
                 
-                document.getElementById('progressText').textContent = '📥 Étape 2/2 : Récupération des utilisateurs créés...';
-                document.getElementById('progressStep').textContent = 'Recherche par batch_id...';
-
-                // Étape 2 : Récupérer les users créés avec ce batch_id
-                const rawUsers = await executeCommand(`/ip hotspot user print detail where comment~"${currentBatchId}"`);
-                
-                // Parser les utilisateurs créés
                 allTickets = parseUsersFromOutput(rawUsers, price, timeLimit, profile);
                 
-                const elapsed = ((Date.now() - generationStartTime) / 1000).toFixed(1);
-
-                // Afficher résultats
                 document.getElementById('progressOverlay').style.display = 'none';
-                document.getElementById('btnGenerate').disabled = false;
-                updatePill('on', `Connecté • Terminé`);
-
                 document.getElementById('statsRow').style.display = 'flex';
                 document.getElementById('statOk').textContent = allTickets.length;
-                document.getElementById('statFail').textContent = quantity - allTickets.length;
-                document.getElementById('statTime').textContent = elapsed + 's';
-
+                document.getElementById('ticketCount').textContent = '(' + allTickets.length + ')';
                 renderTickets();
                 document.getElementById('jsonSection').style.display = 'block';
                 document.getElementById('jsonOutput').textContent = JSON.stringify({
-                    batch_id: currentBatchId,
-                    mikrotik: mikrotikName,
-                    profile, timeLimit, price, type: ticketType,
-                    requested: quantity,
-                    created: allTickets.length,
-                    elapsed_seconds: parseFloat(elapsed),
-                    tickets: allTickets
+                    batch_id: currentBatchId, tickets: allTickets
                 }, null, 2);
-
-                showToast(`✅ ${allTickets.length}/${quantity} tickets en ${elapsed}s !`, 'success');
-
+                showToast('✅ ' + allTickets.length + ' tickets trouvés', 'success');
             } catch (e) {
                 document.getElementById('progressOverlay').style.display = 'none';
-                document.getElementById('btnGenerate').disabled = false;
-                updatePill('on', 'Erreur');
                 showToast('❌ ' + e.message, 'error');
             }
-        }
-
-        function buildBatchScript(profile, timeLimit, quantity, prefix, price, batchId) {
-            return `{
-  :local profile "${profile}"
-  :local timeLimit "${timeLimit}"
-  :local quantity ${quantity}
-  :local prefix "${prefix}"
-  :local type "${ticketType}"
-  :local price ${price}
-  :local batchId "${batchId}"
-  :local success 0
-  :local index 0
-  :local chars "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-  
-  :while (\$success < \$quantity and \$index < (\$quantity * 5)) do={
-    :set \$index (\$index + 1)
-    
-    :local code ""
-    :for i from=1 to=6 do={ :set \$code (\$code . [:pick \$chars ([:rnd 32])]) }
-    
-    :local name (\$prefix . \$code)
-    :local password \$name
-    
-    :if (\$type = "compte") do={
-      :set \$name (\$prefix . "_" . \$code)
-      :local pcode ""
-      :for i from=1 to=8 do={ :set \$pcode (\$pcode . [:pick \$chars ([:rnd 32])]) }
-      :set \$password (\$prefix . "P" . \$pcode)
-    }
-    
-    :local comment ("type=" . \$type . "|profile=" . \$profile . "|limit=" . \$timeLimit . "|price=" . \$price . "|batch=" . \$batchId)
-    
-    :do {
-      /ip hotspot user add name=\$name password=\$password profile=\$profile limit-uptime=\$timeLimit comment=\$comment
-      :set \$success (\$success + 1)
-    } on-error={
-      :log warning ("Ticket creation failed: " . \$name)
-    }
-  }
-  
-  :put ("BATCH_COMPLETE:success=" . \$success . ":total_attempts=" . \$index)
-}`;
         }
 
         function parseUsersFromOutput(raw, price, timeLimit, profile) {
             const tickets = [];
             if (!raw || raw === 'OK') return tickets;
-
-            // Parser la sortie MikroTik
             const userBlocks = raw.split(/\n\s*\d+\s+/);
-            
             for (const block of userBlocks) {
                 if (!block.trim()) continue;
-                
                 const nameMatch = block.match(/name="([^"]+)"/);
                 const passMatch = block.match(/password="([^"]+)"/);
                 const profMatch = block.match(/profile="([^"]+)"/);
                 const limitMatch = block.match(/limit-uptime="?([^"\s]+)"?/);
-                const commentMatch = block.match(/comment="([^"]+)"/);
-
                 if (nameMatch) {
                     tickets.push({
                         name: nameMatch[1],
                         password: passMatch ? passMatch[1] : nameMatch[1],
                         profile: profMatch ? profMatch[1] : profile,
                         timeLimit: limitMatch ? limitMatch[1] : timeLimit,
-                        price: price,
-                        type: ticketType
+                        price: price, type: ticketType
                     });
                 }
             }
-
             return tickets;
         }
 
-        // ==================== VÉRIFICATION MANUELLE ====================
-        async function verifyBatch() {
-            if (!currentBatchId) { showToast('❌ Générez d\'abord un batch', 'error'); return; }
-            if (!connected) { showToast('❌ Connectez-vous', 'error'); return; }
-
-            document.getElementById('progressOverlay').style.display = 'flex';
-            document.getElementById('progressText').textContent = '🔍 Vérification du batch...';
-            document.getElementById('progressStep').textContent = 'Recherche: ' + currentBatchId;
-
-            try {
-                const rawUsers = await executeCommand(`/ip hotspot user print detail where comment~"${currentBatchId}"`);
-                const price = parseInt(document.getElementById('price').value) || 100;
-                const timeLimit = document.getElementById('timeLimit').value;
-                const profile = document.getElementById('selectedProfile').value;
-                
-                allTickets = parseUsersFromOutput(rawUsers, price, timeLimit, profile);
-
-                document.getElementById('progressOverlay').style.display = 'none';
-                document.getElementById('statsRow').style.display = 'flex';
-                document.getElementById('statOk').textContent = allTickets.length;
-
-                renderTickets();
-                document.getElementById('jsonSection').style.display = 'block';
-                document.getElementById('jsonOutput').textContent = JSON.stringify({
-                    batch_id: currentBatchId,
-                    tickets: allTickets
-                }, null, 2);
-
-                showToast(`✅ ${allTickets.length} tickets trouvés !`, 'success');
-            } catch (e) {
-                document.getElementById('progressOverlay').style.display = 'none';
-                showToast('❌ ' + e.message, 'error');
-            }
-        }
-
-        // ==================== RENDER TICKETS ====================
+        // ==================== RENDER ====================
         function renderTickets() {
             const grid = document.getElementById('ticketsGrid');
             if (allTickets.length === 0) {
@@ -862,30 +643,19 @@
                 <div class="ticket-card" id="ticket-${idx}">
                     <div class="ticket-top">
                         <div class="ticket-logo">📶</div>
-                        <div>
-                            <div class="ticket-company">${escapeHtml(mikrotikName || 'BF WIFI ZONE')}</div>
-                            <div class="ticket-subtitle">Accès Internet Haut Débit</div>
-                        </div>
+                        <div><div class="ticket-company">${esc(mikrotikName || 'BF WIFI ZONE')}</div><div class="ticket-subtitle">Accès Internet Haut Débit</div></div>
                     </div>
                     <div class="ticket-body">
-                        <div class="ticket-code-section">
-                            <div class="ticket-label">Code d'accès</div>
-                            <div class="ticket-code">${escapeHtml(t.name)}</div>
-                            ${t.type === 'compte' ? `<div class="ticket-password">Mot de passe: ${escapeHtml(t.password)}</div>` : ''}
-                        </div>
+                        <div class="ticket-label">Code d'accès</div>
+                        <div class="ticket-code">${esc(t.name)}</div>
+                        ${t.type === 'compte' ? '<div class="ticket-password">Mot de passe: ' + esc(t.password) + '</div>' : ''}
                         <div class="ticket-details">
-                            <div class="ticket-detail">
-                                <div class="dt-label">⏱️ Validité</div>
-                                <div class="dt-value">${escapeHtml(t.timeLimit)}</div>
-                            </div>
-                            <div class="ticket-detail">
-                                <div class="dt-label">📋 Profil</div>
-                                <div class="dt-value">${escapeHtml(t.profile)}</div>
-                            </div>
+                            <div class="ticket-detail"><div class="dt-label">⏱️ Validité</div><div class="dt-value">${esc(t.timeLimit)}</div></div>
+                            <div class="ticket-detail"><div class="dt-label">📋 Profil</div><div class="dt-value">${esc(t.profile)}</div></div>
                         </div>
                     </div>
                     <div class="ticket-bottom">
-                        <span class="ticket-validity">🕐 ${escapeHtml(t.timeLimit)}</span>
+                        <span class="ticket-validity">🕐 ${esc(t.timeLimit)}</span>
                         <span class="ticket-price">${t.price} FCFA</span>
                     </div>
                 </div>
@@ -898,16 +668,16 @@
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
             for (let i = 0; i < allTickets.length; i++) {
-                const ticketEl = document.getElementById(`ticket-${i}`);
-                if (!ticketEl) continue;
+                const el = document.getElementById('ticket-' + i);
+                if (!el) continue;
                 if (i > 0) pdf.addPage();
-                const canvas = await html2canvas(ticketEl, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+                const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff' });
                 const imgData = canvas.toDataURL('image/png');
-                const imgWidth = pdf.internal.pageSize.getWidth() - 20;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                pdf.addImage(imgData, 'PNG', 10, (pdf.internal.pageSize.getHeight() - imgHeight) / 2, imgWidth, imgHeight);
+                const w = pdf.internal.pageSize.getWidth() - 20;
+                const h = (canvas.height * w) / canvas.width;
+                pdf.addImage(imgData, 'PNG', 10, (pdf.internal.pageSize.getHeight() - h) / 2, w, h);
             }
-            pdf.save(`BF_WIFI_Tickets_${currentBatchId}.pdf`);
+            pdf.save('BF_WIFI_Tickets_' + currentBatchId + '.pdf');
             showToast('📥 PDF téléchargé !', 'success');
         }
 
@@ -917,12 +687,12 @@
         }
 
         // ==================== UTILS ====================
-        function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
-        function escapeHtml(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+        function esc(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
         function showToast(msg, type) {
             const t = document.createElement('div');
             t.className = 'toast';
-            t.style.cssText = `background:${type==='success'?'#0d3d0d':type==='error'?'#3d0d0d':'#1a1a3a'};border-color:${type==='success'?'var(--green)':'#ff4444'};`;
+            t.style.cssText = 'background:' + (type==='success'?'#0d3d0d':type==='error'?'#3d0d0d':'#1a1a3a') + ';border-color:' + (type==='success'?'var(--green)':'#ff4444') + ';';
             t.textContent = msg;
             document.body.appendChild(t);
             setTimeout(() => t.remove(), 3000);
