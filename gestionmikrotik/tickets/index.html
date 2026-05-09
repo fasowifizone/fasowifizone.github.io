@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BF WIFI ZONE - Générateur de Tickets</title>
+    <title>BF WIFI ZONE - Générateur de Tickets Intelligent</title>
+    <!-- html2canvas + jsPDF pour export PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --bg: #0a0a14;
@@ -17,6 +20,7 @@
             --text: #e0e0e0;
             --text-dim: #888;
             --border: #2a2a4a;
+            --gold: #c9a84c;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,236 +30,334 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; }
+        .app-container { max-width: 1400px; margin: 0 auto; }
 
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* TOP BAR */
+        .topbar {
+            background: linear-gradient(135deg, #1a1a3e 0%, #2a1a4e 100%);
             border-radius: 15px;
-            padding: 25px 30px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .header h1 { font-size: 28px; margin-bottom: 5px; }
-        .header p { opacity: 0.9; font-size: 14px; }
-
-        /* Connection Bar */
-        .connection-bar {
-            background: var(--panel);
-            border-radius: 12px;
-            padding: 15px 20px;
-            margin-bottom: 20px;
+            padding: 15px 25px;
+            margin-bottom: 15px;
             display: flex;
-            gap: 12px;
             align-items: center;
+            justify-content: space-between;
             flex-wrap: wrap;
+            gap: 10px;
             border: 1px solid var(--border);
         }
-        .connection-bar input {
-            flex: 1;
-            min-width: 200px;
+        .topbar-left h1 { font-size: 22px; background: linear-gradient(90deg, var(--gold), #f0d060); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .topbar-left p { font-size: 11px; color: var(--text-dim); }
+        .topbar-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .topbar-right input {
             background: var(--bg);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 13px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
             font-family: monospace;
+            width: 200px;
         }
-        .connection-bar input:focus { border-color: var(--highlight); outline: none; }
         .btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 13px;
-            transition: all 0.3s;
+            font-size: 12px;
+            transition: all 0.2s;
         }
-        .btn-connect { background: var(--green); color: #000; }
-        .btn-connect:hover { box-shadow: 0 0 20px rgba(0,255,136,0.3); }
-        .btn-generate { background: var(--highlight); color: white; font-size: 16px; padding: 14px 30px; }
-        .btn-generate:hover { box-shadow: 0 0 30px rgba(233,68,96,0.4); transform: translateY(-2px); }
-        .btn-export { background: var(--blue); color: #000; }
-        .btn-copy { background: var(--orange); color: #000; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-gold { background: linear-gradient(135deg, var(--gold), #f0d060); color: #000; font-weight: bold; }
+        .btn-gold:hover { box-shadow: 0 0 20px rgba(201,168,76,0.4); }
+        .btn-green { background: var(--green); color: #000; }
+        .btn-red { background: var(--highlight); color: white; }
+        .btn-blue { background: var(--blue); color: #000; }
 
-        .status-badge {
+        .status-pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
         }
-        .status-connected { background: rgba(0,255,136,0.15); color: var(--green); }
-        .status-disconnected { background: rgba(255,68,68,0.15); color: #ff4444; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
-        .dot-green { background: var(--green); box-shadow: 0 0 8px var(--green); }
-        .dot-red { background: #ff4444; }
+        .pill-on { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+        .pill-off { background: rgba(255,68,68,0.1); color: #ff4444; border: 1px solid rgba(255,68,68,0.3); }
 
-        /* Main Grid */
+        /* MAIN GRID */
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: 380px 1fr;
+            gap: 15px;
         }
 
-        /* Panel */
-        .panel {
+        /* LEFT PANEL */
+        .config-panel {
             background: var(--panel);
             border-radius: 12px;
-            padding: 20px;
+            padding: 18px;
             border: 1px solid var(--border);
         }
-        .panel h2 {
-            font-size: 18px;
-            margin-bottom: 18px;
+        .config-panel h3 {
+            font-size: 15px;
+            margin-bottom: 15px;
+            color: var(--gold);
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .panel h3 {
-            font-size: 14px;
-            color: var(--text-dim);
-            margin: 15px 0 8px;
-        }
-
-        /* Form */
-        .form-group {
-            margin-bottom: 15px;
-        }
+        .form-group { margin-bottom: 12px; }
         .form-group label {
             display: block;
-            font-size: 12px;
+            font-size: 10px;
             color: var(--text-dim);
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         .form-group select, .form-group input {
             width: 100%;
-            padding: 10px 14px;
+            padding: 10px 12px;
             background: var(--bg);
             border: 1px solid var(--border);
             color: var(--text);
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             font-family: inherit;
         }
-        .form-group select:focus, .form-group input:focus {
-            border-color: var(--highlight);
-            outline: none;
-        }
+        .form-group select:focus, .form-group input:focus { border-color: var(--gold); outline: none; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        /* Radio buttons */
-        .radio-group {
+        /* TYPE SELECTOR */
+        .type-selector {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 15px;
         }
-        .radio-card {
+        .type-card {
             flex: 1;
-            padding: 14px;
+            padding: 12px 8px;
             background: var(--bg);
             border: 2px solid var(--border);
             border-radius: 10px;
             cursor: pointer;
             text-align: center;
+            transition: all 0.2s;
+        }
+        .type-card:hover { border-color: var(--text-dim); }
+        .type-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.1); }
+        .type-card .icon { font-size: 24px; }
+        .type-card .label { font-size: 11px; font-weight: 600; margin-top: 4px; }
+        .type-card .hint { font-size: 9px; color: var(--text-dim); }
+
+        /* PROFILES LIST */
+        .profiles-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 8px;
+        }
+        .profile-chip {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            margin: 3px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .profile-chip:hover { border-color: var(--gold); }
+        .profile-chip.selected { background: var(--gold); color: #000; border-color: var(--gold); font-weight: bold; }
+        .profile-chip .time-badge {
+            background: rgba(0,255,136,0.2);
+            color: var(--green);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 9px;
+            margin-left: 4px;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--gold), #f0d060);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
             transition: all 0.3s;
         }
-        .radio-card:hover { border-color: var(--text-dim); }
-        .radio-card.active {
-            border-color: var(--highlight);
-            background: rgba(233,68,96,0.1);
-        }
-        .radio-card .icon { font-size: 28px; margin-bottom: 6px; }
-        .radio-card .title { font-weight: 600; font-size: 13px; }
-        .radio-card .desc { font-size: 10px; color: var(--text-dim); margin-top: 3px; }
+        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(201,168,76,0.3); }
+        .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        /* Progress */
-        .progress-bar {
-            height: 6px;
-            background: var(--bg);
-            border-radius: 3px;
-            margin: 15px 0;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--green), var(--blue));
-            border-radius: 3px;
-            transition: width 0.5s;
-            width: 0%;
-        }
-        .progress-text {
-            font-size: 12px;
-            color: var(--text-dim);
-            text-align: center;
-        }
-
-        /* Results Table */
-        .results-container {
-            max-height: 500px;
-            overflow-y: auto;
-            margin-top: 15px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-        thead th {
-            background: var(--accent);
-            padding: 10px;
-            text-align: left;
-            position: sticky;
-            top: 0;
-            font-size: 11px;
-            color: var(--highlight);
-            text-transform: uppercase;
-        }
-        tbody td {
-            padding: 8px 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            font-family: monospace;
-        }
-        tbody tr:hover { background: rgba(255,255,255,0.02); }
-        .ticket-ok { color: var(--green); }
-        .ticket-fail { color: #ff4444; }
-
-        /* JSON Output */
-        .json-output {
-            background: #0a0a14;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 12px;
-            white-space: pre-wrap;
-            max-height: 400px;
-            overflow-y: auto;
+        /* RIGHT PANEL - TICKETS */
+        .tickets-panel {
+            background: var(--panel);
+            border-radius: 12px;
+            padding: 18px;
             border: 1px solid var(--border);
-            color: var(--green);
+        }
+        .tickets-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .tickets-header h3 { font-size: 15px; color: var(--gold); }
+        .tickets-actions { display: flex; gap: 6px; }
+
+        .tickets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 12px;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 5px;
         }
 
-        /* Loading */
-        .loading-spinner {
+        /* TICKET CARD - LE VRAI DESIGN */
+        .ticket-card {
+            background: white;
+            border-radius: 12px;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        .ticket-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .ticket-top {
+            background: linear-gradient(135deg, #1a3a5c 0%, #0d2137 100%);
+            color: white;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .ticket-logo {
+            width: 36px;
+            height: 36px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #000;
+            font-weight: bold;
+        }
+        .ticket-company { font-weight: bold; font-size: 14px; }
+        .ticket-subtitle { font-size: 9px; opacity: 0.7; }
+
+        .ticket-body {
+            padding: 15px;
+            text-align: center;
+            background: linear-gradient(180deg, #fff 0%, #f8f9fa 100%);
+        }
+        .ticket-code-section {
+            margin: 8px 0;
+        }
+        .ticket-label {
+            font-size: 9px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 3px;
+        }
+        .ticket-code {
+            font-size: 28px;
+            font-weight: 900;
+            color: #1a3a5c;
+            letter-spacing: 4px;
+            font-family: 'Courier New', monospace;
+            background: #f0f0f0;
+            padding: 8px 15px;
+            border-radius: 6px;
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border);
-            border-top: 2px solid var(--highlight);
+        }
+        .ticket-password {
+            font-size: 16px;
+            color: #555;
+            font-family: 'Courier New', monospace;
+            margin-top: 3px;
+        }
+
+        .ticket-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+            text-align: left;
+        }
+        .ticket-detail {
+            background: #f0f4f8;
+            padding: 8px 10px;
+            border-radius: 6px;
+        }
+        .ticket-detail .dt-label { font-size: 8px; color: #888; text-transform: uppercase; }
+        .ticket-detail .dt-value { font-size: 13px; font-weight: bold; color: #1a3a5c; }
+
+        .ticket-bottom {
+            background: #1a3a5c;
+            color: white;
+            padding: 8px 15px;
+            text-align: center;
+            font-size: 9px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ticket-validity { color: var(--gold); font-weight: bold; font-size: 11px; }
+        .ticket-price {
+            background: var(--gold);
+            color: #000;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* PROGRESS */
+        .progress-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .progress-box {
+            background: var(--panel);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .progress-box .spinner {
+            width: 50px; height: 50px;
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--gold);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Toast */
+        /* TOAST */
         .toast {
             position: fixed;
             top: 20px;
@@ -264,148 +366,164 @@
             background: var(--panel);
             border: 1px solid var(--border);
             border-radius: 8px;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
+            z-index: 2000;
             font-size: 13px;
+            animation: slideRight 0.3s ease;
         }
-        @keyframes slideIn {
+        @keyframes slideRight {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
 
-        @media (max-width: 768px) {
+        /* JSON */
+        .json-section {
+            margin-top: 20px;
+            background: #0a0a14;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--border);
+        }
+        .json-section pre {
+            font-family: monospace;
+            font-size: 11px;
+            color: var(--green);
+            max-height: 200px;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+
+        @media (max-width: 900px) {
             .main-grid { grid-template-columns: 1fr; }
-            .connection-bar { flex-direction: column; }
-            .radio-group { flex-direction: column; }
+            .tickets-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>🎫 BF WIFI ZONE - Ticket Generator</h1>
-            <p>Générez des tickets WiFi en masse • Voucher ou Compte • Avec profil et time limit</p>
+    <div class="app-container">
+        <!-- TOP BAR -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h1>🎫 BF WIFI ZONE • Ticket Generator Pro</h1>
+                <p>Analyse intelligente des profils • Génération en masse • Export PDF</p>
+            </div>
+            <div class="topbar-right">
+                <input type="text" id="mikIdInput" placeholder="MikroTik ID">
+                <input type="text" id="accountKeyInput" placeholder="Account Key">
+                <button class="btn btn-gold" onclick="connectAndAnalyze()">🔌 Connecter & Analyser</button>
+                <span id="connectionPill" class="status-pill pill-off">● Déconnecté</span>
+            </div>
         </div>
 
-        <!-- Connection Bar -->
-        <div class="connection-bar">
-            <input type="text" id="mikIdInput" placeholder="MikroTik ID" value="f5b4edea-a263-4b7a-866e-eb97da411f26">
-            <input type="text" id="accountKeyInput" placeholder="Account Key" value="689872a3-a221-4842-9aaa-761eff2eee05">
-            <button class="btn btn-connect" onclick="connectAndLoad()">🔌 Connecter & Charger</button>
-            <span id="connectionBadge" class="status-badge status-disconnected">
-                <span class="status-dot dot-red"></span> Déconnecté
-            </span>
-        </div>
-
-        <!-- Main Grid -->
+        <!-- MAIN GRID -->
         <div class="main-grid">
-            <!-- LEFT: Configuration -->
-            <div class="panel">
-                <h2>⚙️ Configuration des Tickets</h2>
+            <!-- LEFT: CONFIG -->
+            <div class="config-panel">
+                <h3>⚙️ Configuration Tickets</h3>
 
-                <!-- Type de ticket -->
-                <div class="radio-group">
-                    <div class="radio-card active" id="cardVoucher" onclick="selectType('voucher')">
+                <!-- Type -->
+                <div class="type-selector">
+                    <div class="type-card selected" id="typeVoucher" onclick="setType('voucher')">
                         <div class="icon">🎟️</div>
-                        <div class="title">Voucher</div>
-                        <div class="desc">Nom = Mot de passe</div>
+                        <div class="label">Voucher</div>
+                        <div class="hint">Code = Password</div>
                     </div>
-                    <div class="radio-card" id="cardCompte" onclick="selectType('compte')">
+                    <div class="type-card" id="typeCompte" onclick="setType('compte')">
                         <div class="icon">👤</div>
-                        <div class="title">Compte</div>
-                        <div class="desc">Nom ≠ Mot de passe</div>
+                        <div class="label">Compte</div>
+                        <div class="hint">Nom + Password</div>
                     </div>
                 </div>
 
-                <!-- Profil -->
+                <!-- Profils détectés -->
                 <div class="form-group">
-                    <label>📋 Profil utilisateur</label>
-                    <select id="profileSelect">
-                        <option value="">Chargement des profils...</option>
-                    </select>
+                    <label>📋 Profils intelligents détectés</label>
+                    <div class="profiles-list" id="profilesList">
+                        <span style="color:var(--text-dim);font-size:12px;">Connectez-vous pour charger...</span>
+                    </div>
                 </div>
 
-                <!-- Time Limit -->
-                <div class="form-group">
-                    <label>⏱️ Time Limit</label>
-                    <input type="text" id="timeLimit" placeholder="Ex: 1h, 30m, 2d, 1w" value="1h">
+                <!-- Profil sélectionné -->
+                <input type="hidden" id="selectedProfile">
+
+                <!-- Détails automatiques -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>⏱️ Time Limit (auto)</label>
+                        <input type="text" id="timeLimit" placeholder="Détecté auto" readonly style="background:#0a1a0a;border-color:#1a3a1a;color:var(--green);">
+                    </div>
+                    <div class="form-group">
+                        <label>💰 Prix (FCFA)</label>
+                        <input type="number" id="price" placeholder="Prix" value="100">
+                    </div>
                 </div>
 
                 <!-- Quantité -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>🔢 Quantité</label>
+                        <input type="number" id="quantity" value="5" min="1" max="200">
+                    </div>
+                    <div class="form-group">
+                        <label>🏷️ Préfixe</label>
+                        <input type="text" id="prefix" value="BF" maxlength="6">
+                    </div>
+                </div>
+
+                <!-- Nom MikroTik -->
                 <div class="form-group">
-                    <label>🔢 Nombre de tickets</label>
-                    <input type="number" id="quantity" min="1" max="500" value="5">
+                    <label>🖥️ Nom du MikroTik (auto)</label>
+                    <input type="text" id="mikName" placeholder="Chargé automatiquement" readonly style="background:#0a1a1a;border-color:#1a3a3a;color:var(--blue);">
                 </div>
 
-                <!-- Préfixe -->
-                <div class="form-group">
-                    <label>🏷️ Préfixe (optionnel)</label>
-                    <input type="text" id="prefix" placeholder="Ex: VIP, HOTSPOT, TEST" value="BF">
-                </div>
-
-                <!-- Progress -->
-                <div class="progress-bar" id="progressBar" style="display:none;">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <div class="progress-text" id="progressText"></div>
-
-                <!-- Generate Button -->
-                <button class="btn btn-generate" id="generateBtn" onclick="generateTickets()" disabled>
-                    🚀 Générer les Tickets
+                <button class="btn-generate" id="btnGenerate" onclick="generateTickets()" disabled>
+                    🚀 GÉNÉRER LES TICKETS
                 </button>
             </div>
 
-            <!-- RIGHT: Results -->
-            <div class="panel">
-                <h2>📊 Résultats
-                    <span style="margin-left:auto;font-size:12px;">
-                        <button class="btn btn-copy" onclick="copyResults()" style="padding:6px 12px;font-size:11px;">📋 Copier</button>
-                        <button class="btn btn-export" onclick="exportCSV()" style="padding:6px 12px;font-size:11px;">📥 CSV</button>
-                    </span>
-                </h2>
-
-                <!-- Stats -->
-                <div id="statsArea" style="margin-bottom:15px;font-size:13px;color:var(--text-dim);">
-                    En attente de génération...
+            <!-- RIGHT: TICKETS -->
+            <div class="tickets-panel">
+                <div class="tickets-header">
+                    <h3>📊 Tickets Générés <span id="ticketCount" style="color:var(--text-dim);">(0)</span></h3>
+                    <div class="tickets-actions">
+                        <button class="btn btn-blue" onclick="downloadAllPDF()">📥 Tout en PDF</button>
+                        <button class="btn btn-green" onclick="copyJSON()">📋 Copier JSON</button>
+                    </div>
                 </div>
 
-                <!-- Table -->
-                <div class="results-container" id="resultsTable" style="display:none;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nom</th>
-                                <th>Password</th>
-                                <th>Profil</th>
-                                <th>Limit</th>
-                                <th>Statut</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resultsBody"></tbody>
-                    </table>
+                <div class="tickets-grid" id="ticketsGrid">
+                    <div style="text-align:center;padding:40px;color:var(--text-dim);">
+                        <div style="font-size:60px;">🎫</div>
+                        <p>Générez vos tickets pour les voir ici</p>
+                    </div>
                 </div>
 
-                <!-- JSON Output -->
-                <h3>📄 JSON Brut</h3>
-                <div class="json-output" id="jsonOutput">
-                    // En attente...
+                <!-- JSON -->
+                <div class="json-section" id="jsonSection" style="display:none;">
+                    <h4 style="color:var(--gold);margin-bottom:8px;">📄 Export JSON</h4>
+                    <pre id="jsonOutput"></pre>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- PROGRESS OVERLAY -->
+    <div class="progress-overlay" id="progressOverlay" style="display:none;">
+        <div class="progress-box">
+            <div class="spinner"></div>
+            <p id="progressText">Génération en cours...</p>
+            <p style="font-size:11px;color:var(--text-dim);" id="progressCount"></p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         const API_BASE = 'https://fasowifizone.pythonanywhere.com';
-        let mikId = '';
-        let accountKey = '';
-        let connected = false;
-        let currentType = 'voucher';
-        let profiles = [];
-        let generatedTickets = [];
+        let mikId = '', accountKey = '', connected = false;
+        let profiles = [], selectedProfileData = null;
+        let ticketType = 'voucher';
+        let allTickets = [];
+        let mikrotikName = '';
 
-        // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
             mikId = localStorage.getItem('mikId') || 'f5b4edea-a263-4b7a-866e-eb97da411f26';
             accountKey = localStorage.getItem('accountKey') || '689872a3-a221-4842-9aaa-761eff2eee05';
@@ -413,59 +531,40 @@
             document.getElementById('accountKeyInput').value = accountKey;
         });
 
-        function selectType(type) {
-            currentType = type;
-            document.getElementById('cardVoucher').classList.toggle('active', type === 'voucher');
-            document.getElementById('cardCompte').classList.toggle('active', type === 'compte');
+        function setType(type) {
+            ticketType = type;
+            document.getElementById('typeVoucher').classList.toggle('selected', type === 'voucher');
+            document.getElementById('typeCompte').classList.toggle('selected', type === 'compte');
         }
 
-        async function connectAndLoad() {
-            mikId = document.getElementById('mikIdInput').value.trim();
-            accountKey = document.getElementById('accountKeyInput').value.trim();
+        // ==================== ANALYSE INTELLIGENTE DES PROFILS ====================
+        function analyzeProfile(name) {
+            // Chercher un pattern: chiffre(s) + lettre (h, H, d, D, w, W, m, M, j, J)
+            const match = name.match(/^(\d+)\s*([hHdDwWmMjJ])/);
+            if (!match) return null;
 
-            if (!mikId || !accountKey) {
-                showToast('❌ Remplissez MikroTik ID et Account Key', 'error');
-                return;
+            const number = parseInt(match[1]);
+            const letter = match[2].toLowerCase();
+
+            let timeLimit = '';
+            let unit = '';
+
+            switch(letter) {
+                case 'h': timeLimit = `${number}h`; unit = 'Heure(s)'; break;
+                case 'm': timeLimit = `${number}m`; unit = 'Minute(s)'; break;
+                case 'd': timeLimit = `${number}d`; unit = 'Jour(s)'; break;
+                case 'w': timeLimit = `${number}w`; unit = 'Semaine(s)'; break;
+                case 'j': timeLimit = `${number}d`; unit = 'Jour(s)'; break; // j = jour
+                default: return null;
             }
 
-            localStorage.setItem('mikId', mikId);
-            localStorage.setItem('accountKey', accountKey);
-
-            document.getElementById('connectionBadge').innerHTML = '<span class="loading-spinner"></span> Connexion...';
-
-            try {
-                // Récupérer les profils
-                const profilesData = await executeCommand('/ip hotspot user profile print');
-                profiles = parseProfiles(profilesData);
-
-                // Remplir le select
-                const select = document.getElementById('profileSelect');
-                select.innerHTML = '';
-                profiles.forEach(p => {
-                    const opt = document.createElement('option');
-                    opt.value = p.name;
-                    opt.textContent = `${p.name} ${p.isDefault ? '(défaut)' : ''}`;
-                    if (p.isDefault) opt.selected = true;
-                    select.appendChild(opt);
-                });
-
-                connected = true;
-                document.getElementById('connectionBadge').innerHTML = `
-                    <span class="status-dot dot-green"></span> Connecté • ${profiles.length} profils chargés
-                `;
-                document.getElementById('connectionBadge').className = 'status-badge status-connected';
-                document.getElementById('generateBtn').disabled = false;
-
-                showToast(`✅ Connecté ! ${profiles.length} profils chargés`, 'success');
-            } catch (e) {
-                connected = false;
-                document.getElementById('connectionBadge').innerHTML = `
-                    <span class="status-dot dot-red"></span> Échec: ${e.message}
-                `;
-                document.getElementById('connectionBadge').className = 'status-badge status-disconnected';
-                document.getElementById('generateBtn').disabled = true;
-                showToast('❌ ' + e.message, 'error');
-            }
+            return {
+                number,
+                letter,
+                timeLimit,
+                unit,
+                display: `${number}${letter.toUpperCase()} - ${number} ${unit}`
+            };
         }
 
         function parseProfiles(raw) {
@@ -479,292 +578,336 @@
 
                 const isDefault = line.includes('*');
                 const nameMatch = line.match(/name="([^"]+)"/);
-                if (nameMatch) {
+                if (!nameMatch) continue;
+
+                const name = nameMatch[1];
+                const analysis = analyzeProfile(name);
+
+                if (analysis) {
                     profs.push({
-                        name: nameMatch[1],
-                        isDefault: isDefault
+                        name,
+                        isDefault,
+                        ...analysis
                     });
                 }
             }
+
+            // Trier: par nombre puis par unité (h, d, w, m)
+            const unitOrder = { 'm': 1, 'h': 2, 'd': 3, 'w': 4, 'j': 3 };
+            profs.sort((a, b) => {
+                if (a.letter !== b.letter) return (unitOrder[a.letter] || 99) - (unitOrder[b.letter] || 99);
+                return a.number - b.number;
+            });
+
             return profs;
         }
 
+        function renderProfiles() {
+            const container = document.getElementById('profilesList');
+            if (profiles.length === 0) {
+                container.innerHTML = '<span style="color:#ff8c00;font-size:12px;">⚠️ Aucun profil intelligent détecté (format: chiffre+h/d/w/m)</span>';
+                return;
+            }
+
+            container.innerHTML = profiles.map((p, idx) => `
+                <span class="profile-chip ${idx === 0 ? 'selected' : ''}" 
+                      onclick="selectProfile('${p.name}', this)" 
+                      data-profile="${p.name}">
+                    ${p.name}
+                    <span class="time-badge">${p.display}</span>
+                </span>
+            `).join('');
+
+            // Sélectionner le premier automatiquement
+            if (profiles.length > 0) {
+                selectProfile(profiles[0].name, container.querySelector('.profile-chip'));
+            }
+        }
+
+        function selectProfile(profileName, element) {
+            document.querySelectorAll('.profile-chip').forEach(c => c.classList.remove('selected'));
+            if (element) element.classList.add('selected');
+
+            document.getElementById('selectedProfile').value = profileName;
+            selectedProfileData = profiles.find(p => p.name === profileName);
+
+            if (selectedProfileData) {
+                document.getElementById('timeLimit').value = selectedProfileData.timeLimit;
+                // Détecter le prix à partir du nom si possible
+                const priceMatch = profileName.match(/(\d+)f/i);
+                if (priceMatch) {
+                    document.getElementById('price').value = priceMatch[1];
+                }
+            }
+        }
+
+        // ==================== CONNEXION ====================
+        async function connectAndAnalyze() {
+            mikId = document.getElementById('mikIdInput').value.trim();
+            accountKey = document.getElementById('accountKeyInput').value.trim();
+
+            if (!mikId || !accountKey) {
+                showToast('❌ Remplissez MikroTik ID et Account Key', 'error');
+                return;
+            }
+
+            localStorage.setItem('mikId', mikId);
+            localStorage.setItem('accountKey', accountKey);
+
+            updateConnectionUI('loading', 'Analyse...');
+
+            try {
+                // Récupérer les profils
+                const rawProfiles = await executeCommand('/ip hotspot user profile print');
+                profiles = parseProfiles(rawProfiles);
+                renderProfiles();
+
+                // Récupérer le nom du MikroTik
+                try {
+                    const identityRaw = await executeCommand('/system identity print');
+                    const idMatch = identityRaw.match(/name="([^"]+)"/);
+                    mikrotikName = idMatch ? idMatch[1] : 'MikroTik';
+                } catch {
+                    mikrotikName = 'MikroTik';
+                }
+                document.getElementById('mikName').value = mikrotikName;
+
+                connected = true;
+                document.getElementById('btnGenerate').disabled = false;
+                updateConnectionUI('connected', `Connecté • ${profiles.length} profils`);
+                showToast(`✅ Connecté ! ${profiles.length} profils détectés`, 'success');
+            } catch (e) {
+                connected = false;
+                document.getElementById('btnGenerate').disabled = true;
+                updateConnectionUI('disconnected', 'Échec connexion');
+                showToast('❌ ' + e.message, 'error');
+            }
+        }
+
+        function updateConnectionUI(status, text) {
+            const pill = document.getElementById('connectionPill');
+            if (status === 'connected') {
+                pill.className = 'status-pill pill-on';
+                pill.innerHTML = '● ' + text;
+            } else if (status === 'loading') {
+                pill.className = 'status-pill';
+                pill.innerHTML = '⏳ ' + text;
+            } else {
+                pill.className = 'status-pill pill-off';
+                pill.innerHTML = '● ' + text;
+            }
+        }
+
+        // ==================== COMMANDES ====================
         async function executeCommand(command) {
-            // Push command
             const pushRes = await fetch(`${API_BASE}/mik/commands/push`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    mik_id: mikId,
-                    account_key: accountKey,
-                    command: command,
-                    type: 'script',
-                    priority: 1
-                })
+                body: JSON.stringify({ mik_id: mikId, account_key: accountKey, command, type: 'script', priority: 1 })
             });
             const pushData = await pushRes.json();
             if (!pushData.success) throw new Error(pushData.message);
 
-            // Wait response
             for (let i = 0; i < 45; i++) {
                 await sleep(1000);
                 const statusRes = await fetch(`${API_BASE}/mik/commands/status/${pushData.command_id}`);
                 const statusData = await statusRes.json();
-
                 if (statusData.success && statusData.command) {
-                    if (statusData.command.status === 'completed') {
-                        return statusData.response ? statusData.response.text : 'OK';
-                    }
-                    if (statusData.command.status === 'failed') {
-                        throw new Error(statusData.response ? statusData.response.text : 'Échec');
-                    }
+                    if (statusData.command.status === 'completed') return statusData.response ? statusData.response.text : 'OK';
+                    if (statusData.command.status === 'failed') throw new Error(statusData.response ? statusData.response.text : 'Échec');
                 }
             }
             throw new Error('Timeout');
         }
 
-        function generateTicketName(type, prefix, index) {
-            const timestamp = Date.now().toString(36).toUpperCase();
-            const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-
-            if (type === 'voucher') {
-                // Nom = password (voucher)
-                return `${prefix}${random}${index}`;
-            } else {
-                // Compte : nom et password différents
-                return `${prefix}_user_${random}${index}`;
-            }
-        }
-
-        function generateTicketPassword(type, prefix, index) {
-            const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-
-            if (type === 'voucher') {
-                // Pour voucher, on utilise le même que le nom (sera défini après)
-                return '';
-            } else {
-                return `${prefix}${random}${index}`;
-            }
-        }
-
+        // ==================== GÉNÉRATION ====================
         async function generateTickets() {
-            if (!connected) {
-                showToast('❌ Connectez-vous d\'abord !', 'error');
-                return;
-            }
+            if (!connected) { showToast('❌ Connectez-vous !', 'error'); return; }
 
-            const profile = document.getElementById('profileSelect').value;
-            const timeLimit = document.getElementById('timeLimit').value.trim();
-            const quantity = parseInt(document.getElementById('quantity').value);
+            const profileName = document.getElementById('selectedProfile').value;
+            const timeLimit = document.getElementById('timeLimit').value;
+            const price = parseInt(document.getElementById('price').value) || 100;
+            const quantity = parseInt(document.getElementById('quantity').value) || 5;
             const prefix = document.getElementById('prefix').value.trim() || 'BF';
 
-            if (!profile) { showToast('❌ Sélectionnez un profil', 'error'); return; }
-            if (!timeLimit) { showToast('❌ Entrez un time limit', 'error'); return; }
-            if (isNaN(quantity) || quantity < 1 || quantity > 500) {
-                showToast('❌ Quantité entre 1 et 500', 'error'); return;
-            }
-
-            // Reset
-            generatedTickets = [];
-            document.getElementById('resultsBody').innerHTML = '';
-            document.getElementById('resultsTable').style.display = 'table';
-            document.getElementById('jsonOutput').textContent = 'Génération en cours...';
+            if (!profileName) { showToast('❌ Sélectionnez un profil', 'error'); return; }
+            if (!timeLimit) { showToast('❌ Time limit requis', 'error'); return; }
 
             // Show progress
-            const progressBar = document.getElementById('progressBar');
-            const progressFill = document.getElementById('progressFill');
-            const progressText = document.getElementById('progressText');
-            const generateBtn = document.getElementById('generateBtn');
+            document.getElementById('progressOverlay').style.display = 'flex';
+            document.getElementById('btnGenerate').disabled = true;
 
-            progressBar.style.display = 'block';
-            generateBtn.disabled = true;
-            generateBtn.textContent = '⏳ Génération...';
-
-            let successCount = 0;
-            let failCount = 0;
+            allTickets = [];
+            let success = 0, fail = 0;
 
             for (let i = 0; i < quantity; i++) {
-                progressText.textContent = `Génération ${i + 1}/${quantity}...`;
-                progressFill.style.width = `${((i + 1) / quantity) * 100}%`;
+                document.getElementById('progressText').textContent = `Génération ticket ${i + 1}/${quantity}`;
+                document.getElementById('progressCount').textContent = `${success} réussis • ${fail} échoués`;
 
-                let ticketName, ticketPassword;
+                let name, password;
 
-                if (currentType === 'voucher') {
-                    ticketName = generateTicketName('voucher', prefix, i + 1);
-                    ticketPassword = ticketName; // Même chose
+                if (ticketType === 'voucher') {
+                    const code = generateCode(prefix);
+                    name = code;
+                    password = code;
                 } else {
-                    ticketName = generateTicketName('compte', prefix, i + 1);
-                    ticketPassword = generateTicketPassword('compte', prefix, i + 1);
+                    name = `${prefix}_${generateCode('')}`;
+                    password = generateCode(prefix + 'P');
                 }
 
-                // Créer la commande
-                const command = `/ip hotspot user add name="${ticketName}" password="${ticketPassword}" profile="${profile}" limit-uptime="${timeLimit}" comment="${currentType}"`;
+                const command = `/ip hotspot user add name="${name}" password="${password}" profile="${profileName}" limit-uptime="${timeLimit}" comment="${ticketType}|${price}F"`;
 
                 try {
                     const result = await executeCommand(command);
-                    // Vérifier si ça a réussi
-                    if (result === 'OK' || result.includes('success') || !result.includes('failure') && !result.includes('already')) {
-                        successCount++;
-                        generatedTickets.push({
-                            name: ticketName,
-                            password: ticketPassword,
-                            profile: profile,
-                            timeLimit: timeLimit,
-                            type: currentType,
-                            status: 'success'
-                        });
-                        addResultRow(i + 1, ticketName, ticketPassword, profile, timeLimit, true);
-                    } else if (result.includes('already exist') || result.includes('exists')) {
-                        // Nom déjà pris, on réessaie avec un autre
-                        failCount++;
-                        // Réessayer avec un nom différent
-                        const newName = ticketName + '_' + Math.random().toString(36).substring(2, 5);
-                        const newPassword = currentType === 'voucher' ? newName : ticketPassword;
-                        const retryCommand = `/ip hotspot user add name="${newName}" password="${newPassword}" profile="${profile}" limit-uptime="${timeLimit}" comment="${currentType}"`;
-                        
-                        try {
-                            await executeCommand(retryCommand);
-                            successCount++;
-                            generatedTickets.push({
-                                name: newName,
-                                password: newPassword,
-                                profile: profile,
-                                timeLimit: timeLimit,
-                                type: currentType,
-                                status: 'success'
-                            });
-                            addResultRow(i + 1, newName, newPassword, profile, timeLimit, true);
-                        } catch (e2) {
-                            failCount++;
-                            generatedTickets.push({
-                                name: ticketName,
-                                password: ticketPassword,
-                                error: e2.message,
-                                status: 'failed'
-                            });
-                            addResultRow(i + 1, ticketName, ticketPassword, profile, timeLimit, false);
-                        }
+                    if (result === 'OK' || (!result.includes('failure') && !result.includes('already'))) {
+                        success++;
+                        allTickets.push({ name, password, profile: profileName, timeLimit, price, type: ticketType, status: 'success' });
                     } else {
-                        failCount++;
-                        generatedTickets.push({
-                            name: ticketName,
-                            password: ticketPassword,
-                            error: result,
-                            status: 'failed'
-                        });
-                        addResultRow(i + 1, ticketName, ticketPassword, profile, timeLimit, false);
+                        // Retry with different name
+                        const altName = name + '_' + Math.random().toString(36).substring(2, 5);
+                        const altPassword = ticketType === 'voucher' ? altName : password;
+                        const altCmd = `/ip hotspot user add name="${altName}" password="${altPassword}" profile="${profileName}" limit-uptime="${timeLimit}" comment="${ticketType}|${price}F"`;
+                        try {
+                            await executeCommand(altCmd);
+                            success++;
+                            allTickets.push({ name: altName, password: altPassword, profile: profileName, timeLimit, price, type: ticketType, status: 'success_retry' });
+                        } catch (e2) {
+                            fail++;
+                            allTickets.push({ name, password, profile: profileName, timeLimit, price, type: ticketType, status: 'failed', error: e2.message });
+                        }
                     }
                 } catch (e) {
-                    failCount++;
-                    generatedTickets.push({
-                        name: ticketName,
-                        password: ticketPassword,
-                        error: e.message,
-                        status: 'failed'
-                    });
-                    addResultRow(i + 1, ticketName, ticketPassword, profile, timeLimit, false);
+                    fail++;
+                    allTickets.push({ name, password, profile: profileName, timeLimit, price, type: ticketType, status: 'failed', error: e.message });
                 }
 
-                // Petit délai entre chaque commande
-                await sleep(500);
+                await sleep(400);
             }
 
-            // Final
-            progressBar.style.display = 'none';
-            progressText.textContent = '';
-            generateBtn.disabled = false;
-            generateBtn.textContent = '🚀 Générer les Tickets';
+            // Hide progress
+            document.getElementById('progressOverlay').style.display = 'none';
+            document.getElementById('btnGenerate').disabled = false;
 
-            // Stats
-            document.getElementById('statsArea').innerHTML = `
-                ✅ <b>${successCount}</b> tickets créés avec succès
-                ${failCount > 0 ? ` • ❌ <b>${failCount}</b> échecs` : ''}
-                sur <b>${quantity}</b> demandés
-            `;
-
-            // JSON output
+            // Render tickets
+            renderTickets();
+            document.getElementById('ticketCount').textContent = `(${allTickets.length})`;
+            document.getElementById('jsonSection').style.display = 'block';
             document.getElementById('jsonOutput').textContent = JSON.stringify({
-                success: true,
-                total_requested: quantity,
-                total_created: successCount,
-                total_failed: failCount,
-                type: currentType,
-                profile: profile,
-                time_limit: timeLimit,
-                tickets: generatedTickets
+                mikrotik: mikrotikName,
+                profile: profileName,
+                timeLimit, price, type: ticketType,
+                total: allTickets.length,
+                success,
+                failed: fail,
+                tickets: allTickets
             }, null, 2);
 
-            showToast(`✅ ${successCount}/${quantity} tickets générés !`, 'success');
+            showToast(`✅ ${success}/${quantity} tickets générés !`, 'success');
         }
 
-        function addResultRow(index, name, password, profile, timeLimit, success) {
-            const tbody = document.getElementById('resultsBody');
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${index}</td>
-                <td style="font-family:monospace;">${escapeHtml(name)}</td>
-                <td style="font-family:monospace;">${escapeHtml(password)}</td>
-                <td>${escapeHtml(profile)}</td>
-                <td>${escapeHtml(timeLimit)}</td>
-                <td class="${success ? 'ticket-ok' : 'ticket-fail'}">
-                    ${success ? '✅ Créé' : '❌ Échec'}
-                </td>
-            `;
-            tbody.appendChild(tr);
+        function generateCode(prefix) {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let code = '';
+            for (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+            return prefix ? prefix + code : code;
         }
 
-        function copyResults() {
-            const json = document.getElementById('jsonOutput').textContent;
-            navigator.clipboard.writeText(json).then(() => {
-                showToast('📋 JSON copié !', 'success');
-            }).catch(() => {
-                showToast('❌ Erreur copie', 'error');
-            });
+        // ==================== RENDER TICKETS ====================
+        function renderTickets() {
+            const grid = document.getElementById('ticketsGrid');
+            if (allTickets.length === 0) {
+                grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);">Aucun ticket</div>';
+                return;
+            }
+
+            grid.innerHTML = allTickets.map((t, idx) => `
+                <div class="ticket-card" id="ticket-${idx}">
+                    <div class="ticket-top">
+                        <div class="ticket-logo">📶</div>
+                        <div>
+                            <div class="ticket-company">${escapeHtml(mikrotikName || 'BF WIFI ZONE')}</div>
+                            <div class="ticket-subtitle">Accès Internet Haut Débit</div>
+                        </div>
+                    </div>
+                    <div class="ticket-body">
+                        <div class="ticket-code-section">
+                            <div class="ticket-label">Code d'accès</div>
+                            <div class="ticket-code">${escapeHtml(t.name)}</div>
+                            ${t.type === 'compte' ? `<div class="ticket-password">Mot de passe: ${escapeHtml(t.password)}</div>` : ''}
+                        </div>
+                        <div class="ticket-details">
+                            <div class="ticket-detail">
+                                <div class="dt-label">⏱️ Validité</div>
+                                <div class="dt-value">${escapeHtml(t.timeLimit)}</div>
+                            </div>
+                            <div class="ticket-detail">
+                                <div class="dt-label">📋 Profil</div>
+                                <div class="dt-value">${escapeHtml(t.profile)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ticket-bottom">
+                        <span class="ticket-validity">🕐 ${escapeHtml(t.timeLimit)}</span>
+                        <span class="ticket-price">${t.price} FCFA</span>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function exportCSV() {
-            if (generatedTickets.length === 0) {
+        // ==================== TÉLÉCHARGEMENT PDF ====================
+        async function downloadAllPDF() {
+            if (allTickets.length === 0) {
                 showToast('❌ Aucun ticket à exporter', 'error');
                 return;
             }
 
-            let csv = 'Nom,Password,Profil,TimeLimit,Type,Statut\n';
-            generatedTickets.forEach(t => {
-                csv += `${t.name},${t.password},${t.profile},${t.timeLimit},${t.type},${t.status}\n`;
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+
+            for (let i = 0; i < allTickets.length; i++) {
+                const ticketEl = document.getElementById(`ticket-${i}`);
+                if (!ticketEl) continue;
+
+                if (i > 0) pdf.addPage();
+
+                const canvas = await html2canvas(ticketEl, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    useCORS: true
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = pageWidth - 20;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                const x = 10;
+                const y = (pageHeight - imgHeight) / 2;
+
+                pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+            }
+
+            pdf.save(`BF_WIFI_Tickets_${Date.now()}.pdf`);
+            showToast('📥 PDF téléchargé !', 'success');
+        }
+
+        function copyJSON() {
+            const json = document.getElementById('jsonOutput').textContent;
+            navigator.clipboard.writeText(json).then(() => {
+                showToast('📋 JSON copié !', 'success');
             });
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `bf_wifi_tickets_${Date.now()}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-
-            showToast('📥 CSV téléchargé !', 'success');
         }
 
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function showToast(message, type) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.style.cssText = `
-                background: ${type === 'success' ? '#0d3d0d' : type === 'error' ? '#3d0d0d' : '#1a1a3a'};
-                border-color: ${type === 'success' ? '#00ff88' : type === 'error' ? '#ff4444' : '#4da6ff'};
-            `;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+        // ==================== UTILS ====================
+        function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+        function escapeHtml(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+        function showToast(msg, type) {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.style.cssText = `background:${type==='success'?'#0d3d0d':type==='error'?'#3d0d0d':'#1a1a3a'};border-color:${type==='success'?'var(--green)':'#ff4444'};`;
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
         }
     </script>
 </body>
