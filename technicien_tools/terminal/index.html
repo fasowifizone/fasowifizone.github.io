@@ -407,381 +407,306 @@
         </div>
     </div>
 
-    <script>
-        // Configuration
-        let currentAccountKey = localStorage.getItem('accountKey') || '689872a3-a221-4842-9aaa-761eff2eee05';
-        let currentMikId = localStorage.getItem('mikId') || 'f5b4edea-a263-4b7a-866e-eb97da411f26';
-        let currentCommandType = 'script';
-        let currentPriority = 1;
-        let refreshTimer = null;
-        let lastCommandId = null;
+<script>
+    let currentAccountKey = localStorage.getItem('accountKey') || '689872a3-a221-4842-9aaa-761eff2eee05';
+    let currentMikId = localStorage.getItem('mikId') || 'f5b4edea-a263-4b7a-866e-eb97da411f26';
+    let currentCommandType = 'script';
+    let currentPriority = 1;
+    let refreshTimer = null;
 
-        const API_BASE = 'https://fasowifizone.pythonanywhere.com';
+    const API_BASE = 'https://fasowifizone.pythonanywhere.com';
 
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('accountKey').value = currentAccountKey;
-            document.getElementById('mikId').value = currentMikId;
-            loadHistory();
-            startAutoRefresh();
-            checkMikrotikStatus();
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('accountKey').value = currentAccountKey;
+        document.getElementById('mikId').value = currentMikId;
+        loadHistory();
+        startAutoRefresh();
+        checkMikrotikStatus();
+    });
+
+    function saveConfig() {
+        currentAccountKey = document.getElementById('accountKey').value;
+        currentMikId = document.getElementById('mikId').value;
+        localStorage.setItem('accountKey', currentAccountKey);
+        localStorage.setItem('mikId', currentMikId);
+        showNotification('Configuration sauvegardée !', 'success');
+        loadHistory();
+        checkMikrotikStatus();
+    }
+
+    async function checkMikrotikStatus() {
+        try {
+            const response = await fetch(`${API_BASE}/mik/commands/pending/${currentMikId}?account_key=${currentAccountKey}`);
+            const data = await response.json();
+            const statusSpan = document.getElementById('connectionStatus');
+            if (data.success) {
+                statusSpan.innerHTML = '<span class="status-badge online">● Connecté</span>';
+                statusSpan.title = `${data.pending_commands || 0} commande(s) en attente`;
+            } else {
+                statusSpan.innerHTML = '<span class="status-badge offline">● Déconnecté</span>';
+            }
+        } catch (error) {
+            document.getElementById('connectionStatus').innerHTML = '<span class="status-badge offline">● Erreur connexion</span>';
+        }
+    }
+
+    function setCommandType(type) {
+        currentCommandType = type;
+        document.querySelectorAll('.type-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-type') === type) btn.classList.add('active');
         });
+    }
 
-        // Sauvegarder configuration
-        function saveConfig() {
-            currentAccountKey = document.getElementById('accountKey').value;
-            currentMikId = document.getElementById('mikId').value;
-            localStorage.setItem('accountKey', currentAccountKey);
-            localStorage.setItem('mikId', currentMikId);
-            showNotification('Configuration sauvegardée !', 'success');
+    function setPriority(priority) {
+        currentPriority = priority;
+        document.querySelectorAll('.priority-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (parseInt(btn.getAttribute('data-priority')) === priority) btn.classList.add('active');
+        });
+    }
+
+    function loadPresetCommand() {
+        const select = document.getElementById('presetCommands');
+        const command = select.value;
+        if (command) {
+            document.getElementById('commandText').value = command;
+            select.value = '';
+        }
+    }
+
+    async function sendCommand() {
+        const commandText = document.getElementById('commandText').value.trim();
+        if (!commandText) { showNotification('Veuillez entrer une commande', 'error'); return; }
+        if (!currentAccountKey || !currentMikId) { showNotification('Configurez Account Key et MikroTik ID', 'error'); return; }
+
+        const sendBtn = document.querySelector('.send-btn');
+        sendBtn.disabled = true;
+        sendBtn.textContent = '⏳ Envoi en cours...';
+
+        try {
+            const response = await fetch(`${API_BASE}/mik/commands/push`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    mik_id: currentMikId,
+                    account_key: currentAccountKey,
+                    command: commandText,
+                    type: currentCommandType,
+                    priority: currentPriority
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification('✅ Commande envoyée !', 'success');
+                document.getElementById('responseArea').innerHTML = `
+                    <div style="color: #4caf50;">
+                        ✅ Commande envoyée !<br>
+                        ID: ${data.command_id}<br>
+                        ⏳ En attente d'exécution par le MikroTik...
+                    </div>`;
+                waitForResponse(data.command_id);
+            } else {
+                showNotification('❌ ' + data.message, 'error');
+                document.getElementById('responseArea').innerHTML = `<div style="color: #f44336;">❌ ${data.message}</div>`;
+            }
+        } catch (error) {
+            showNotification('❌ Erreur: ' + error.message, 'error');
+            document.getElementById('responseArea').innerHTML = `<div style="color: #f44336;">❌ ${error.message}</div>`;
+        } finally {
+            sendBtn.disabled = false;
+            sendBtn.textContent = '🚀 Envoyer la commande';
+        }
+    }
+
+    async function waitForResponse(commandId, attempts = 0) {
+        if (attempts > 30) {
+            document.getElementById('responseArea').innerHTML = `
+                <div style="color: #ff9800;">⏰ Délai dépassé<br><small>Vérifiez l'historique</small></div>`;
             loadHistory();
-            checkMikrotikStatus();
+            return;
         }
 
-        // Vérifier statut MikroTik
-        async function checkMikrotikStatus() {
-            try {
-                const response = await fetch(`${API_BASE}/mik/commands/pending/${currentMikId}?account_key=${currentAccountKey}`);
-                const data = await response.json();
-                const statusSpan = document.getElementById('connectionStatus');
-                if (data.success) {
-                    statusSpan.innerHTML = '<span class="status-badge online">● Connecté</span>';
-                    statusSpan.title = `${data.pending_commands || 0} commande(s) en attente`;
-                } else {
-                    statusSpan.innerHTML = '<span class="status-badge offline">● Déconnecté</span>';
-                }
-            } catch (error) {
-                document.getElementById('connectionStatus').innerHTML = '<span class="status-badge offline">● Erreur connexion</span>';
-            }
-        }
-
-        // Définir type commande
-        function setCommandType(type) {
-            currentCommandType = type;
-            document.querySelectorAll('.type-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('data-type') === type) {
-                    btn.classList.add('active');
-                }
-            });
-        }
-
-        // Définir priorité
-        function setPriority(priority) {
-            currentPriority = priority;
-            document.querySelectorAll('.priority-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (parseInt(btn.getAttribute('data-priority')) === priority) {
-                    btn.classList.add('active');
-                }
-            });
-        }
-
-        // Charger commande prédéfinie
-        function loadPresetCommand() {
-            const select = document.getElementById('presetCommands');
-            const command = select.value;
-            if (command) {
-                document.getElementById('commandText').value = command;
-                select.value = '';
-            }
-        }
-
-        // Envoyer commande
-        async function sendCommand() {
-            const commandText = document.getElementById('commandText').value.trim();
-            
-            if (!commandText) {
-                showNotification('Veuillez entrer une commande', 'error');
-                return;
-            }
-
-            if (!currentAccountKey || !currentMikId) {
-                showNotification('Veuillez configurer Account Key et MikroTik ID', 'error');
-                return;
-            }
-
-            const sendBtn = document.querySelector('.send-btn');
-            sendBtn.disabled = true;
-            sendBtn.textContent = '⏳ Envoi en cours...';
-
-            try {
-                const response = await fetch(`${API_BASE}/mik/commands/push`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        mik_id: currentMikId,
-                        account_key: currentAccountKey,
-                        command: commandText,
-                        type: currentCommandType,
-                        priority: currentPriority
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    showNotification('✅ Commande envoyée avec succès !', 'success');
-                    document.getElementById('responseArea').innerHTML = `
-                        <div style="color: #4caf50;">
-                            ✅ Commande envoyée !<br>
-                            ID: ${data.command_id}<br>
-                            En attente d'exécution par le MikroTik...
-                        </div>
-                    `;
-                    lastCommandId = data.command_id;
-                    loadHistory();
-                    // Attendre la réponse
-                    waitForResponse(data.command_id);
-                } else {
-                    showNotification('❌ Erreur: ' + data.message, 'error');
-                    document.getElementById('responseArea').innerHTML = `
-                        <div style="color: #f44336;">
-                            ❌ Erreur: ${data.message}
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                showNotification('❌ Erreur de connexion: ' + error.message, 'error');
-                document.getElementById('responseArea').innerHTML = `
-                    <div style="color: #f44336;">
-                        ❌ Erreur de connexion: ${error.message}
-                    </div>
-                `;
-            } finally {
-                sendBtn.disabled = false;
-                sendBtn.textContent = '🚀 Envoyer la commande';
-            }
-        }
-
-        // Attendre la réponse
-        async function waitForResponse(commandId, attempts = 0) {
-            if (attempts > 30) { // 30 secondes max
-                document.getElementById('responseArea').innerHTML = `
-                    <div style="color: #ff9800;">
-                        ⏰ Délai dépassé, la commande est toujours en attente
-                    </div>
-                `;
-                return;
-            }
-
-            setTimeout(async () => {
-                try {
-                    const response = await fetch(`${API_BASE}/mik/commands/status/${commandId}`);
-                    const data = await response.json();
-
-                    if (data.success) {
-                        const status = data.command.status;
-                        
-                        if (status === 'completed') {
-                            displayResponse(data);
-                        } else if (status === 'failed') {
-                            document.getElementById('responseArea').innerHTML = `
-                                <div style="color: #f44336;">
-                                    ❌ Commande échouée<br>
-                                    Erreur: ${data.command.error_message || 'Erreur inconnue'}
-                                </div>
-                            `;
-                        } else if (status === 'executing') {
-                            document.getElementById('responseArea').innerHTML = `
-                                <div style="color: #2196f3;">
-                                    🔄 Commande en cours d'exécution...
-                                </div>
-                            `;
-                            waitForResponse(commandId, attempts + 1);
-                        } else {
-                            document.getElementById('responseArea').innerHTML = `
-                                <div style="color: #ff9800;">
-                                    ⏳ Commande en attente (${status})...
-                                </div>
-                            `;
-                            waitForResponse(commandId, attempts + 1);
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error waiting for response:', error);
-                    waitForResponse(commandId, attempts + 1);
-                }
-            }, 1000);
-        }
-
-        // Afficher réponse
-        function displayResponse(data) {
-            const responseData = data.response || {};
-            const command = data.command;
-            
-            let html = `
-                <div style="margin-bottom: 15px;">
-                    <div style="color: #4caf50; font-weight: bold;">✅ Commande exécutée</div>
-                    <div style="color: #888; font-size: 11px;">ID: ${command.id}</div>
-                    <div style="color: #888; font-size: 11px;">Temps: ${responseData.execution_time_ms || 0}ms</div>
-                </div>
-                <div style="border-top: 1px solid #333; margin: 10px 0; padding-top: 10px;">
-                    <div style="color: #aaa; margin-bottom: 5px;">📝 Commande:</div>
-                    <div style="background: #2d2d2d; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px;">
-                        ${escapeHtml(command.text)}
-                    </div>
-                </div>
-                <div style="margin-top: 15px;">
-                    <div style="color: #aaa; margin-bottom: 5px;">📡 Réponse:</div>
-                    <div style="background: #2d2d2d; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; white-space: pre-wrap;">
-                        ${escapeHtml(responseData.response || 'Pas de réponse')}
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('responseArea').innerHTML = html;
-        }
-
-        // Charger historique
-        async function loadHistory() {
-            if (!currentAccountKey || !currentMikId) {
-                document.getElementById('historyList').innerHTML = '<div class="loading">⚠️ Configurez Account Key et MikroTik ID</div>';
-                return;
-            }
-
-            document.getElementById('historyList').innerHTML = '<div class="loading">⏳ Chargement...</div>';
-
-            try {
-                const response = await fetch(`${API_BASE}/mik/commands/history/${currentMikId}?account_key=${currentAccountKey}&limit=20`);
-                const data = await response.json();
-
-                if (data.success && data.commands) {
-                    displayHistory(data.commands);
-                } else {
-                    document.getElementById('historyList').innerHTML = '<div class="loading">📭 Aucune commande trouvée</div>';
-                }
-            } catch (error) {
-                document.getElementById('historyList').innerHTML = `<div class="loading">❌ Erreur: ${error.message}</div>`;
-            }
-        }
-
-        // Afficher historique
-        function displayHistory(commands) {
-            if (!commands || commands.length === 0) {
-                document.getElementById('historyList').innerHTML = '<div class="loading">📭 Aucune commande trouvée</div>';
-                return;
-            }
-
-            let html = '';
-            for (const cmd of commands) {
-                const statusClass = `status-${cmd.status}`;
-                const statusText = {
-                    'pending': '⏳ En attente',
-                    'executing': '🔄 En cours',
-                    'completed': '✅ Complété',
-                    'failed': '❌ Échoué',
-                    'cancelled': '🚫 Annulé'
-                }[cmd.status] || cmd.status;
-
-                html += `
-                    <div class="history-item" onclick="viewCommandDetail('${cmd.command_id}')">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <span class="history-status ${statusClass}">${statusText}</span>
-                                <span style="font-size: 11px; color: #888; margin-left: 10px;">${cmd.created_at || ''}</span>
-                            </div>
-                            <span style="font-size: 11px; color: #888;">Priorité: ${cmd.priority || 0}</span>
-                        </div>
-                        <div class="history-command" style="margin-top: 8px;">
-                            ${escapeHtml(cmd.command_text).substring(0, 100)}${cmd.command_text.length > 100 ? '...' : ''}
-                        </div>
-                    </div>
-                `;
-            }
-
-            document.getElementById('historyList').innerHTML = html;
-        }
-
-        // Voir détail commande
-        async function viewCommandDetail(commandId) {
+        setTimeout(async () => {
             try {
                 const response = await fetch(`${API_BASE}/mik/commands/status/${commandId}`);
                 const data = await response.json();
-                
-                if (data.success) {
-                    displayResponse(data);
-                }
-            } catch (error) {
-                showNotification('Erreur chargement détail', 'error');
-            }
-        }
 
-        // Vérifier commandes en attente
-        async function checkPendingCommands() {
-            if (!currentAccountKey || !currentMikId) return;
-            
-            try {
-                const response = await fetch(`${API_BASE}/mik/commands/pending/${currentMikId}?account_key=${currentAccountKey}`);
-                const data = await response.json();
-                
-                if (data.success && data.pending_commands > 0) {
-                    showNotification(`${data.pending_commands} commande(s) en attente`, 'info');
+                if (!data.success) {
+                    document.getElementById('responseArea').innerHTML = `
+                        <div style="color: #ff9800;">⏳ En attente... (${attempts + 1}/30)</div>`;
+                    waitForResponse(commandId, attempts + 1);
+                    return;
+                }
+
+                const cmd = data.command;
+                const resp = data.response;
+
+                if (cmd.status === 'completed') {
+                    document.getElementById('responseArea').innerHTML = `
+                        <div style="margin-bottom:15px;">
+                            <div style="color:#4caf50;font-weight:bold;">✅ Commande exécutée</div>
+                            <div style="color:#888;font-size:11px;">ID: ${commandId}</div>
+                            <div style="color:#888;font-size:11px;">Temps: ${resp ? resp.execution_time_ms : '0'}ms</div>
+                        </div>
+                        <div style="border-top:1px solid #333;margin:10px 0;padding-top:10px;">
+                            <div style="color:#aaa;margin-bottom:5px;">📝 Commande:</div>
+                            <div style="background:#2d2d2d;padding:10px;border-radius:5px;font-family:monospace;font-size:12px;">
+                                ${escapeHtml(cmd.text || 'N/A')}
+                            </div>
+                        </div>
+                        <div style="margin-top:15px;">
+                            <div style="color:#aaa;margin-bottom:5px;">📡 Réponse:</div>
+                            <div style="background:#2d2d2d;padding:10px;border-radius:5px;font-family:monospace;font-size:12px;white-space:pre-wrap;">
+                                ${escapeHtml(resp ? resp.text : 'Pas de réponse')}
+                            </div>
+                        </div>`;
+                    loadHistory();
+                } else if (cmd.status === 'failed') {
+                    document.getElementById('responseArea').innerHTML = `
+                        <div style="color:#f44336;">
+                            ❌ Échec<br>
+                            ${escapeHtml(resp ? resp.text : 'Erreur inconnue')}
+                        </div>`;
                     loadHistory();
                 } else {
-                    showNotification('Aucune commande en attente', 'info');
+                    document.getElementById('responseArea').innerHTML = `
+                        <div style="color:#2196f3;">🔄 ${cmd.status}... (${attempts + 1}/30)</div>`;
+                    waitForResponse(commandId, attempts + 1);
                 }
             } catch (error) {
-                console.error('Error checking pending:', error);
+                document.getElementById('responseArea').innerHTML = `
+                    <div style="color:#ff9800;">🔄 Nouvelle tentative... (${attempts + 1}/30)</div>`;
+                waitForResponse(commandId, attempts + 1);
             }
-        }
+        }, 1000);
+    }
 
-        // Auto refresh
-        function startAutoRefresh() {
-            if (refreshTimer) clearInterval(refreshTimer);
-            refreshTimer = setInterval(() => {
-                loadHistory();
-                checkMikrotikStatus();
-            }, 10000);
+    async function loadHistory() {
+        if (!currentAccountKey || !currentMikId) {
+            document.getElementById('historyList').innerHTML = '<div class="loading">⚠️ Configurez Account Key et MikroTik ID</div>';
+            return;
         }
+        document.getElementById('historyList').innerHTML = '<div class="loading">⏳ Chargement...</div>';
 
-        // Notification
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 12px 20px;
-                background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'};
-                color: white;
-                border-radius: 8px;
-                z-index: 9999;
-                animation: slideIn 0.3s ease;
-            `;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-
-        // Escape HTML
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Style animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
+        try {
+            const response = await fetch(`${API_BASE}/mik/commands/history/${currentMikId}?account_key=${currentAccountKey}&limit=20`);
+            const data = await response.json();
+            if (data.success && data.commands) {
+                displayHistory(data.commands);
+            } else {
+                document.getElementById('historyList').innerHTML = '<div class="loading">📭 Aucune commande</div>';
             }
+        } catch (error) {
+            document.getElementById('historyList').innerHTML = `<div class="loading">❌ ${error.message}</div>`;
+        }
+    }
+
+    function displayHistory(commands) {
+        if (!commands || commands.length === 0) {
+            document.getElementById('historyList').innerHTML = '<div class="loading">📭 Aucune commande</div>';
+            return;
+        }
+        let html = '';
+        for (const cmd of commands) {
+            const statusClass = `status-${cmd.status}`;
+            const statusText = {
+                'pending': '⏳ En attente',
+                'executing': '🔄 En cours',
+                'completed': '✅ Complété',
+                'failed': '❌ Échoué',
+                'cancelled': '🚫 Annulé'
+            }[cmd.status] || cmd.status;
+
+            html += `
+                <div class="history-item" onclick="viewCommandDetail('${cmd.command_id}')">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <span class="history-status ${statusClass}">${statusText}</span>
+                        <span style="font-size:11px;color:#888;">${cmd.created_at || ''}</span>
+                    </div>
+                    <div class="history-command" style="margin-top:8px;">
+                        ${escapeHtml(cmd.command_text || '').substring(0, 100)}${(cmd.command_text || '').length > 100 ? '...' : ''}
+                    </div>
+                </div>`;
+        }
+        document.getElementById('historyList').innerHTML = html;
+    }
+
+    async function viewCommandDetail(commandId) {
+        try {
+            const response = await fetch(`${API_BASE}/mik/commands/status/${commandId}`);
+            const data = await response.json();
+            if (data.success) {
+                const cmd = data.command;
+                const resp = data.response;
+                document.getElementById('responseArea').innerHTML = `
+                    <div style="margin-bottom:15px;">
+                        <div style="color:#4caf50;font-weight:bold;">📋 Détail commande</div>
+                        <div style="color:#888;font-size:11px;">ID: ${commandId}</div>
+                        <div style="color:#888;font-size:11px;">Statut: ${cmd.status}</div>
+                    </div>
+                    <div style="border-top:1px solid #333;margin:10px 0;padding-top:10px;">
+                        <div style="color:#aaa;">📝 Commande:</div>
+                        <div style="background:#2d2d2d;padding:10px;border-radius:5px;font-family:monospace;font-size:12px;">
+                            ${escapeHtml(cmd.text || 'N/A')}
+                        </div>
+                    </div>
+                    <div style="margin-top:15px;">
+                        <div style="color:#aaa;">📡 Réponse:</div>
+                        <div style="background:#2d2d2d;padding:10px;border-radius:5px;font-family:monospace;font-size:12px;white-space:pre-wrap;">
+                            ${escapeHtml(resp ? resp.text : 'Pas de réponse')}
+                        </div>
+                    </div>`;
+            }
+        } catch (error) {
+            showNotification('Erreur chargement détail', 'error');
+        }
+    }
+
+    async function checkPendingCommands() {
+        if (!currentAccountKey || !currentMikId) return;
+        try {
+            const response = await fetch(`${API_BASE}/mik/commands/pending/${currentMikId}?account_key=${currentAccountKey}`);
+            const data = await response.json();
+            if (data.success && data.pending_commands > 0) {
+                showNotification(`${data.pending_commands} commande(s) en attente`, 'info');
+            } else {
+                showNotification('Aucune commande en attente', 'info');
+            }
+            loadHistory();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    function startAutoRefresh() {
+        if (refreshTimer) clearInterval(refreshTimer);
+        refreshTimer = setInterval(() => {
+            loadHistory();
+            checkMikrotikStatus();
+        }, 10000);
+    }
+
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position:fixed;top:20px;right:20px;padding:12px 20px;z-index:9999;
+            background:${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'};
+            color:white;border-radius:8px;animation:slideIn 0.3s ease;
         `;
-        document.head.appendChild(style);
-    </script>
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
 </body>
 </html>
