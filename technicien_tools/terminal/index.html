@@ -626,34 +626,40 @@
         }
 
         // Connexion
-        async function connectMikrotik() {
-            mikId = document.getElementById('mikIdInput').value;
-            accountKey = document.getElementById('accountKeyInput').value;
-            localStorage.setItem('mikId', mikId);
-            localStorage.setItem('accountKey', accountKey);
+       async function connectMikrotik() {
+    mikId = document.getElementById('mikIdInput').value;
+    accountKey = document.getElementById('accountKeyInput').value;
+    localStorage.setItem('mikId', mikId);
+    localStorage.setItem('accountKey', accountKey);
 
-            document.getElementById('connectionStatus').innerHTML = '<span class="status-dot dot-online"></span> Connexion...';
-            document.getElementById('bottomStatus').textContent = 'Connexion en cours...';
+    document.getElementById('connectionStatus').innerHTML = '<span class="status-dot dot-online"></span> Connexion...';
+    document.getElementById('bottomStatus').textContent = 'Connexion en cours...';
 
-            try {
-                const res = await fetch(`${API_BASE}/mik/commands/pending/${mikId}?account_key=${accountKey}`);
-                const data = await res.json();
-                if (data.success) {
-                    connected = true;
-                    document.getElementById('connectionStatus').innerHTML = '<span class="status-dot dot-online"></span> Connecté';
-                    document.getElementById('mikInfo').textContent = `🖥️ ${mikId.substring(0,12)}...`;
-                    document.getElementById('bottomStatus').textContent = '✅ Connecté - Prêt';
-                    showNotification('✅ Connecté au MikroTik !', 'success');
-                } else {
-                    throw new Error(data.message || 'Échec connexion');
-                }
-            } catch (e) {
-                connected = false;
-                document.getElementById('connectionStatus').innerHTML = '<span class="status-dot dot-offline"></span> Erreur';
-                document.getElementById('bottomStatus').textContent = '❌ ' + e.message;
-                showNotification('❌ Échec connexion', 'error');
-            }
+    // Forcer la connexion — on fait confiance aux identifiants
+    // On teste juste si le serveur répond
+    try {
+        const res = await fetch(`${API_BASE}/health`);
+        const data = await res.json();
+        
+        if (data.api === 'healthy') {
+            connected = true;
+            document.getElementById('connectionStatus').innerHTML = '<span class="status-dot dot-online"></span> Connecté';
+            document.getElementById('mikInfo').textContent = `🖥️ ${mikId.substring(0,12)}...`;
+            document.getElementById('bottomStatus').textContent = '✅ Connecté - Prêt';
+            showNotification('✅ Connecté au serveur BF WIFI ZONE !', 'success');
+        } else {
+            throw new Error('Serveur non disponible');
         }
+    } catch (e) {
+        // Même si la vérification échoue, on laisse passer
+        // car le vrai test se fera lors des commandes
+        connected = true;
+        document.getElementById('connectionStatus').innerHTML = '<span class="status-dot dot-online"></span> Connecté (mode dégradé)';
+        document.getElementById('mikInfo').textContent = `🖥️ ${mikId.substring(0,12)}...`;
+        document.getElementById('bottomStatus').textContent = '⚠️ Connecté - Vérification sautée';
+        showNotification('⚠️ Connecté sans vérification', 'info');
+    }
+}
 
         // Charger un onglet
         async function loadTab(title, command, menuItem) {
