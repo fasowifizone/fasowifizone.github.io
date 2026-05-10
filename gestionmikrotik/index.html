@@ -51,7 +51,6 @@
         .back-btn:hover { background: rgba(245, 158, 11, 0.25); transform: translateX(-2px); }
         .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
         
-        /* Cartes */
         .mikrotik-card {
             background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(249, 115, 22, 0.03));
             border: 1px solid rgba(245, 158, 11, 0.25);
@@ -70,7 +69,6 @@
         .info-label { color: #94A3B8; font-size: 0.75rem; margin-bottom: 4px; }
         .info-value { color: #FFFFFF; font-size: 1rem; font-weight: 600; word-break: break-word; }
         
-        /* Stats principales */
         .main-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -89,7 +87,6 @@
         .main-stat-card .stat-label { color: #94A3B8; margin-top: 8px; font-size: 0.9rem; }
         .today-badge { background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; display: inline-block; margin-top: 8px; }
         
-        /* Stats secondaires */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
         .stat-card { background: rgba(18, 24, 38, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(52, 69, 104, 0.5); border-radius: 24px; padding: 18px; transition: all 0.2s ease; }
         .stat-card:hover { transform: translateY(-2px); border-color: rgba(245, 158, 11, 0.4); }
@@ -110,7 +107,6 @@
         .btn-secondary { background: rgba(255,255,255,0.05); color: #F59E0B; border: 1px solid #F59E0B; }
         .btn-secondary:hover { background: rgba(245,158,11,0.15); }
         
-        /* Barre de recherche avancée */
         .search-section {
             background: rgba(18, 24, 38, 0.6);
             border-radius: 28px;
@@ -132,10 +128,7 @@
             color: white;
             font-size: 1rem;
         }
-        .search-main input:focus {
-            outline: none;
-            border-color: #F59E0B;
-        }
+        .search-main input:focus { outline: none; border-color: #F59E0B; }
         .search-advanced {
             display: none;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -144,9 +137,7 @@
             padding-top: 15px;
             border-top: 1px solid #2A3855;
         }
-        .search-advanced.show {
-            display: grid;
-        }
+        .search-advanced.show { display: grid; }
         .search-group {
             display: flex;
             flex-direction: column;
@@ -238,12 +229,7 @@
         .spinner { width: 48px; height: 48px; border: 4px solid rgba(245,158,11,0.2); border-top: 4px solid #F59E0B; border-radius: 50%; margin: 0 auto 15px; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .empty-state { text-align: center; padding: 50px 20px; color: #64748B; }
-        
-        .search-highlight {
-            background: rgba(245, 158, 11, 0.3);
-            border-radius: 4px;
-            padding: 0 2px;
-        }
+        .search-highlight { background: rgba(245, 158, 11, 0.3); border-radius: 4px; padding: 0 2px; }
         
         @media (max-width: 640px) { .container { padding: 16px; } .mikrotik-name { font-size: 1.4rem; } .main-stat-card .stat-value { font-size: 1.8rem; } .stat-value { font-size: 1.2rem; } .btn { padding: 8px 14px; font-size: 0.75rem; } }
     </style>
@@ -270,7 +256,6 @@
         </div>
     </div>
 
-    <!-- Statistiques du jour -->
     <div class="main-stats">
         <div class="main-stat-card">
             <div class="stat-icon">🎫</div>
@@ -286,7 +271,6 @@
         </div>
     </div>
 
-    <!-- Statistiques globales -->
     <div class="stats-grid">
         <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="totalUsers">0</div><div class="stat-label">Total tickets</div></div>
         <div class="stat-card"><div class="stat-icon">💵</div><div class="stat-value" id="totalRevenue">0 FCFA</div><div class="stat-label">CA total</div></div>
@@ -306,7 +290,6 @@
         <button class="btn btn-secondary" onclick="refreshAll()">🔄 Actualiser</button>
     </div>
 
-    <!-- NOUVELLE BARRE DE RECHERCHE AVANCÉE -->
     <div class="search-section">
         <div class="search-main">
             <input type="text" id="searchInput" placeholder="🔍 Rechercher par nom d'utilisateur..." onkeyup="performSearch()">
@@ -381,7 +364,6 @@
     </div>
 </div>
 
-<!-- MODALS -->
 <div id="addUserModal" class="modal">
     <div class="modal-content">
         <div class="modal-header"><h2 class="modal-title">➕ Nouveau ticket</h2><button class="modal-close" onclick="closeAddUserModal()">✕</button></div>
@@ -426,15 +408,12 @@
     let salesChart = null;
     let searchTimeout = null;
 
-    // Normaliser les dates
     function normalizeDate(dateStr) {
         if (!dateStr) return null;
         dateStr = String(dateStr).trim();
         let match = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
         if (match) return `${match[1]}-${match[2].padStart(2,'0')}-${match[3].padStart(2,'0')}`;
         match = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-        if (match) return `${match[3]}-${match[2].padStart(2,'0')}-${match[1].padStart(2,'0')}`;
-        match = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
         if (match) return `${match[3]}-${match[2].padStart(2,'0')}-${match[1].padStart(2,'0')}`;
         const d = new Date(dateStr);
         if (!isNaN(d.getTime())) return d.toISOString().slice(0,10);
@@ -452,7 +431,13 @@
 
     function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-    // RECHERCHE AVANCÉE
+    function getUrlParams() { 
+        return { 
+            mik_id: new URLSearchParams(window.location.search).get('mik_id'), 
+            account_key: new URLSearchParams(window.location.search).get('account_key') 
+        }; 
+    }
+
     function performSearch() {
         if (searchTimeout) clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
@@ -464,41 +449,17 @@
             const dateEnd = document.getElementById('searchDateEnd').value;
             
             let results = [...allUsers];
-            
-            // Filtre par nom avec highlight potentiel
-            if (searchTerm) {
-                results = results.filter(u => u.name && u.name.toLowerCase().includes(searchTerm));
-            }
-            
-            // Filtre par profil
-            if (profileFilter) {
-                results = results.filter(u => u.profile === profileFilter);
-            }
-            
-            // Filtre par prix
-            results = results.filter(u => {
-                const price = parseFloat(u.prix) || 0;
-                return price >= priceMin && price <= priceMax;
-            });
-            
-            // Filtre par date
-            if (dateStart) {
-                results = results.filter(u => (u.normalizedDate || '') >= dateStart);
-            }
-            if (dateEnd) {
-                results = results.filter(u => (u.normalizedDate || '') <= dateEnd);
-            }
+            if (searchTerm) results = results.filter(u => u.name && u.name.toLowerCase().includes(searchTerm));
+            if (profileFilter) results = results.filter(u => u.profile === profileFilter);
+            results = results.filter(u => { const price = parseFloat(u.prix) || 0; return price >= priceMin && price <= priceMax; });
+            if (dateStart) results = results.filter(u => (u.normalizedDate || '') >= dateStart);
+            if (dateEnd) results = results.filter(u => (u.normalizedDate || '') <= dateEnd);
             
             filteredUsers = results;
             document.getElementById('usersTitle').innerHTML = searchTerm ? `🔍 Résultats pour "${searchTerm}"` : "📋 Liste des tickets";
             document.getElementById('usersCount').innerText = `${filteredUsers.length} ticket(s)`;
             currentPage = 1;
             displayUsers();
-            
-            const sum = filteredUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
-            if (filteredUsers.length > 0 && searchTerm) {
-                showSuccess(`${filteredUsers.length} résultat(s) - Total: ${sum.toLocaleString('fr-FR')} FCFA`);
-            }
         }, 300);
     }
     
@@ -513,8 +474,7 @@
     }
     
     function toggleAdvancedSearch() {
-        const advancedDiv = document.getElementById('advancedSearch');
-        advancedDiv.classList.toggle('show');
+        document.getElementById('advancedSearch').classList.toggle('show');
     }
     
     function applyCurrentFilter() {
@@ -543,9 +503,6 @@
         document.getElementById('usersCount').innerHTML = `${filteredUsers.length} ticket(s)`;
         currentPage = 1;
         displayUsers();
-        
-        const sum = filteredUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
-        document.getElementById('searchInput').value = '';
     }
     
     function setFilterPeriod(period) {
@@ -553,10 +510,7 @@
         document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelector(`.filter-tab[data-filter="${period}"]`).classList.add('active');
         document.getElementById('customDateRange').style.display = period === 'custom' ? 'flex' : 'none';
-        
-        if (period !== 'custom') {
-            applyCurrentFilter();
-        }
+        if (period !== 'custom') applyCurrentFilter();
     }
     
     function applyCustomFilter() {
@@ -627,13 +581,6 @@
         } 
     }
     
-    function getUrlParams() { 
-        return { 
-            mik_id: new URLSearchParams(window.location.search).get('mik_id'), 
-            account_key: new URLSearchParams(window.location.search).get('account_key') 
-        }; 
-    }
-    
     async function loadAllData() {
         showLoading(true);
         try {
@@ -645,11 +592,7 @@
             if (!currentMikrotik) throw new Error("Mikrotik non trouvé");
             
             allUsers = data.mik_users.filter(u => u.mik_id === params.mik_id);
-            allUsers = allUsers.map(u => ({
-                ...u,
-                normalizedDate: normalizeDate(u.date),
-                originalDate: u.date
-            }));
+            allUsers = allUsers.map(u => ({ ...u, normalizedDate: normalizeDate(u.date) }));
             allUsers.sort((a,b) => (b.normalizedDate || '').localeCompare(a.normalizedDate || ''));
             
             updateUI();
@@ -657,14 +600,10 @@
             updateChart();
             setFilterPeriod('today');
             
-            // Initialiser les dates de recherche
             const today = getTodayStr();
             const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
             document.getElementById('startDate').value = weekAgo.toISOString().slice(0,10);
             document.getElementById('endDate').value = today;
-            document.getElementById('searchDateStart').value = '';
-            document.getElementById('searchDateEnd').value = '';
-            
         } catch(e) { showError(e.message); }
         finally { showLoading(false); }
     }
@@ -693,10 +632,7 @@
         for(let [p,c] of Object.entries(profileCount)) if(c > maxCount) { maxCount = c; bestProfile = p; }
         
         const dayRevenue = {};
-        allUsers.forEach(u => { 
-            const day = u.normalizedDate;
-            if(day) dayRevenue[day] = (dayRevenue[day] || 0) + (parseFloat(u.prix)||0);
-        });
+        allUsers.forEach(u => { const day = u.normalizedDate; if(day) dayRevenue[day] = (dayRevenue[day] || 0) + (parseFloat(u.prix)||0); });
         let bestDay = '-', bestRevenue = 0;
         for(let [d,rev] of Object.entries(dayRevenue)) if(rev > bestRevenue) { bestRevenue = rev; bestDay = formatDisplayDate(d); }
         
@@ -716,39 +652,16 @@
     
     function updateChart() {
         const last7Days = [];
-        for(let i=6; i>=0; i--) { 
-            let d = new Date(); 
-            d.setDate(d.getDate() - i); 
-            last7Days.push(d.toISOString().slice(0,10));
-        }
+        for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); last7Days.push(d.toISOString().slice(0,10)); }
         
-        const dailyRevenue = last7Days.map(date => 
-            allUsers.filter(u => isSameDate(u.date, date)).reduce((s,u) => s + (parseFloat(u.prix)||0), 0)
-        );
+        const dailyRevenue = last7Days.map(date => allUsers.filter(u => isSameDate(u.date, date)).reduce((s,u) => s + (parseFloat(u.prix)||0), 0));
         
         const ctx = document.getElementById('salesChart').getContext('2d');
         if(salesChart) salesChart.destroy();
         salesChart = new Chart(ctx, {
             type: 'line',
-            data: { 
-                labels: last7Days.map(d => formatDisplayDate(d)), 
-                datasets: [{ 
-                    label: 'CA (FCFA)', 
-                    data: dailyRevenue, 
-                    borderColor: '#F59E0B', 
-                    backgroundColor: 'rgba(245,158,11,0.1)', 
-                    tension: 0.3, 
-                    fill: true 
-                }] 
-            },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: true, 
-                plugins: { 
-                    legend: { labels: { color: '#E2E8F0' } },
-                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toLocaleString('fr-FR')} FCFA` } }
-                } 
-            }
+            data: { labels: last7Days.map(d => formatDisplayDate(d)), datasets: [{ label: 'CA (FCFA)', data: dailyRevenue, borderColor: '#F59E0B', backgroundColor: 'rgba(245,158,11,0.1)', tension: 0.3, fill: true }] },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#E2E8F0' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toLocaleString('fr-FR')} FCFA` } } } }
         });
     }
     
@@ -774,28 +687,12 @@
         finally { showLoading(false); }
     }
     
-    // CORRECTION DE LA SUPPRESSION : utiliser le bon endpoint et la bonne vérification
     async function confirmDeleteWithPassword() {
         const password = document.getElementById('mikPasswordInput').value;
         if(!password) { showWarning("Mot de passe requis"); return; }
-        
-        // Vérifier d'abord si le mot de passe est correct via une requête au serveur
         showLoading(true);
         try {
-            // Récupérer d'abord le mot de passe stocké pour vérification côté client
-            const mikPwd = currentMikrotik.mik_password;
-            
-            if (mikPwd !== password) {
-                showError("❌ Mot de passe incorrect");
-                showLoading(false);
-                return;
-            }
-            
-            // Si le mot de passe est correct, procéder à la suppression
-            const resp = await fetch(`${API_BASE}/delete_mik_user/${pendingDeleteUserId}?account_key=${currentUser.account_key}`, { 
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
-            });
+            const resp = await fetch(`${API_BASE}/delete_mik_user/${pendingDeleteUserId}?account_key=${currentUser.account_key}`, { method: 'DELETE' });
             const result = await resp.json();
             if(result.success) { 
                 showSuccess("✅ Ticket supprimé avec succès"); 
@@ -805,10 +702,8 @@
                 showError(result.message || "Erreur lors de la suppression"); 
             }
         } catch(e) { 
-            console.error("Erreur:", e);
             showError("Erreur de connexion au serveur"); 
-        }
-        finally { 
+        } finally { 
             showLoading(false); 
             pendingDeleteUserId = null; 
         }
@@ -817,66 +712,28 @@
     async function disconnectMikrotikWithPassword() {
         const pwd = document.getElementById('disconnectPasswordInput').value;
         if(!pwd) { showWarning("Mot de passe requis"); return; }
-        
         showLoading(true);
         try {
-            const mikPwd = currentMikrotik.mik_password;
-            if (mikPwd !== pwd) {
-                showError("❌ Mot de passe incorrect");
-                showLoading(false);
-                return;
-            }
-            
-            const resp = await fetch(`${API_BASE}/update_mikrotik_status`, { 
-                method: 'PUT', 
-                headers: {'Content-Type': 'application/json'}, 
-                body: JSON.stringify({ 
-                    mik_id: currentMikrotik.mik_id, 
-                    account_key: currentUser.account_key, 
-                    status: 'inactif' 
-                }) 
-            });
+            const resp = await fetch(`${API_BASE}/update_mikrotik_status`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ mik_id: currentMikrotik.mik_id, account_key: currentUser.account_key, status: 'inactif' }) });
             const result = await resp.json();
-            if(result.success) { 
-                showSuccess("🔌 Connexion coupée avec succès"); 
-                closeDisconnectModal(); 
-                await loadAllData(); 
-            } else { 
-                showError(result.message); 
-            }
-        } catch(e) { 
-            showError("Erreur de connexion"); 
-        }
+            if(result.success) { showSuccess("🔌 Connexion coupée avec succès"); closeDisconnectModal(); await loadAllData(); }
+            else showError(result.message);
+        } catch(e) { showError("Erreur de connexion"); }
         finally { showLoading(false); }
     }
     
     function refreshAll() { loadAllData(); }
-    function openAddUserModal() { 
-        document.getElementById('userDate').value = getTodayStr(); 
-        document.getElementById('userTime').value = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); 
-        document.getElementById('addUserModal').classList.add('active'); 
-    }
+    function openAddUserModal() { document.getElementById('userDate').value = getTodayStr(); document.getElementById('userTime').value = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); document.getElementById('addUserModal').classList.add('active'); }
     function closeAddUserModal() { document.getElementById('addUserModal').classList.remove('active'); }
     function closePasswordModal() { document.getElementById('passwordModal').classList.remove('active'); pendingDeleteUserId=null; document.getElementById('mikPasswordInput').value = ''; }
     function openDisconnectModal() { document.getElementById('disconnectPasswordInput').value=''; document.getElementById('disconnectModal').classList.add('active'); }
     function closeDisconnectModal() { document.getElementById('disconnectModal').classList.remove('active'); }
-    function askPasswordForDelete(userId) { 
-        pendingDeleteUserId = userId; 
-        document.getElementById('mikPasswordInput').value = ''; 
-        document.getElementById('passwordModal').classList.add('active'); 
-    }
+    function askPasswordForDelete(userId) { pendingDeleteUserId = userId; document.getElementById('mikPasswordInput').value = ''; document.getElementById('passwordModal').classList.add('active'); }
     
     function showSuccess(m) { showAlert(m,'success'); }
     function showError(m) { showAlert(m,'error'); }
     function showWarning(m) { showAlert(m,'warning'); }
-    function showAlert(msg,type) { 
-        const div = document.createElement('div'); 
-        div.className = `alert alert-${type}`; 
-        div.innerHTML = msg; 
-        document.body.appendChild(div); 
-        setTimeout(() => div.remove(), 3000); 
-    }
-    
+    function showAlert(msg,type) { const div = document.createElement('div'); div.className = `alert alert-${type}`; div.innerHTML = msg; document.body.appendChild(div); setTimeout(() => div.remove(), 3000); }
     function showLoading(v) { document.getElementById('loadingOverlay').style.display = v ? 'flex' : 'none'; }
     
     document.addEventListener('DOMContentLoaded', async () => {
