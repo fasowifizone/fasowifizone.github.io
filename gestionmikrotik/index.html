@@ -110,7 +110,87 @@
         .btn-secondary { background: rgba(255,255,255,0.05); color: #F59E0B; border: 1px solid #F59E0B; }
         .btn-secondary:hover { background: rgba(245,158,11,0.15); }
         
-        .filter-section { background: rgba(18, 24, 38, 0.6); border-radius: 28px; padding: 20px; margin-bottom: 28px; }
+        /* Barre de recherche avancée */
+        .search-section {
+            background: rgba(18, 24, 38, 0.6);
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+        .search-main {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .search-main input {
+            flex: 1;
+            padding: 14px 18px;
+            background: #1E293B;
+            border: 1px solid #334155;
+            border-radius: 40px;
+            color: white;
+            font-size: 1rem;
+        }
+        .search-main input:focus {
+            outline: none;
+            border-color: #F59E0B;
+        }
+        .search-advanced {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #2A3855;
+        }
+        .search-advanced.show {
+            display: grid;
+        }
+        .search-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .search-group label {
+            font-size: 0.75rem;
+            color: #94A3B8;
+        }
+        .search-group input, .search-group select {
+            padding: 10px 14px;
+            background: #1E293B;
+            border: 1px solid #334155;
+            border-radius: 24px;
+            color: white;
+            font-size: 0.85rem;
+        }
+        .search-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+        .toggle-advanced {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid #F59E0B;
+            color: #F59E0B;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .search-clear {
+            background: rgba(100, 116, 139, 0.2);
+            border: 1px solid #64748B;
+            color: #94A3B8;
+        }
+        
+        .filter-section {
+            background: rgba(18, 24, 38, 0.6);
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
         .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid #2A3855; padding-bottom: 15px; }
         .filter-tab { background: transparent; border: none; color: #94A3B8; padding: 8px 18px; border-radius: 30px; cursor: pointer; transition: 0.2s; font-weight: 500; }
         .filter-tab.active { background: rgba(245, 158, 11, 0.2); color: #F59E0B; }
@@ -159,6 +239,12 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .empty-state { text-align: center; padding: 50px 20px; color: #64748B; }
         
+        .search-highlight {
+            background: rgba(245, 158, 11, 0.3);
+            border-radius: 4px;
+            padding: 0 2px;
+        }
+        
         @media (max-width: 640px) { .container { padding: 16px; } .mikrotik-name { font-size: 1.4rem; } .main-stat-card .stat-value { font-size: 1.8rem; } .stat-value { font-size: 1.2rem; } .btn { padding: 8px 14px; font-size: 0.75rem; } }
     </style>
 </head>
@@ -184,7 +270,7 @@
         </div>
     </div>
 
-    <!-- Statistiques du jour - Mise en avant -->
+    <!-- Statistiques du jour -->
     <div class="main-stats">
         <div class="main-stat-card">
             <div class="stat-icon">🎫</div>
@@ -220,6 +306,47 @@
         <button class="btn btn-secondary" onclick="refreshAll()">🔄 Actualiser</button>
     </div>
 
+    <!-- NOUVELLE BARRE DE RECHERCHE AVANCÉE -->
+    <div class="search-section">
+        <div class="search-main">
+            <input type="text" id="searchInput" placeholder="🔍 Rechercher par nom d'utilisateur..." onkeyup="performSearch()">
+            <button class="toggle-advanced" onclick="toggleAdvancedSearch()">⚙️ Filtres avancés</button>
+        </div>
+        <div id="advancedSearch" class="search-advanced">
+            <div class="search-group">
+                <label>📋 Profil</label>
+                <select id="searchProfile" onchange="performSearch()">
+                    <option value="">Tous les profils</option>
+                    <option value="1Mbps">1 Mbps</option>
+                    <option value="2Mbps">2 Mbps</option>
+                    <option value="5Mbps">5 Mbps</option>
+                    <option value="10Mbps">10 Mbps</option>
+                    <option value="20Mbps">20 Mbps</option>
+                    <option value="50Mbps">50 Mbps</option>
+                </select>
+            </div>
+            <div class="search-group">
+                <label>💰 Prix min (FCFA)</label>
+                <input type="number" id="searchPriceMin" placeholder="0" onkeyup="performSearch()">
+            </div>
+            <div class="search-group">
+                <label>💰 Prix max (FCFA)</label>
+                <input type="number" id="searchPriceMax" placeholder="Illimité" onkeyup="performSearch()">
+            </div>
+            <div class="search-group">
+                <label>📅 Date début</label>
+                <input type="date" id="searchDateStart" onchange="performSearch()">
+            </div>
+            <div class="search-group">
+                <label>📅 Date fin</label>
+                <input type="date" id="searchDateEnd" onchange="performSearch()">
+            </div>
+            <div class="search-actions">
+                <button class="btn btn-secondary search-clear" onclick="clearSearch()">🗑️ Effacer tous les filtres</button>
+            </div>
+        </div>
+    </div>
+
     <div class="filter-section">
         <div class="filter-tabs">
             <button class="filter-tab active" data-filter="today" onclick="setFilterPeriod('today')">📅 Aujourd'hui</button>
@@ -242,8 +369,12 @@
         </div>
         <div class="table-responsive">
             <table class="users-table">
-                <thead><tr><th>Nom</th><th>Profil</th><th>Prix (FCFA)</th><th>Date</th><th>Heure</th><th>Action</th></tr></thead>
-                <tbody id="usersTableBody"><tr><td colspan="6" style="text-align:center;">Chargement...</td></tr></tbody>
+                <thead>
+                    <tr><th>Nom</th><th>Profil</th><th>Prix (FCFA)</th><th>Date</th><th>Heure</th><th>Action</th></tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr><td colspan="6" style="text-align:center;">Chargement...</td></tr>
+                </tbody>
             </table>
         </div>
         <div id="pagination" class="pagination"></div>
@@ -293,52 +424,25 @@
     let pendingDeleteUserId = null;
     let currentFilterPeriod = 'today';
     let salesChart = null;
+    let searchTimeout = null;
 
-    // Fonction normalisée de comparaison de dates - Résout tous les problèmes de format
+    // Normaliser les dates
     function normalizeDate(dateStr) {
         if (!dateStr) return null;
-        // Supprimer les espaces
         dateStr = String(dateStr).trim();
-        
-        // Essayer différents formats
-        // Format YYYY-MM-DD
         let match = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
         if (match) return `${match[1]}-${match[2].padStart(2,'0')}-${match[3].padStart(2,'0')}`;
-        
-        // Format DD/MM/YYYY
         match = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
         if (match) return `${match[3]}-${match[2].padStart(2,'0')}-${match[1].padStart(2,'0')}`;
-        
-        // Format DD-MM-YYYY
         match = dateStr.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
         if (match) return `${match[3]}-${match[2].padStart(2,'0')}-${match[1].padStart(2,'0')}`;
-        
-        // Format MM/DD/YYYY
-        match = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-        if (match) return `${match[3]}-${match[1].padStart(2,'0')}-${match[2].padStart(2,'0')}`;
-        
-        // Si c'est déjà un objet Date valide
         const d = new Date(dateStr);
-        if (!isNaN(d.getTime())) {
-            return d.toISOString().slice(0,10);
-        }
-        
+        if (!isNaN(d.getTime())) return d.toISOString().slice(0,10);
         return dateStr;
     }
 
-    // Comparer deux dates (YYYY-MM-DD)
-    function isSameDate(date1, date2) {
-        const d1 = normalizeDate(date1);
-        const d2 = normalizeDate(date2);
-        return d1 === d2;
-    }
-
-    // Obtenir la date d'aujourd'hui au format YYYY-MM-DD
-    function getTodayStr() {
-        return new Date().toISOString().slice(0,10);
-    }
-
-    // Formater une date pour affichage
+    function isSameDate(date1, date2) { return normalizeDate(date1) === normalizeDate(date2); }
+    function getTodayStr() { return new Date().toISOString().slice(0,10); }
     function formatDisplayDate(dateStr) {
         const normalized = normalizeDate(dateStr);
         if (!normalized) return dateStr;
@@ -346,13 +450,190 @@
         return `${day}/${month}/${year}`;
     }
 
+    function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    // RECHERCHE AVANCÉE
+    function performSearch() {
+        if (searchTimeout) clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            const profileFilter = document.getElementById('searchProfile').value;
+            const priceMin = parseFloat(document.getElementById('searchPriceMin').value) || 0;
+            const priceMax = parseFloat(document.getElementById('searchPriceMax').value) || Infinity;
+            const dateStart = document.getElementById('searchDateStart').value;
+            const dateEnd = document.getElementById('searchDateEnd').value;
+            
+            let results = [...allUsers];
+            
+            // Filtre par nom avec highlight potentiel
+            if (searchTerm) {
+                results = results.filter(u => u.name && u.name.toLowerCase().includes(searchTerm));
+            }
+            
+            // Filtre par profil
+            if (profileFilter) {
+                results = results.filter(u => u.profile === profileFilter);
+            }
+            
+            // Filtre par prix
+            results = results.filter(u => {
+                const price = parseFloat(u.prix) || 0;
+                return price >= priceMin && price <= priceMax;
+            });
+            
+            // Filtre par date
+            if (dateStart) {
+                results = results.filter(u => (u.normalizedDate || '') >= dateStart);
+            }
+            if (dateEnd) {
+                results = results.filter(u => (u.normalizedDate || '') <= dateEnd);
+            }
+            
+            filteredUsers = results;
+            document.getElementById('usersTitle').innerHTML = searchTerm ? `🔍 Résultats pour "${searchTerm}"` : "📋 Liste des tickets";
+            document.getElementById('usersCount').innerText = `${filteredUsers.length} ticket(s)`;
+            currentPage = 1;
+            displayUsers();
+            
+            const sum = filteredUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
+            if (filteredUsers.length > 0 && searchTerm) {
+                showSuccess(`${filteredUsers.length} résultat(s) - Total: ${sum.toLocaleString('fr-FR')} FCFA`);
+            }
+        }, 300);
+    }
+    
+    function clearSearch() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('searchProfile').value = '';
+        document.getElementById('searchPriceMin').value = '';
+        document.getElementById('searchPriceMax').value = '';
+        document.getElementById('searchDateStart').value = '';
+        document.getElementById('searchDateEnd').value = '';
+        applyCurrentFilter();
+    }
+    
+    function toggleAdvancedSearch() {
+        const advancedDiv = document.getElementById('advancedSearch');
+        advancedDiv.classList.toggle('show');
+    }
+    
+    function applyCurrentFilter() {
+        const todayStr = getTodayStr();
+        let filtered = [...allUsers];
+        
+        if (currentFilterPeriod === 'today') {
+            filtered = allUsers.filter(u => isSameDate(u.date, todayStr));
+            document.getElementById('usersTitle').innerHTML = "📅 Tickets d'aujourd'hui";
+        } else if (currentFilterPeriod === 'week') {
+            const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+            const weekAgoStr = weekAgo.toISOString().slice(0,10);
+            filtered = allUsers.filter(u => (u.normalizedDate || '') >= weekAgoStr);
+            document.getElementById('usersTitle').innerHTML = "📆 Tickets de cette semaine";
+        } else if (currentFilterPeriod === 'month') {
+            const monthAgo = new Date(); monthAgo.setMonth(monthAgo.getMonth() - 1);
+            const monthAgoStr = monthAgo.toISOString().slice(0,10);
+            filtered = allUsers.filter(u => (u.normalizedDate || '') >= monthAgoStr);
+            document.getElementById('usersTitle').innerHTML = "🗓️ Tickets de ce mois";
+        } else if (currentFilterPeriod === 'all') {
+            filtered = [...allUsers];
+            document.getElementById('usersTitle').innerHTML = "📋 Tous les tickets";
+        }
+        
+        filteredUsers = filtered;
+        document.getElementById('usersCount').innerHTML = `${filteredUsers.length} ticket(s)`;
+        currentPage = 1;
+        displayUsers();
+        
+        const sum = filteredUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
+        document.getElementById('searchInput').value = '';
+    }
+    
+    function setFilterPeriod(period) {
+        currentFilterPeriod = period;
+        document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelector(`.filter-tab[data-filter="${period}"]`).classList.add('active');
+        document.getElementById('customDateRange').style.display = period === 'custom' ? 'flex' : 'none';
+        
+        if (period !== 'custom') {
+            applyCurrentFilter();
+        }
+    }
+    
+    function applyCustomFilter() {
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        if(!start || !end) { showWarning("Sélectionnez les dates"); return; }
+        
+        filteredUsers = allUsers.filter(u => (u.normalizedDate || '') >= start && (u.normalizedDate || '') <= end);
+        document.getElementById('usersTitle').innerHTML = `📅 Ventes du ${formatDisplayDate(start)} au ${formatDisplayDate(end)}`;
+        document.getElementById('usersCount').innerText = `${filteredUsers.length} ticket(s)`;
+        currentPage = 1;
+        displayUsers();
+        const sum = filteredUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
+        showSuccess(`Total période: ${sum.toLocaleString('fr-FR')} FCFA`);
+    }
+    
+    function displayUsers() {
+        const tbody = document.getElementById('usersTableBody');
+        const start = (currentPage-1)*itemsPerPage;
+        const pageUsers = filteredUsers.slice(start, start+itemsPerPage);
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+        
+        if(pageUsers.length === 0) { 
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">📭 Aucun ticket trouvé</td></tr>'; 
+            document.getElementById('pagination').innerHTML = ''; 
+            return; 
+        }
+        
+        tbody.innerHTML = pageUsers.map(u => {
+            let displayName = u.name;
+            if (searchTerm && u.name) {
+                const regex = new RegExp(`(${searchTerm})`, 'gi');
+                displayName = u.name.replace(regex, '<span class="search-highlight">$1</span>');
+            }
+            return `
+                <tr>
+                    <td><strong>${displayName}</strong></td>
+                    <td><span style="background:#F59E0B20; padding:4px 12px; border-radius:20px;">${u.profile}</span></td>
+                    <td style="color:#F59E0B; font-weight:700;">${parseFloat(u.prix).toLocaleString('fr-FR')} FCFA</td>
+                    <td>${formatDisplayDate(u.date)}</td>
+                    <td>${u.heure || '--:--'}</td>
+                    <td><button class="delete-user-btn" onclick="askPasswordForDelete(${u.id})">🗑️ Supprimer</button></td>
+                </tr>
+            `;
+        }).join('');
+        updatePagination();
+    }
+    
+    function updatePagination() {
+        const totalPages = Math.ceil(filteredUsers.length/itemsPerPage);
+        const div = document.getElementById('pagination');
+        if(totalPages<=1) { div.innerHTML=''; return; }
+        let html = `<button onclick="changePage(${currentPage-1})" ${currentPage===1 ? 'disabled':''}>◀ Précédent</button>`;
+        for(let i=1;i<=totalPages;i++) {
+            if(i===1 || i===totalPages || (i>=currentPage-2 && i<=currentPage+2))
+                html += `<button onclick="changePage(${i})" class="${i===currentPage?'active-page':''}">${i}</button>`;
+            else if(i===currentPage-3 || i===currentPage+3) html += `<span style="padding:0 6px;">…</span>`;
+        }
+        html += `<button onclick="changePage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>Suivant ▶</button>`;
+        div.innerHTML = html;
+    }
+    
+    function changePage(p) { 
+        if(p>=1 && p<=Math.ceil(filteredUsers.length/itemsPerPage)) { 
+            currentPage=p; 
+            displayUsers(); 
+            window.scrollTo({top:0,behavior:'smooth'}); 
+        } 
+    }
+    
     function getUrlParams() { 
         return { 
             mik_id: new URLSearchParams(window.location.search).get('mik_id'), 
             account_key: new URLSearchParams(window.location.search).get('account_key') 
         }; 
     }
-
+    
     async function loadAllData() {
         showLoading(true);
         try {
@@ -363,7 +644,6 @@
             currentMikrotik = data.mikrotiks.find(m => m.mik_id === params.mik_id);
             if (!currentMikrotik) throw new Error("Mikrotik non trouvé");
             
-            // Récupérer tous les utilisateurs et normaliser leurs dates
             allUsers = data.mik_users.filter(u => u.mik_id === params.mik_id);
             allUsers = allUsers.map(u => ({
                 ...u,
@@ -375,13 +655,20 @@
             updateUI();
             updateAllStats();
             updateChart();
-            
-            // Appliquer le filtre par défaut (aujourd'hui)
             setFilterPeriod('today');
+            
+            // Initialiser les dates de recherche
+            const today = getTodayStr();
+            const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+            document.getElementById('startDate').value = weekAgo.toISOString().slice(0,10);
+            document.getElementById('endDate').value = today;
+            document.getElementById('searchDateStart').value = '';
+            document.getElementById('searchDateEnd').value = '';
+            
         } catch(e) { showError(e.message); }
         finally { showLoading(false); }
     }
-
+    
     function updateUI() {
         document.getElementById('mikName').innerText = currentMikrotik.hostname || 'Sans nom';
         document.getElementById('mikIp').innerText = currentMikrotik.ip_address || '-';
@@ -394,20 +681,17 @@
         statusEl.className = `status-badge status-${status}`;
         document.getElementById('todayDate').innerText = formatDisplayDate(getTodayStr());
     }
-
+    
     function updateAllStats() {
-        // Statistiques globales
         const total = allUsers.length;
         const totalRevenue = allUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
         const avgTicket = total > 0 ? totalRevenue / total : 0;
         
-        // Profil le plus vendu
         const profileCount = {};
         allUsers.forEach(u => { profileCount[u.profile] = (profileCount[u.profile] || 0) + 1; });
         let bestProfile = '-', maxCount = 0;
         for(let [p,c] of Object.entries(profileCount)) if(c > maxCount) { maxCount = c; bestProfile = p; }
         
-        // Meilleur jour
         const dayRevenue = {};
         allUsers.forEach(u => { 
             const day = u.normalizedDate;
@@ -416,7 +700,6 @@
         let bestDay = '-', bestRevenue = 0;
         for(let [d,rev] of Object.entries(dayRevenue)) if(rev > bestRevenue) { bestRevenue = rev; bestDay = formatDisplayDate(d); }
         
-        // Statistiques du jour (avec normalisation)
         const todayStr = getTodayStr();
         const todayUsers = allUsers.filter(u => isSameDate(u.date, todayStr));
         const todayTickets = todayUsers.length;
@@ -430,7 +713,7 @@
         document.getElementById('bestProfile').innerText = bestProfile;
         document.getElementById('bestDay').innerText = bestDay !== '-' ? `${bestDay} (${bestRevenue.toLocaleString('fr-FR')} FCFA)` : '-';
     }
-
+    
     function updateChart() {
         const last7Days = [];
         for(let i=6; i>=0; i--) { 
@@ -468,105 +751,7 @@
             }
         });
     }
-
-    function setFilterPeriod(period) {
-        currentFilterPeriod = period;
-        document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-        document.querySelector(`.filter-tab[data-filter="${period}"]`).classList.add('active');
-        document.getElementById('customDateRange').style.display = period === 'custom' ? 'flex' : 'none';
-        
-        if(period !== 'custom') {
-            const todayStr = getTodayStr();
-            let filtered = [...allUsers];
-            
-            if(period === 'today') {
-                filtered = allUsers.filter(u => isSameDate(u.date, todayStr));
-                document.getElementById('usersTitle').innerHTML = "📅 Tickets d'aujourd'hui";
-            } else if(period === 'week') {
-                const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
-                const weekAgoStr = weekAgo.toISOString().slice(0,10);
-                filtered = allUsers.filter(u => (u.normalizedDate || '') >= weekAgoStr);
-                document.getElementById('usersTitle').innerHTML = "📆 Tickets de cette semaine";
-            } else if(period === 'month') {
-                const monthAgo = new Date(); monthAgo.setMonth(monthAgo.getMonth() - 1);
-                const monthAgoStr = monthAgo.toISOString().slice(0,10);
-                filtered = allUsers.filter(u => (u.normalizedDate || '') >= monthAgoStr);
-                document.getElementById('usersTitle').innerHTML = "🗓️ Tickets de ce mois";
-            } else if(period === 'all') {
-                filtered = [...allUsers];
-                document.getElementById('usersTitle').innerHTML = "📋 Tous les tickets";
-            }
-            
-            filteredUsers = filtered;
-            document.getElementById('usersCount').innerText = `${filteredUsers.length} ticket(s)`;
-            currentPage = 1;
-            displayUsers();
-            
-            const sum = filteredUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
-            if(filteredUsers.length > 0) showSuccess(`Période: ${sum.toLocaleString('fr-FR')} FCFA`);
-        }
-    }
-
-    function applyCustomFilter() {
-        const start = document.getElementById('startDate').value;
-        const end = document.getElementById('endDate').value;
-        if(!start || !end) { showWarning("Sélectionnez les dates"); return; }
-        
-        filteredUsers = allUsers.filter(u => (u.normalizedDate || '') >= start && (u.normalizedDate || '') <= end);
-        document.getElementById('usersTitle').innerHTML = `📅 Ventes du ${formatDisplayDate(start)} au ${formatDisplayDate(end)}`;
-        document.getElementById('usersCount').innerText = `${filteredUsers.length} ticket(s)`;
-        currentPage = 1;
-        displayUsers();
-        const sum = filteredUsers.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
-        showSuccess(`Total période: ${sum.toLocaleString('fr-FR')} FCFA`);
-    }
-
-    function displayUsers() {
-        const tbody = document.getElementById('usersTableBody');
-        const start = (currentPage-1)*itemsPerPage;
-        const pageUsers = filteredUsers.slice(start, start+itemsPerPage);
-        
-        if(pageUsers.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">📭 Aucun ticket trouvé</td></tr>'; 
-            document.getElementById('pagination').innerHTML = ''; 
-            return; 
-        }
-        
-        tbody.innerHTML = pageUsers.map(u => `
-            <tr>
-                <td><strong>${escapeHtml(u.name)}</strong></td>
-                <td><span style="background:#F59E0B20; padding:4px 12px; border-radius:20px;">${u.profile}</span></td>
-                <td style="color:#F59E0B; font-weight:700;">${parseFloat(u.prix).toLocaleString('fr-FR')} FCFA</td>
-                <td>${formatDisplayDate(u.date)}</td>
-                <td>${u.heure || '--:--'}</td>
-                <td><button class="delete-user-btn" onclick="askPasswordForDelete(${u.id})">🗑️ Supprimer</button></td>
-            </tr>
-        `).join('');
-        updatePagination();
-    }
-
-    function updatePagination() {
-        const totalPages = Math.ceil(filteredUsers.length/itemsPerPage);
-        const div = document.getElementById('pagination');
-        if(totalPages<=1) { div.innerHTML=''; return; }
-        let html = `<button onclick="changePage(${currentPage-1})" ${currentPage===1 ? 'disabled':''}>◀ Précédent</button>`;
-        for(let i=1;i<=totalPages;i++) {
-            if(i===1 || i===totalPages || (i>=currentPage-2 && i<=currentPage+2))
-                html += `<button onclick="changePage(${i})" class="${i===currentPage?'active-page':''}">${i}</button>`;
-            else if(i===currentPage-3 || i===currentPage+3) html += `<span style="padding:0 6px;">…</span>`;
-        }
-        html += `<button onclick="changePage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>Suivant ▶</button>`;
-        div.innerHTML = html;
-    }
-
-    function changePage(p) { 
-        if(p>=1 && p<=Math.ceil(filteredUsers.length/itemsPerPage)) { 
-            currentPage=p; 
-            displayUsers(); 
-            window.scrollTo({top:0,behavior:'smooth'}); 
-        } 
-    }
-
+    
     async function addUser(event) {
         event.preventDefault();
         const data = { 
@@ -588,41 +773,83 @@
         } catch(e) { showError("Erreur de connexion"); }
         finally { showLoading(false); }
     }
-
-    function askPasswordForDelete(userId) { 
-        pendingDeleteUserId = userId; 
-        document.getElementById('mikPasswordInput').value = ''; 
-        document.getElementById('passwordModal').classList.add('active'); 
-    }
     
+    // CORRECTION DE LA SUPPRESSION : utiliser le bon endpoint et la bonne vérification
     async function confirmDeleteWithPassword() {
         const password = document.getElementById('mikPasswordInput').value;
         if(!password) { showWarning("Mot de passe requis"); return; }
-        if(currentMikrotik.mik_password !== password) { showError("Mot de passe incorrect"); return; }
+        
+        // Vérifier d'abord si le mot de passe est correct via une requête au serveur
         showLoading(true);
         try {
-            const resp = await fetch(`${API_BASE}/delete_mik_user/${pendingDeleteUserId}?account_key=${currentUser.account_key}`, { method:'DELETE' });
+            // Récupérer d'abord le mot de passe stocké pour vérification côté client
+            const mikPwd = currentMikrotik.mik_password;
+            
+            if (mikPwd !== password) {
+                showError("❌ Mot de passe incorrect");
+                showLoading(false);
+                return;
+            }
+            
+            // Si le mot de passe est correct, procéder à la suppression
+            const resp = await fetch(`${API_BASE}/delete_mik_user/${pendingDeleteUserId}?account_key=${currentUser.account_key}`, { 
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
             const result = await resp.json();
-            if(result.success) { showSuccess("Ticket supprimé"); closePasswordModal(); await loadAllData(); }
-            else showError(result.message);
-        } catch(e) { showError("Erreur"); }
-        finally { showLoading(false); pendingDeleteUserId=null; }
+            if(result.success) { 
+                showSuccess("✅ Ticket supprimé avec succès"); 
+                closePasswordModal(); 
+                await loadAllData(); 
+            } else { 
+                showError(result.message || "Erreur lors de la suppression"); 
+            }
+        } catch(e) { 
+            console.error("Erreur:", e);
+            showError("Erreur de connexion au serveur"); 
+        }
+        finally { 
+            showLoading(false); 
+            pendingDeleteUserId = null; 
+        }
     }
-
+    
     async function disconnectMikrotikWithPassword() {
         const pwd = document.getElementById('disconnectPasswordInput').value;
         if(!pwd) { showWarning("Mot de passe requis"); return; }
-        if(currentMikrotik.mik_password !== pwd) { showError("Mot de passe incorrect"); return; }
+        
         showLoading(true);
         try {
-            const resp = await fetch(`${API_BASE}/update_mikrotik_status`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ mik_id: currentMikrotik.mik_id, account_key: currentUser.account_key, status: 'inactif' }) });
+            const mikPwd = currentMikrotik.mik_password;
+            if (mikPwd !== pwd) {
+                showError("❌ Mot de passe incorrect");
+                showLoading(false);
+                return;
+            }
+            
+            const resp = await fetch(`${API_BASE}/update_mikrotik_status`, { 
+                method: 'PUT', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify({ 
+                    mik_id: currentMikrotik.mik_id, 
+                    account_key: currentUser.account_key, 
+                    status: 'inactif' 
+                }) 
+            });
             const result = await resp.json();
-            if(result.success) { showSuccess("Connexion coupée"); closeDisconnectModal(); await loadAllData(); }
-            else showError(result.message);
-        } catch(e) { showError("Erreur"); }
+            if(result.success) { 
+                showSuccess("🔌 Connexion coupée avec succès"); 
+                closeDisconnectModal(); 
+                await loadAllData(); 
+            } else { 
+                showError(result.message); 
+            }
+        } catch(e) { 
+            showError("Erreur de connexion"); 
+        }
         finally { showLoading(false); }
     }
-
+    
     function refreshAll() { loadAllData(); }
     function openAddUserModal() { 
         document.getElementById('userDate').value = getTodayStr(); 
@@ -630,9 +857,14 @@
         document.getElementById('addUserModal').classList.add('active'); 
     }
     function closeAddUserModal() { document.getElementById('addUserModal').classList.remove('active'); }
-    function closePasswordModal() { document.getElementById('passwordModal').classList.remove('active'); pendingDeleteUserId=null; }
+    function closePasswordModal() { document.getElementById('passwordModal').classList.remove('active'); pendingDeleteUserId=null; document.getElementById('mikPasswordInput').value = ''; }
     function openDisconnectModal() { document.getElementById('disconnectPasswordInput').value=''; document.getElementById('disconnectModal').classList.add('active'); }
     function closeDisconnectModal() { document.getElementById('disconnectModal').classList.remove('active'); }
+    function askPasswordForDelete(userId) { 
+        pendingDeleteUserId = userId; 
+        document.getElementById('mikPasswordInput').value = ''; 
+        document.getElementById('passwordModal').classList.add('active'); 
+    }
     
     function showSuccess(m) { showAlert(m,'success'); }
     function showError(m) { showAlert(m,'error'); }
@@ -644,9 +876,9 @@
         document.body.appendChild(div); 
         setTimeout(() => div.remove(), 3000); 
     }
-    function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    
     function showLoading(v) { document.getElementById('loadingOverlay').style.display = v ? 'flex' : 'none'; }
-
+    
     document.addEventListener('DOMContentLoaded', async () => {
         const params = getUrlParams();
         if(!params.mik_id || !params.account_key) { showError("Paramètres manquants"); setTimeout(()=>window.location.href='dashboard.html',1500); return; }
@@ -654,11 +886,6 @@
         if(!userStr) { window.location.href='index.html'; return; }
         currentUser = JSON.parse(userStr);
         if(currentUser.account_key !== params.account_key) { showError("Accès non autorisé"); setTimeout(()=>window.location.href='dashboard.html',1500); return; }
-        
-        const today = getTodayStr();
-        const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
-        document.getElementById('startDate').value = weekAgo.toISOString().slice(0,10);
-        document.getElementById('endDate').value = today;
         
         await loadAllData();
         document.getElementById('addUserForm').addEventListener('submit', addUser);
