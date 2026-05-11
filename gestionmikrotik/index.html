@@ -146,7 +146,6 @@
         .stat-premium-value { font-size: 2.2rem; font-weight: 800; color: #f59e0b; }
         .stat-premium-label { color: #94a3b8; margin-top: 8px; font-size: 0.85rem; font-weight: 500; }
         
-        /* Graphiques */
         .charts-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -229,6 +228,32 @@
             align-items: center;
             gap: 12px;
         }
+        .search-bar {
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+            border: 1px solid rgba(245,158,11,0.2);
+        }
+        .search-input {
+            flex: 1;
+            padding: 12px 18px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            color: white;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.1);
+        }
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -306,7 +331,7 @@
             background: rgba(18, 24, 38, 0.7);
             border-radius: 32px;
             padding: 32px;
-            margin-top: 32px;
+            margin-top: 0;
             overflow-x: auto;
         }
         .tickets-table {
@@ -326,7 +351,7 @@
             border-bottom: 1px solid #2a3855;
         }
         .tickets-table tr:hover { background: rgba(255,255,255,0.02); }
-        .delete-btn {
+        .delete-btn, .restore-btn {
             background: rgba(239,68,68,0.15);
             border: none;
             color: #ef4444;
@@ -335,16 +360,8 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .delete-btn:hover { background: rgba(239,68,68,0.4); }
-        .restore-btn {
-            background: rgba(16,185,129,0.15);
-            border: none;
-            color: #10b981;
-            padding: 6px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .delete-btn:hover, .restore-btn:hover { background: rgba(239,68,68,0.4); }
+        .restore-btn { background: rgba(16,185,129,0.15); color: #10b981; }
         .restore-btn:hover { background: rgba(16,185,129,0.4); }
         .alert {
             position: fixed;
@@ -379,6 +396,7 @@
             justify-content: center;
             align-items: center;
             z-index: 2000;
+            flex-direction: column;
         }
         .spinner {
             width: 60px;
@@ -389,15 +407,32 @@
             animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .date-filter-bar {
-            background: rgba(18, 24, 38, 0.5);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 24px;
+        .pagination {
             display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            align-items: flex-end;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+        .pagination button {
+            padding: 8px 14px;
+            background: rgba(245,158,11,0.1);
+            border: 1px solid rgba(245,158,11,0.3);
+            color: #f59e0b;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .pagination button:hover:not(:disabled) {
+            background: rgba(245,158,11,0.3);
+        }
+        .pagination button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .pagination .active-page {
+            background: #f59e0b;
+            color: #0a0e1a;
+            border-color: #f59e0b;
         }
         .corbeille-item {
             background: rgba(239,68,68,0.1);
@@ -449,7 +484,6 @@
         <div class="stat-premium-card"><div class="stat-premium-icon"><i class="fas fa-money-bill-wave"></i></div><div class="stat-premium-value" id="totalRevenue">0 FCFA</div><div class="stat-premium-label">CA total</div></div>
     </div>
 
-    <!-- GRILLE DES GRAPHIQUES -->
     <div class="charts-grid">
         <div class="chart-card">
             <div class="chart-title"><i class="fas fa-chart-line"></i> Évolution des ventes (7 derniers jours)</div>
@@ -470,28 +504,36 @@
     </div>
 
     <div class="tabs-container">
-        <button class="tab-btn active" onclick="switchTab('tickets')"><i class="fas fa-list"></i> Tickets</button>
-        <button class="tab-btn" onclick="switchTab('ventes')"><i class="fas fa-chart-bar"></i> Analyse avancée</button>
-        <button class="tab-btn" onclick="switchTab('corbeille')"><i class="fas fa-trash-restore"></i> Corbeille</button>
-        <button class="tab-btn" onclick="switchTab('reset')"><i class="fas fa-trash-alt"></i> Réinitialisation</button>
-        <button class="tab-btn" onclick="switchTab('password')"><i class="fas fa-key"></i> Mot de passe</button>
-        <button class="tab-btn" onclick="switchTab('bulk')"><i class="fas fa-calendar-week"></i> Suppression massive</button>
+        <button class="tab-btn active" onclick="switchTab('tickets', this)"><i class="fas fa-list"></i> Tickets</button>
+        <button class="tab-btn" onclick="switchTab('ventes', this)"><i class="fas fa-chart-bar"></i> Analyse avancée</button>
+        <button class="tab-btn" onclick="switchTab('corbeille', this)"><i class="fas fa-trash-restore"></i> Corbeille</button>
+        <button class="tab-btn" onclick="switchTab('reset', this)"><i class="fas fa-trash-alt"></i> Réinitialisation</button>
+        <button class="tab-btn" onclick="switchTab('password', this)"><i class="fas fa-key"></i> Mot de passe</button>
+        <button class="tab-btn" onclick="switchTab('bulk', this)"><i class="fas fa-calendar-week"></i> Suppression massive</button>
     </div>
 
-    <!-- Onglet Tickets -->
+    <!-- Onglet Tickets avec barre de recherche -->
     <div id="tab-tickets" class="tab-content active">
         <div class="tickets-section">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
                 <h3><i class="fas fa-ticket-alt"></i> Liste des tickets</h3>
                 <button class="btn btn-primary" onclick="openAddUserModal()"><i class="fas fa-plus"></i> Ajouter un ticket</button>
             </div>
+            
+            <!-- Barre de recherche -->
+            <div class="search-bar">
+                <i class="fas fa-search" style="color: #f59e0b;"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Rechercher par nom, profil ou prix..." onkeyup="filterTickets()">
+                <button class="btn btn-secondary" onclick="clearSearch()"><i class="fas fa-times"></i> Effacer</button>
+            </div>
+            
             <div style="overflow-x: auto;">
                 <table class="tickets-table">
                     <thead><tr><th>Nom</th><th>Profil</th><th>Prix</th><th>Date</th><th>Heure</th><th>Action</th></tr></thead>
                     <tbody id="usersTableBody"><tr><td colspan="6" style="text-align:center;">Chargement...</td></tr></tbody>
                 </table>
             </div>
-            <div id="pagination" style="display: flex; justify-content: center; gap: 8px; margin-top: 24px;"></div>
+            <div id="pagination" class="pagination"></div>
         </div>
     </div>
 
@@ -499,7 +541,7 @@
     <div id="tab-ventes" class="tab-content">
         <div class="management-panel">
             <div class="panel-title"><i class="fas fa-chart-line"></i> Analyse détaillée des ventes</div>
-            <div class="date-filter-bar">
+            <div class="date-filter-bar" style="background: rgba(18, 24, 38, 0.5); border-radius: 20px; padding: 20px; margin-bottom: 24px; display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end;">
                 <div class="form-group"><label><i class="fas fa-calendar-day"></i> Date début</label><input type="date" id="ventesStartDate"></div>
                 <div class="form-group"><label><i class="fas fa-calendar-day"></i> Date fin</label><input type="date" id="ventesEndDate"></div>
                 <button class="btn btn-primary" onclick="analyserVentes()"><i class="fas fa-chart-simple"></i> Analyser</button>
@@ -604,24 +646,49 @@
     let allUsers = [], filteredUsers = [], deletedTickets = [];
     let currentPage = 1, itemsPerPage = 30;
     let pendingDeleteUserId = null;
+    let currentSearchTerm = '';
     let salesChart = null, profileChart = null, bestDaysChart = null, priceChart = null, ventesChart = null;
 
     function getUrlParams() { return { mik_id: new URLSearchParams(location.search).get('mik_id'), account_key: new URLSearchParams(location.search).get('account_key') }; }
-    function normalizeDate(d) { if(!d)return null; let m=d.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/); if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`; return new Date(d).toISOString().slice(0,10); }
-    function formatDate(d) { let n=normalizeDate(d); if(!n)return d; let [y,m,day]=n.split('-'); return `${day}/${m}/${y}`; }
+    
+    function normalizeDate(d) { 
+        if(!d) return null;
+        if(typeof d === 'object' && d.toISOString) return d.toISOString().slice(0,10);
+        let str = d.toString();
+        let m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+        if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+        let d2 = new Date(str);
+        if(!isNaN(d2.getTime())) return d2.toISOString().slice(0,10);
+        return null;
+    }
+    
+    function formatDate(d) { 
+        let n = normalizeDate(d);
+        if(!n) return d || '-';
+        let [y,m,day] = n.split('-');
+        return `${day}/${m}/${y}`;
+    }
+    
     function getToday() { return new Date().toISOString().slice(0,10); }
+    function getCurrentTime() { return new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit', second:'2-digit'}); }
 
-    function showAlert(msg,type){ let d=document.createElement('div'); d.className=`alert alert-${type}`; d.innerHTML=`<i class="fas fa-${type==='success'?'check-circle':type==='error'?'exclamation-circle':'info-circle'}"></i> ${msg}`; document.body.appendChild(d); setTimeout(()=>d.remove(),4000); }
+    function showAlert(msg,type){
+        let d=document.createElement('div');
+        d.className=`alert alert-${type}`;
+        d.innerHTML=`<i class="fas fa-${type==='success'?'check-circle':type==='error'?'exclamation-circle':'info-circle'}"></i> ${msg}`;
+        document.body.appendChild(d);
+        setTimeout(()=>d.remove(),4000);
+    }
     function showSuccess(m){showAlert(m,'success');}
     function showError(m){showAlert(m,'error');}
     function showWarning(m){showAlert(m,'warning');}
     function showLoading(v){document.getElementById('loadingOverlay').style.display=v?'flex':'none';}
 
-    function switchTab(tab){
+    function switchTab(tab, btn){
         document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
         document.getElementById(`tab-${tab}`).classList.add('active');
         document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-        event.target.classList.add('active');
+        if(btn) btn.classList.add('active');
         if(tab === 'ventes') { chargerStatistiquesVentes(); analyserVentes(); }
         if(tab === 'corbeille') chargerCorbeille();
     }
@@ -635,13 +702,13 @@
             let params=getUrlParams();
             currentMikrotik=data.mikrotiks.find(m=>m.mik_id===params.mik_id);
             if(!currentMikrotik) throw new Error("Mikrotik non trouvé");
-            allUsers=data.mik_users.filter(u=>u.mik_id===params.mik_id).map(u=>({...u,normalizedDate:normalizeDate(u.date)}));
-            allUsers.sort((a,b)=>(b.normalizedDate||'').localeCompare(a.normalizedDate||''));
+            allUsers=data.mik_users.filter(u=>u.mik_id===params.mik_id).map(u=>({...u,normalizedDate:normalizeDate(u.date),prix:parseFloat(u.prix)||0}));
+            allUsers.sort((a,b)=>new Date(`${b.normalizedDate}T${b.heure||'00:00:00'}`) - new Date(`${a.normalizedDate}T${a.heure||'00:00:00'}`));
             chargerCorbeille();
             updateUI();
             updateStats();
             updateAllCharts();
-            applyFilters();
+            filterTickets();
         }catch(e){showError(e.message);}
         finally{showLoading(false);}
     }
@@ -660,25 +727,22 @@
 
     function updateStats(){
         let today=getToday();
-        let todayUsers=allUsers.filter(u=>normalizeDate(u.date)===today);
-        let totalRev=allUsers.reduce((s,u)=>s+(parseFloat(u.prix)||0),0);
+        let todayUsers=allUsers.filter(u=>u.normalizedDate===today);
+        let totalRev=allUsers.reduce((s,u)=>s+u.prix,0);
         document.getElementById('todayTickets').innerText=todayUsers.length;
-        document.getElementById('todayRevenue').innerText=todayUsers.reduce((s,u)=>s+(parseFloat(u.prix)||0),0).toLocaleString('fr-FR')+' FCFA';
+        document.getElementById('todayRevenue').innerText=todayUsers.reduce((s,u)=>s+u.prix,0).toLocaleString('fr-FR')+' FCFA';
         document.getElementById('totalUsers').innerText=allUsers.length;
         document.getElementById('totalRevenue').innerText=totalRev.toLocaleString('fr-FR')+' FCFA';
     }
 
-    // MISE À JOUR DE TOUS LES GRAPHIQUES
     function updateAllCharts(){
-        // 1. Graphique évolution 7 derniers jours
         let last7Days = [];
         for(let i=6; i>=0; i--) { let d = new Date(); d.setDate(d.getDate() - i); last7Days.push(d.toISOString().slice(0,10)); }
-        let dailyRevenue = last7Days.map(date => allUsers.filter(u => normalizeDate(u.date) === date).reduce((s,u) => s + (parseFloat(u.prix)||0), 0));
+        let dailyRevenue = last7Days.map(date => allUsers.filter(u => u.normalizedDate === date).reduce((s,u) => s + u.prix, 0));
         let ctx1 = document.getElementById('salesChart').getContext('2d');
         if(salesChart) salesChart.destroy();
         salesChart = new Chart(ctx1, { type: 'line', data: { labels: last7Days.map(d=>formatDate(d)), datasets: [{ label: 'CA (FCFA)', data: dailyRevenue, borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', tension: 0.3, fill: true }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#e2e8f0' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toLocaleString('fr-FR')} FCFA` } } } } });
 
-        // 2. Répartition par profil (Camembert)
         let profileCount = {};
         allUsers.forEach(u => { profileCount[u.profile] = (profileCount[u.profile] || 0) + 1; });
         let profiles = Object.keys(profileCount).slice(0,5);
@@ -687,41 +751,80 @@
         if(profileChart) profileChart.destroy();
         profileChart = new Chart(ctx2, { type: 'pie', data: { labels: profiles, datasets: [{ data: counts, backgroundColor: ['#f59e0b', '#10b981', '#ef4444', '#3b82f6', '#8b5cf6'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#e2e8f0' } } } } });
 
-        // 3. Top 5 meilleurs jours
         let dayRevenue = {};
-        allUsers.forEach(u => { let d = u.normalizedDate; if(d) dayRevenue[d] = (dayRevenue[d] || 0) + (parseFloat(u.prix)||0); });
+        allUsers.forEach(u => { let d = u.normalizedDate; if(d) dayRevenue[d] = (dayRevenue[d] || 0) + u.prix; });
         let topDays = Object.entries(dayRevenue).sort((a,b)=>b[1]-a[1]).slice(0,5);
         let ctx3 = document.getElementById('bestDaysChart').getContext('2d');
         if(bestDaysChart) bestDaysChart.destroy();
         bestDaysChart = new Chart(ctx3, { type: 'bar', data: { labels: topDays.map(d=>formatDate(d[0])), datasets: [{ label: 'CA (FCFA)', data: topDays.map(d=>d[1]), backgroundColor: '#f59e0b', borderRadius: 8 }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#e2e8f0' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toLocaleString('fr-FR')} FCFA` } } } } });
 
-        // 4. Répartition des prix par tranches
         let priceRanges = { '0-1000':0, '1001-2000':0, '2001-5000':0, '5001-10000':0, '10000+':0 };
-        allUsers.forEach(u => { let p = parseFloat(u.prix)||0; if(p<=1000) priceRanges['0-1000']++; else if(p<=2000) priceRanges['1001-2000']++; else if(p<=5000) priceRanges['2001-5000']++; else if(p<=10000) priceRanges['5001-10000']++; else priceRanges['10000+']++; });
+        allUsers.forEach(u => { let p = u.prix; if(p<=1000) priceRanges['0-1000']++; else if(p<=2000) priceRanges['1001-2000']++; else if(p<=5000) priceRanges['2001-5000']++; else if(p<=10000) priceRanges['5001-10000']++; else priceRanges['10000+']++; });
         let ctx4 = document.getElementById('priceDistributionChart').getContext('2d');
         if(priceChart) priceChart.destroy();
         priceChart = new Chart(ctx4, { type: 'bar', data: { labels: Object.keys(priceRanges), datasets: [{ label: 'Nombre de tickets', data: Object.values(priceRanges), backgroundColor: '#10b981', borderRadius: 8 }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#e2e8f0' } } } } });
     }
 
-    function applyFilters(){ filteredUsers=[...allUsers]; displayUsers(); }
+    function filterTickets(){
+        currentSearchTerm = document.getElementById('searchInput').value.toLowerCase();
+        filteredUsers = allUsers.filter(u => 
+            u.name.toLowerCase().includes(currentSearchTerm) ||
+            u.profile.toLowerCase().includes(currentSearchTerm) ||
+            u.prix.toString().includes(currentSearchTerm)
+        );
+        currentPage = 1;
+        displayUsers();
+    }
+
+    function clearSearch(){
+        document.getElementById('searchInput').value = '';
+        filterTickets();
+    }
+
     function displayUsers(){
         let tbody=document.getElementById('usersTableBody');
         let start=(currentPage-1)*itemsPerPage;
         let pageUsers=filteredUsers.slice(start,start+itemsPerPage);
-        if(pageUsers.length===0){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;">Aucun ticket</td></tr>';return;}
-        tbody.innerHTML=pageUsers.map(u=>`<tr><td><strong>${escapeHtml(u.name)}</strong></td><td><span style="background:#f59e0b20;padding:4px12px;border-radius:20px;">${u.profile}</span></td><td style="color:#f59e0b;">${parseFloat(u.prix).toLocaleString('fr-FR')} FCFA</td><td>${formatDate(u.date)}</td><td>${u.heure||'--:--'}</td><td><button class="delete-btn" onclick="askPasswordForDelete(${u.id})"><i class="fas fa-trash"></i> Supprimer</button></td></tr>`).join('');
+        if(pageUsers.length===0){
+            tbody.innerHTML='<tr><td colspan="6" style="text-align:center;">Aucun ticket trouvé</td></tr>';
+            document.getElementById('pagination').innerHTML='';
+            return;
+        }
+        tbody.innerHTML=pageUsers.map(u=>`<tr>
+            <td><strong>${escapeHtml(u.name)}</strong></td>
+            <td><span style="background:#f59e0b20;padding:4px 12px;border-radius:20px;">${u.profile}</span></td>
+            <td style="color:#f59e0b;">${u.prix.toLocaleString('fr-FR')} FCFA</td>
+            <td>${formatDate(u.date)}</td>
+            <td>${u.heure || '--:--'}</td>
+            <td><button class="delete-btn" onclick="askPasswordForDelete(${u.id})"><i class="fas fa-trash"></i> Supprimer</button></td>
+        </tr>`).join('');
+        
         let totalPages=Math.ceil(filteredUsers.length/itemsPerPage);
         let pagDiv=document.getElementById('pagination');
         if(totalPages<=1){pagDiv.innerHTML='';return;}
-        let html=`<button onclick="changePage(${currentPage-1})" ${currentPage===1?'disabled':''}>◀</button>`;
-        for(let i=1;i<=totalPages;i++) if(i===1||i===totalPages||(i>=currentPage-2&&i<=currentPage+2)) html+=`<button onclick="changePage(${i})" class="${i===currentPage?'active-page':''}">${i}</button>`;
-        html+=`<button onclick="changePage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>▶</button>`;
+        let html='';
+        html+=`<button onclick="changePage(${currentPage-1})" ${currentPage===1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
+        for(let i=1;i<=totalPages;i++){
+            if(i===1||i===totalPages||(i>=currentPage-2&&i<=currentPage+2)){
+                html+=`<button onclick="changePage(${i})" class="${i===currentPage?'active-page':''}">${i}</button>`;
+            } else if(i===currentPage-3||i===currentPage+3){
+                html+=`<span style="padding:8px;">...</span>`;
+            }
+        }
+        html+=`<button onclick="changePage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
         pagDiv.innerHTML=html;
     }
-    function changePage(p){if(p>=1&&p<=Math.ceil(filteredUsers.length/itemsPerPage)){currentPage=p;displayUsers();window.scrollTo({top:0});}}
+    
+    function changePage(p){
+        if(p>=1&&p<=Math.ceil(filteredUsers.length/itemsPerPage)){
+            currentPage=p;
+            displayUsers();
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+    }
+    
     function escapeHtml(s){if(!s)return '';return s.replace(/[&<>]/g,function(m){if(m==='&')return '&amp;';if(m==='<')return '&lt;';if(m==='>')return '&gt;';return m;});}
 
-    // CORBEILLE
     function sauvegarderCorbeille() { localStorage.setItem(`corbeille_${currentMikrotik?.mik_id}`, JSON.stringify(deletedTickets)); }
     function chargerCorbeille() {
         let saved = localStorage.getItem(`corbeille_${currentMikrotik?.mik_id}`);
@@ -729,6 +832,7 @@
         else deletedTickets = [];
         afficherCorbeille();
     }
+    
     function afficherCorbeille(){
         let container = document.getElementById('corbeilleContainer');
         let count = deletedTickets.length;
@@ -737,9 +841,21 @@
         let grouped = {};
         deletedTickets.forEach(t => { let d = normalizeDate(t.date); if(!grouped[d]) grouped[d] = []; grouped[d].push(t); });
         let dates = Object.keys(grouped).sort().reverse();
-        container.innerHTML = dates.map(date => `<div style="margin-bottom:16px;border-radius:16px;overflow:hidden;"><div style="background:rgba(239,68,68,0.2);padding:12px20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;"><div><i class="fas fa-calendar"></i> <strong>${formatDate(date)}</strong> - ${grouped[date].length} ticket(s)</div><button class="btn btn-success" style="padding:6px16px;" onclick="restaurerDate('${date}')"><i class="fas fa-trash-restore"></i> Restaurer cette date</button></div><div style="padding:12px20px;"><table style="width:100%;font-size:0.85rem;"><thead><tr><th>Nom</th><th>Profil</th><th>Prix</th><th>Heure</th><th>Action</th></tr></thead><tbody>${grouped[date].map(t => `<tr><td>${escapeHtml(t.name)}</td><td>${t.profile}</td><td>${parseFloat(t.prix).toLocaleString('fr-FR')} FCFA</td><td>${t.heure||'--:--'}</td><td><button class="restore-btn" onclick="restaurerTicket(${t.id})"><i class="fas fa-undo"></i> Restaurer</button></td></tr>`).join('')}</tbody></table></div></div>`).join('');
+        container.innerHTML = dates.map(date => `<div style="margin-bottom:16px;border-radius:16px;overflow:hidden;border:1px solid rgba(239,68,68,0.2);">
+            <div style="background:rgba(239,68,68,0.15);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                <div><i class="fas fa-calendar"></i> <strong>${formatDate(date)}</strong> - ${grouped[date].length} ticket(s)</div>
+                <button class="btn btn-success" style="padding:6px 16px;" onclick="restaurerDate('${date}')"><i class="fas fa-trash-restore"></i> Restaurer cette date</button>
+            </div>
+            <div style="padding:12px 20px;overflow-x:auto;">
+                <table style="width:100%;font-size:0.85rem;"><thead><tr><th>Nom</th><th>Profil</th><th>Prix</th><th>Heure</th><th>Action</th></tr></thead>
+                <tbody>${grouped[date].map(t => `<tr><td>${escapeHtml(t.name)}</td><td>${t.profile}</td><td>${(parseFloat(t.prix)||0).toLocaleString('fr-FR')} FCFA</td><td>${t.heure||'--:--'}</td><td><button class="restore-btn" onclick="restaurerTicket(${t.id})"><i class="fas fa-undo"></i> Restaurer</button></td></tr>`).join('')}</tbody>
+                </table>
+            </div>
+        </div>`).join('');
     }
+    
     async function ajouterALaCorbeille(ticket) { deletedTickets.unshift({...ticket, deletedAt: new Date().toISOString()}); sauvegarderCorbeille(); afficherCorbeille(); }
+    
     async function restaurerTicket(ticketId){
         let ticket = deletedTickets.find(t => t.id === ticketId);
         if(!ticket){ showError("Ticket non trouvé"); return; }
@@ -752,6 +868,7 @@
         }catch(e){ showError("Erreur"); }
         finally{ showLoading(false); }
     }
+    
     async function restaurerDate(date){
         let tickets = deletedTickets.filter(t => normalizeDate(t.date) === date);
         if(tickets.length === 0) return;
@@ -769,6 +886,7 @@
         showSuccess(`${success} tickets restaurés`);
         showLoading(false);
     }
+    
     async function restaurerToutesDates(){
         if(deletedTickets.length === 0){ showWarning("Corbeille vide"); return; }
         if(!confirm(`Restaurer les ${deletedTickets.length} tickets ?`)) return;
@@ -786,9 +904,9 @@
         showSuccess(`${success} tickets restaurés`);
         showLoading(false);
     }
+    
     function viderCorbeille(){ if(confirm("Vider définitivement la corbeille ?")) { deletedTickets = []; sauvegarderCorbeille(); afficherCorbeille(); showSuccess("Corbeille vidée"); } }
 
-    // Analyse des ventes
     function analyserVentes(){
         let start = document.getElementById('ventesStartDate').value;
         let end = document.getElementById('ventesEndDate').value;
@@ -796,28 +914,51 @@
         if(start) filtered = filtered.filter(u => (u.normalizedDate || '') >= start);
         if(end) filtered = filtered.filter(u => (u.normalizedDate || '') <= end);
         let totalTickets = filtered.length;
-        let totalRevenue = filtered.reduce((s,u) => s + (parseFloat(u.prix)||0), 0);
+        let totalRevenue = filtered.reduce((s,u) => s + u.prix, 0);
         let moyenne = totalTickets > 0 ? totalRevenue / totalTickets : 0;
         document.getElementById('periodeTickets').innerText = totalTickets;
         document.getElementById('perioteRevenue').innerText = totalRevenue.toLocaleString('fr-FR') + ' FCFA';
         document.getElementById('periodeMoyenne').innerText = Math.round(moyenne).toLocaleString('fr-FR') + ' FCFA';
         let dailyStats = {};
-        filtered.forEach(u => { let d = u.normalizedDate; if(d){ if(!dailyStats[d]) dailyStats[d] = { count:0, revenue:0 }; dailyStats[d].count++; dailyStats[d].revenue += parseFloat(u.prix)||0; } });
+        filtered.forEach(u => { let d = u.normalizedDate; if(d){ if(!dailyStats[d]) dailyStats[d] = { count:0, revenue:0 }; dailyStats[d].count++; dailyStats[d].revenue += u.prix; } });
         let sortedDates = Object.keys(dailyStats).sort();
         let detailBody = document.getElementById('ventesDetailBody');
         if(sortedDates.length === 0) detailBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Aucune donnée</td></tr>';
-        else detailBody.innerHTML = sortedDates.map(d => `<tr><td>${formatDate(d)}</td><td>${dailyStats[d].count}</td><td>${dailyStats[d].revenue.toLocaleString('fr-FR')} FCFA</td><td>${Math.round(dailyStats[d].revenue/dailyStats[d].count).toLocaleString('fr-FR')} FCFA</td></tr>`).join('');
+        else detailBody.innerHTML = sortedDates.map(d => `<tr>
+            <td>${formatDate(d)}</td>
+            <td>${dailyStats[d].count}</td>
+            <td>${dailyStats[d].revenue.toLocaleString('fr-FR')} FCFA</td>
+            <td>${Math.round(dailyStats[d].revenue/dailyStats[d].count).toLocaleString('fr-FR')} FCFA</td>
+        </tr>`).join('');
         let ctx = document.getElementById('ventesChart').getContext('2d');
         if(ventesChart) ventesChart.destroy();
         ventesChart = new Chart(ctx, { type: 'line', data: { labels: sortedDates.map(d=>formatDate(d)), datasets: [{ label: 'CA (FCFA)', data: sortedDates.map(d=>dailyStats[d].revenue), borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', tension: 0.3, fill: true }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#e2e8f0' } }, tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toLocaleString('fr-FR')} FCFA` } } } } });
     }
-    function chargerStatistiquesVentes(){ let s=document.getElementById('ventesStartDate').value, e=document.getElementById('ventesEndDate').value; if(!s&&!e){ let weekAgo=new Date(); weekAgo.setDate(weekAgo.getDate()-7); document.getElementById('ventesStartDate').value=weekAgo.toISOString().slice(0,10); document.getElementById('ventesEndDate').value=getToday(); } analyserVentes(); }
+    
+    function chargerStatistiquesVentes(){ 
+        let s=document.getElementById('ventesStartDate').value, e=document.getElementById('ventesEndDate').value; 
+        if(!s&&!e){ 
+            let weekAgo=new Date(); weekAgo.setDate(weekAgo.getDate()-7); 
+            document.getElementById('ventesStartDate').value=weekAgo.toISOString().slice(0,10); 
+            document.getElementById('ventesEndDate').value=getToday(); 
+        } 
+        analyserVentes(); 
+    }
+    
     function resetVentesFilter(){ document.getElementById('ventesStartDate').value=''; document.getElementById('ventesEndDate').value=''; analyserVentes(); }
 
     async function addUser(e){
         e.preventDefault();
-        let data={mik_id:currentMikrotik.mik_id,name:document.getElementById('userName').value.trim(),profile:document.getElementById('userProfile').value,prix:parseFloat(document.getElementById('userPrice').value),date:document.getElementById('userDate').value,heure:document.getElementById('userTime').value,account_key:currentUser.account_key};
-        if(!data.name||!data.profile||!data.prix){showWarning("Tous les champs requis");return;}
+        let data={
+            mik_id:currentMikrotik.mik_id,
+            name:document.getElementById('userName').value.trim(),
+            profile:document.getElementById('userProfile').value,
+            prix:parseFloat(document.getElementById('userPrice').value),
+            date:document.getElementById('userDate').value,
+            heure:document.getElementById('userTime').value,
+            account_key:currentUser.account_key
+        };
+        if(!data.name||!data.profile||isNaN(data.prix)||data.prix<=0){showWarning("Tous les champs requis et prix valide");return;}
         showLoading(true);
         try{
             let resp=await fetch(`${API_BASE}/add_mik_user`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
@@ -827,10 +968,12 @@
         }catch(e){showError("Erreur de connexion");}
         finally{showLoading(false);}
     }
+    
     async function verifyPassword(password){
         let resp=await fetch(`${API_BASE}/verify_mikrotik_password`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mik_id:currentMikrotik.mik_id,account_key:currentUser.account_key,password})});
         return await resp.json();
     }
+    
     async function confirmDeleteWithPassword(){
         let pwd=document.getElementById('deletePasswordInput').value;
         if(!pwd){showWarning("Mot de passe requis");return;}
@@ -850,6 +993,7 @@
         }catch(e){showError("Erreur");}
         finally{showLoading(false);}
     }
+    
     async function resetAllUsers(){
         let pwd=document.getElementById('resetPassword').value;
         if(!pwd){showWarning("Mot de passe requis");return;}
@@ -866,6 +1010,7 @@
         }catch(e){showError("Erreur");}
         finally{showLoading(false);document.getElementById('resetPassword').value='';}
     }
+    
     async function updateMikrotikPassword(){
         let oldPwd=document.getElementById('oldPassword').value;
         let newPwd=document.getElementById('newPassword').value;
@@ -884,6 +1029,7 @@
         }catch(e){showError("Erreur");}
         finally{showLoading(false);}
     }
+    
     async function deleteByDateRange(){
         let pwd=document.getElementById('bulkPassword').value;
         let start=document.getElementById('bulkStartDate').value;
@@ -903,7 +1049,8 @@
         }catch(e){showError("Erreur");}
         finally{showLoading(false);document.getElementById('bulkPassword').value='';}
     }
-    function openAddUserModal(){ document.getElementById('userDate').value=getToday(); document.getElementById('userTime').value=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); document.getElementById('addUserModal').style.display='flex'; }
+    
+    function openAddUserModal(){ document.getElementById('userDate').value=getToday(); document.getElementById('userTime').value=getCurrentTime(); document.getElementById('addUserModal').style.display='flex'; }
     function closeAddUserModal(){ document.getElementById('addUserModal').style.display='none'; }
     function closePasswordModal(){ document.getElementById('passwordModal').style.display='none'; pendingDeleteUserId=null; document.getElementById('deletePasswordInput').value=''; }
     function askPasswordForDelete(userId){ pendingDeleteUserId=userId; document.getElementById('deletePasswordInput').value=''; document.getElementById('passwordModal').style.display='flex'; }
