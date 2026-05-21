@@ -121,7 +121,7 @@
   </div>
 
   <div class="info-box" id="gatewayInfo">
-    🔐 Chargement...
+    🔐 Connexion sécurisée...
   </div>
 
   <div class="camera-box">
@@ -146,16 +146,16 @@
 <canvas id="canvas" width="640" height="480"></canvas>
 
 <script>
-  // ========== RÉCUPÉRATION DU PARAMÈTRE gateway ==========
+  // ========== RÉCUPÉRATION DE LA PASSERELLE DEPUIS L'URL ==========
   const urlParams = new URLSearchParams(window.location.search);
   let GATEWAY_URL = urlParams.get('gateway');
   
-  // Si pas de paramètre, essayer de détecter (fallback)
+  // Si pas de paramètre, afficher une erreur (ne devrait pas arriver)
   if (!GATEWAY_URL) {
-    GATEWAY_URL = window.location.protocol + "//" + window.location.hostname;
-    document.getElementById('gatewayInfo').innerHTML = "⚠️ Aucune passerelle spécifiée<br>Détection automatique: " + GATEWAY_URL;
+    document.getElementById('gatewayInfo').innerHTML = "❌ Erreur: Aucune passerelle spécifiée<br>Veuillez revenir à la page d'accueil";
+    document.getElementById('gatewayInfo').style.color = "#ff4444";
   } else {
-    document.getElementById('gatewayInfo').innerHTML = "🔐 Passerelle: " + GATEWAY_URL;
+    document.getElementById('gatewayInfo').innerHTML = "🔐 Passerelle détectée: " + GATEWAY_URL;
   }
   
   // URL de la page login sur la passerelle
@@ -228,6 +228,13 @@
     
     statusDiv.textContent = "✅ Ticket: " + ticket + " → Connexion...";
     statusDiv.className = "status success";
+    
+    // Vérifier si la passerelle a été reçue
+    if (!GATEWAY_URL) {
+      statusDiv.textContent = "❌ Erreur: Passerelle non trouvée";
+      statusDiv.className = "status error";
+      return;
+    }
     
     // Redirection vers le portail captif avec le ticket
     window.location.href = LOGIN_URL + "?username=" + encodeURIComponent(ticket);
