@@ -1,20 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/>
-  <meta name="theme-color" content="#000000" />
   <title>BKM WIFI - QR SCANNER</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
-      color: #ffffff;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -26,9 +21,6 @@
       width: 100%;
       text-align: center;
     }
-    .header {
-      margin-bottom: 20px;
-    }
     .header h1 {
       font-size: 24px;
       color: #ff9800;
@@ -37,6 +29,7 @@
     .header p {
       font-size: 12px;
       color: #aaa;
+      margin-bottom: 20px;
     }
     .camera-box {
       background: #000;
@@ -69,7 +62,6 @@
       gap: 10px;
       justify-content: center;
       margin-bottom: 20px;
-      flex-wrap: wrap;
     }
     .btn {
       padding: 10px 20px;
@@ -77,24 +69,12 @@
       color: white;
       border: none;
       border-radius: 30px;
-      font-size: 14px;
       cursor: pointer;
-      transition: 0.2s;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
     }
     .btn-primary {
       background: #ff9800;
       color: #000;
       font-weight: bold;
-    }
-    .btn-primary:hover {
-      background: #e68900;
-    }
-    .btn:hover {
-      transform: scale(0.97);
     }
     .status {
       background: rgba(0,0,0,0.6);
@@ -103,13 +83,8 @@
       font-size: 13px;
       margin-bottom: 15px;
     }
-    .status.success {
-      background: #2e7d32;
-      color: white;
-    }
-    .status.error {
-      background: #c62828;
-    }
+    .status.success { background: #2e7d32; }
+    .status.error { background: #c62828; }
     .manual-input {
       width: 100%;
       padding: 12px;
@@ -118,25 +93,22 @@
       text-align: center;
       font-size: 16px;
       font-family: monospace;
-      letter-spacing: 2px;
-      background: #fff;
       margin-bottom: 10px;
-    }
-    .manual-input:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px #ff9800;
     }
     .footer {
       margin-top: 20px;
       font-size: 10px;
       color: #666;
     }
-    .footer a {
+    canvas { display: none; }
+    .info-box {
+      background: rgba(0,0,0,0.5);
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 11px;
       color: #ff9800;
-      text-decoration: none;
-    }
-    canvas {
-      display: none;
+      word-break: break-all;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
@@ -146,6 +118,10 @@
   <div class="header">
     <h1>📷 BKM SCANNER</h1>
     <p>Scannez votre QR code ticket</p>
+  </div>
+
+  <div class="info-box" id="gatewayInfo">
+    🔐 Chargement...
   </div>
 
   <div class="camera-box">
@@ -158,28 +134,35 @@
     <button class="btn btn-primary" id="manualBtn">✏️ Saisie manuelle</button>
   </div>
 
-  <div class="status" id="status">
-    🔍 Initialisation caméra...
-  </div>
+  <div class="status" id="status">🔍 Initialisation caméra...</div>
 
   <div id="manualArea" style="display:none;">
-    <input type="text" id="manualCode" class="manual-input" placeholder="Entrez le code ticket" autocomplete="off">
+    <input type="text" id="manualCode" class="manual-input" placeholder="Entrez le code ticket">
     <button class="btn btn-primary" id="submitManual" style="width:100%;">✓ VALIDER</button>
   </div>
 
-  <div class="footer">
-    BKM WIFI ZONE • <a href="#" id="retryCam">Utiliser la caméra</a>
-  </div>
+  <div class="footer">BKM WIFI ZONE</div>
 </div>
-
 <canvas id="canvas" width="640" height="480"></canvas>
 
 <script>
-  // ========== CONFIGURATION ==========
-  // ⚠️ REMPLACE PAR L'URL DE TON PORTAIL CAPTIF (login.html)
-  const LOGIN_URL = window.location.protocol + "//" + window.location.hostname + "/login.html";
-  // Si ton login.html est ailleurs, décommente et modifie la ligne ci-dessous :
-  // const LOGIN_URL = "http://ip-de-ton-hotspot/login.html";
+  // ========== RÉCUPÉRATION DU PARAMÈTRE gateway ==========
+  const urlParams = new URLSearchParams(window.location.search);
+  let GATEWAY_URL = urlParams.get('gateway');
+  
+  // Si pas de paramètre, essayer de détecter (fallback)
+  if (!GATEWAY_URL) {
+    GATEWAY_URL = window.location.protocol + "//" + window.location.hostname;
+    document.getElementById('gatewayInfo').innerHTML = "⚠️ Aucune passerelle spécifiée<br>Détection automatique: " + GATEWAY_URL;
+  } else {
+    document.getElementById('gatewayInfo').innerHTML = "🔐 Passerelle: " + GATEWAY_URL;
+  }
+  
+  // URL de la page login sur la passerelle
+  const LOGIN_URL = GATEWAY_URL + "/login.html";
+  
+  console.log("Gateway: " + GATEWAY_URL);
+  console.log("Login URL: " + LOGIN_URL);
   
   let video = document.getElementById('video');
   let statusDiv = document.getElementById('status');
@@ -188,7 +171,6 @@
   let animationId = null;
   let manualMode = false;
 
-  // ========== CAMERA ==========
   async function startCamera() {
     try {
       stream = await navigator.mediaDevices.getUserMedia({
@@ -196,12 +178,8 @@
       });
       return stream;
     } catch(e) {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        return stream;
-      } catch(e2) {
-        throw new Error("Caméra inaccessible");
-      }
+      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      return stream;
     }
   }
 
@@ -213,10 +191,9 @@
       statusDiv.textContent = "✅ Caméra active - Scannez le QR code";
       statusDiv.className = "status";
       scanning = true;
-      manualMode = false;
       scanFrame();
     } catch(err) {
-      statusDiv.textContent = "❌ " + err.message + " - Utilisez la saisie manuelle";
+      statusDiv.textContent = "❌ " + err.message + " - Saisie manuelle";
       statusDiv.className = "status error";
       scanning = false;
       document.getElementById('manualArea').style.display = 'block';
@@ -225,7 +202,6 @@
 
   function scanFrame() {
     if (!scanning || manualMode) return;
-    
     if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
@@ -236,48 +212,35 @@
       const code = jsQR(imageData.data, canvas.width, canvas.height, {
         inversionAttempts: "dontInvert",
       });
-      
       if (code && code.data && code.data.trim().length > 0) {
-        const ticket = code.data.trim();
-        onTicketDetected(ticket);
+        onTicketDetected(code.data.trim());
         return;
       }
     }
-    
     animationId = requestAnimationFrame(scanFrame);
   }
 
-  // ========== TICKET DETECTE ==========
   function onTicketDetected(ticket) {
     if (!scanning) return;
     scanning = false;
-    
     if (animationId) cancelAnimationFrame(animationId);
-    if (stream) {
-      stream.getTracks().forEach(t => t.stop());
-      video.srcObject = null;
-    }
+    if (stream) stream.getTracks().forEach(t => t.stop());
     
     statusDiv.textContent = "✅ Ticket: " + ticket + " → Connexion...";
     statusDiv.className = "status success";
     
-    // Redirection vers login.html avec le ticket en paramètre
-    // Le login.html doit avoir le script pour auto-remplir et soumettre
+    // Redirection vers le portail captif avec le ticket
     window.location.href = LOGIN_URL + "?username=" + encodeURIComponent(ticket);
   }
 
-  // ========== MANUEL ==========
-  function showManualMode() {
-    manualMode = true;
-    scanning = false;
-    if (animationId) cancelAnimationFrame(animationId);
-    if (stream) {
-      stream.getTracks().forEach(t => t.stop());
-      video.srcObject = null;
+  function manualSubmit() {
+    const code = document.getElementById('manualCode').value.trim();
+    if (code.length === 0) {
+      statusDiv.textContent = "⚠️ Entrez un code valide";
+      statusDiv.className = "status error";
+      return;
     }
-    document.getElementById('manualArea').style.display = 'block';
-    statusDiv.textContent = "📝 Mode manuel - Entrez votre code ticket";
-    statusDiv.className = "status";
+    onTicketDetected(code);
   }
 
   function hideManualMode() {
@@ -286,40 +249,20 @@
     initScanner();
   }
 
-  function manualSubmit() {
-    const code = document.getElementById('manualCode').value.trim();
-    if (code.length === 0) {
-      statusDiv.textContent = "⚠️ Veuillez entrer un code valide";
-      statusDiv.className = "status error";
-      return;
-    }
-    onTicketDetected(code);
-  }
-
-  // ========== INIT & EVENTS ==========
-  document.getElementById('reloadBtn').addEventListener('click', () => {
-    if (stream) {
-      stream.getTracks().forEach(t => t.stop());
-      video.srcObject = null;
-    }
-    if (animationId) cancelAnimationFrame(animationId);
-    scanning = true;
-    manualMode = false;
-    document.getElementById('manualArea').style.display = 'none';
-    initScanner();
-  });
-
-  document.getElementById('manualBtn').addEventListener('click', showManualMode);
-  document.getElementById('retryCam').addEventListener('click', (e) => {
+  document.getElementById('reloadBtn').onclick = () => { location.reload(); };
+  document.getElementById('manualBtn').onclick = () => {
+    manualMode = true;
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    document.getElementById('manualArea').style.display = 'block';
+    statusDiv.textContent = "📝 Saisissez votre code ticket";
+  };
+  document.getElementById('retryCam').onclick = (e) => {
     e.preventDefault();
     hideManualMode();
-  });
-  document.getElementById('submitManual').addEventListener('click', manualSubmit);
-  document.getElementById('manualCode').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') manualSubmit();
-  });
+  };
+  document.getElementById('submitManual').onclick = manualSubmit;
+  document.getElementById('manualCode').onkeypress = (e) => { if (e.key === 'Enter') manualSubmit(); };
 
-  // Démarrage
   initScanner();
 </script>
 </body>
