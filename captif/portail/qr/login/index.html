@@ -1,343 +1,324 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>BKM WIFI - Scanner votre ticket</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 16px;
-        }
-
-        .scanner-container {
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 32px;
-            padding: 20px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-        }
-
-        h1 {
-            color: #ff9800;
-            text-align: center;
-            font-size: 1.6rem;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .sub {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.85rem;
-            margin-bottom: 24px;
-        }
-
-        .video-wrapper {
-            position: relative;
-            background: #000;
-            border-radius: 20px;
-            overflow: hidden;
-            aspect-ratio: 4 / 3;
-            width: 100%;
-            margin-bottom: 16px;
-            border: 2px solid #ff9800;
-        }
-
-        #video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .scan-line::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: #ff9800;
-            animation: scan 2s linear infinite;
-            box-shadow: 0 0 8px #ff9800;
-        }
-
-        @keyframes scan {
-            0% { top: 0%; }
-            100% { top: 100%; }
-        }
-
-        .status {
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 40px;
-            padding: 12px 16px;
-            text-align: center;
-            color: white;
-            font-size: 0.9rem;
-            margin-bottom: 16px;
-            backdrop-filter: blur(4px);
-        }
-
-        .status.success {
-            background: #4CAF50;
-            color: white;
-            font-weight: bold;
-        }
-
-        .status.error {
-            background: #f44336;
-        }
-
-        .manual-area {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 16px;
-            margin-top: 8px;
-        }
-
-        .manual-input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 40px;
-            border: none;
-            background: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
-            text-align: center;
-            font-family: monospace;
-            letter-spacing: 1px;
-        }
-
-        .btn-manual {
-            width: 100%;
-            margin-top: 12px;
-            padding: 12px;
-            background: #ff9800;
-            border: none;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 1rem;
-            color: #1a1a2e;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn-manual:hover {
-            background: #e68900;
-            transform: scale(0.98);
-        }
-
-        .back-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .back-link a {
-            color: #ff9800;
-            text-decoration: none;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        .footer {
-            margin-top: 24px;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.7rem;
-        }
-    </style>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/>
+  <meta name="theme-color" content="#000000" />
+  <title>BKM WIFI - QR SCANNER</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+      color: #ffffff;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+    .container {
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+    .header {
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 24px;
+      color: #ff9800;
+      margin-bottom: 5px;
+    }
+    .header p {
+      font-size: 12px;
+      color: #aaa;
+    }
+    .camera-box {
+      background: #000;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid #ff9800;
+      margin-bottom: 15px;
+      position: relative;
+    }
+    video {
+      width: 100% !important;
+      height: auto !important;
+      display: block;
+    }
+    .scan-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: #ff9800;
+      animation: scan 2s linear infinite;
+    }
+    @keyframes scan {
+      0% { bottom: 100%; }
+      100% { bottom: 0%; }
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 10px 20px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: #ff9800;
+      color: #000;
+      font-weight: bold;
+    }
+    .btn-primary:hover {
+      background: #e68900;
+    }
+    .btn:hover {
+      transform: scale(0.97);
+    }
+    .status {
+      background: rgba(0,0,0,0.6);
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+    .status.success {
+      background: #2e7d32;
+      color: white;
+    }
+    .status.error {
+      background: #c62828;
+    }
+    .manual-input {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 30px;
+      text-align: center;
+      font-size: 16px;
+      font-family: monospace;
+      letter-spacing: 2px;
+      background: #fff;
+      margin-bottom: 10px;
+    }
+    .manual-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #ff9800;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 10px;
+      color: #666;
+    }
+    .footer a {
+      color: #ff9800;
+      text-decoration: none;
+    }
+    .hidden {
+      display: none;
+    }
+    canvas {
+      display: none;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 </head>
 <body>
+<div class="container">
+  <div class="header">
+    <h1>📷 BKM SCANNER</h1>
+    <p>Scannez votre QR code ticket</p>
+  </div>
 
-<div class="scanner-container">
-    <h1>
-        📷 BKM SCAN
-    </h1>
-    <div class="sub">Pointez la caméra vers le QR code de votre ticket</div>
+  <div class="camera-box">
+    <video id="video" playsinline muted autoplay></video>
+    <div class="scan-line"></div>
+  </div>
 
-    <div class="video-wrapper">
-        <video id="video" playsinline muted autoplay></video>
-        <div class="scan-line"></div>
-    </div>
+  <div class="btn-group">
+    <button class="btn" id="reloadBtn">⟳ Recharger</button>
+    <button class="btn btn-primary" id="manualBtn">✏️ Saisie manuelle</button>
+  </div>
 
-    <div class="status" id="status">
-        🔍 Initialisation de la caméra...
-    </div>
+  <div class="status" id="status">
+    🔍 Initialisation caméra...
+  </div>
 
-    <div class="manual-area">
-        <input type="text" id="manualCode" class="manual-input" placeholder="Ou tapez le code manuellement" autocomplete="off">
-        <button id="submitManual" class="btn-manual">✓ VALIDER LE TICKET</button>
-    </div>
+  <div id="manualArea" style="display:none;">
+    <input type="text" id="manualCode" class="manual-input" placeholder="Entrez le code ticket" autocomplete="off">
+    <button class="btn btn-primary" id="submitManual" style="width:100%;">✓ VALIDER</button>
+  </div>
 
-    <div class="back-link">
-        <a href="#" id="retryBtn">⟳ Réessayer la caméra</a>
-    </div>
-    <div class="footer">
-        BKM WIFI ZONE • Connexion sécurisée
-    </div>
+  <div class="footer">
+    BKM WIFI ZONE • <a href="#" id="retryCam">Utiliser la caméra</a>
+  </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<canvas id="canvas" width="640" height="480"></canvas>
 
 <script>
-    // ⚠️ IMPORTANT : Remplace cette URL par l'URL de ton fichier login.html (portail captif)
-    const CAPTIVE_LOGIN_URL = "https://fasowifizone.github.io/captif/portail/login.html";
-    
-    let video = document.getElementById('video');
-    let statusDiv = document.getElementById('status');
-    let stream = null;
-    let scanning = true;
-    let animationId = null;
+  // ⚠️ À MODIFIER : URL de votre page login.html
+  const LOGIN_URL = "https://fasowifizone.github.io/captif/portail/login.html";
+  
+  let video = document.getElementById('video');
+  let statusDiv = document.getElementById('status');
+  let stream = null;
+  let scanning = true;
+  let animationId = null;
+  let manualMode = false;
 
-    // ========== 1. DEMANDER LA CAMÉRA ==========
-    async function initCamera() {
-        statusDiv.textContent = "📷 Demande d'accès à la caméra...";
-        statusDiv.className = "status";
-        
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { exact: "environment" } }
-            });
-            return stream;
-        } catch (err) {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                return stream;
-            } catch (err2) {
-                throw new Error("Caméra inaccessible. Vérifiez les permissions.");
-            }
-        }
+  // ========== CAMERA ==========
+  async function startCamera() {
+    try {
+      // Caméra arrière d'abord
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: "environment" } }
+      });
+      return stream;
+    } catch(e) {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        return stream;
+      } catch(e2) {
+        throw new Error("Caméra inaccessible");
+      }
     }
+  }
 
-    // ========== 2. LANCER LE SCANNER ==========
-    async function startScanner() {
-        try {
-            const mediaStream = await initCamera();
-            video.srcObject = mediaStream;
-            await video.play();
-            statusDiv.textContent = "✅ Caméra active – Scannez votre QR code";
-            statusDiv.className = "status";
-            scanning = true;
-            requestAnimationFrame(scan);
-        } catch (error) {
-            console.error(error);
-            statusDiv.textContent = "❌ " + error.message + " Utilisez la saisie manuelle.";
-            statusDiv.className = "status error";
-            scanning = false;
-        }
+  async function initScanner() {
+    try {
+      const mediaStream = await startCamera();
+      video.srcObject = mediaStream;
+      await video.play();
+      statusDiv.textContent = "✅ Caméra active - Scannez le QR code";
+      statusDiv.className = "status";
+      scanning = true;
+      scanFrame();
+    } catch(err) {
+      statusDiv.textContent = "❌ " + err.message + " - Utilisez la saisie manuelle";
+      statusDiv.className = "status error";
+      scanning = false;
+      document.getElementById('manualArea').style.display = 'block';
     }
+  }
 
-    // ========== 3. BOUCLE DE SCAN ==========
-    function scan() {
-        if (!scanning) return;
-        
-        if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imageData.data, canvas.width, canvas.height, {
-                inversionAttempts: "dontInvert",
-            });
-            
-            if (code && code.data && code.data.trim().length > 0) {
-                const ticket = code.data.trim();
-                onTicketDetected(ticket);
-                return;
-            }
-        }
-        
-        animationId = requestAnimationFrame(scan);
+  function scanFrame() {
+    if (!scanning || manualMode) return;
+    
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, canvas.width, canvas.height, {
+        inversionAttempts: "dontInvert",
+      });
+      
+      if (code && code.data && code.data.trim().length > 0) {
+        const ticket = code.data.trim();
+        onTicketDetected(ticket);
+        return;
+      }
     }
+    
+    animationId = requestAnimationFrame(scanFrame);
+  }
 
-    // ========== 4. QUAND UN TICKET EST TROUVÉ ==========
-    function onTicketDetected(ticket) {
-        if (!scanning) return;
-        scanning = false;
-        
-        if (animationId) cancelAnimationFrame(animationId);
-        
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-            video.srcObject = null;
-        }
-        
-        statusDiv.textContent = "✅ Ticket scanné : " + ticket + " → Redirection...";
-        statusDiv.className = "status success";
-        
-        // Redirection vers le portail captif avec le ticket en paramètre
-        window.location.href = CAPTIVE_LOGIN_URL + "?username=" + encodeURIComponent(ticket);
+  function onTicketDetected(ticket) {
+    if (!scanning) return;
+    scanning = false;
+    
+    if (animationId) cancelAnimationFrame(animationId);
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      video.srcObject = null;
     }
     
-    // ========== 5. SAISIE MANUELLE ==========
-    function manualSubmit() {
-        const manualCode = document.getElementById('manualCode').value.trim();
-        if (manualCode.length === 0) {
-            statusDiv.textContent = "⚠️ Veuillez entrer un code ticket valide";
-            statusDiv.className = "status error";
-            return;
-        }
-        
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-            video.srcObject = null;
-            scanning = false;
-            if (animationId) cancelAnimationFrame(animationId);
-        }
-        
-        onTicketDetected(manualCode);
+    statusDiv.textContent = "✅ Ticket: " + ticket + " → Redirection...";
+    statusDiv.className = "status success";
+    
+    // Redirection vers login avec le ticket
+    window.location.href = LOGIN_URL + "?username=" + encodeURIComponent(ticket);
+  }
+
+  // ========== MANUEL ==========
+  function showManualMode() {
+    manualMode = true;
+    scanning = false;
+    if (animationId) cancelAnimationFrame(animationId);
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      video.srcObject = null;
     }
-    
-    // ========== 6. RÉESSAYER CAMÉRA ==========
-    function retryCamera() {
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-            video.srcObject = null;
-        }
-        if (animationId) cancelAnimationFrame(animationId);
-        scanning = true;
-        startScanner();
+    document.getElementById('manualArea').style.display = 'block';
+    statusDiv.textContent = "📝 Mode manuel - Entrez votre code ticket";
+    statusDiv.className = "status";
+  }
+
+  function hideManualMode() {
+    manualMode = false;
+    document.getElementById('manualArea').style.display = 'none';
+    initScanner();
+  }
+
+  function manualSubmit() {
+    const code = document.getElementById('manualCode').value.trim();
+    if (code.length === 0) {
+      statusDiv.textContent = "⚠️ Veuillez entrer un code valide";
+      statusDiv.className = "status error";
+      return;
     }
-    
-    // ========== INIT ==========
-    document.getElementById('submitManual').addEventListener('click', manualSubmit);
-    document.getElementById('retryBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        retryCamera();
-    });
-    
-    document.getElementById('manualCode').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') manualSubmit();
-    });
-    
-    startScanner();
+    onTicketDetected(code);
+  }
+
+  // ========== INIT & EVENTS ==========
+  document.getElementById('reloadBtn').addEventListener('click', () => {
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      video.srcObject = null;
+    }
+    if (animationId) cancelAnimationFrame(animationId);
+    scanning = true;
+    manualMode = false;
+    document.getElementById('manualArea').style.display = 'none';
+    initScanner();
+  });
+
+  document.getElementById('manualBtn').addEventListener('click', showManualMode);
+  document.getElementById('retryCam').addEventListener('click', (e) => {
+    e.preventDefault();
+    hideManualMode();
+  });
+  document.getElementById('submitManual').addEventListener('click', manualSubmit);
+  document.getElementById('manualCode').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') manualSubmit();
+  });
+
+  // Démarrage
+  initScanner();
 </script>
 </body>
 </html>
