@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BKM WIFI ZONE - Connexion Internet Haut Débit</title>
+    <meta name="theme-color" content="#3B5998">
+    <link rel="stylesheet" href="all.min.css">
+    <style>
+        :root {
+            --primary: #3B5998;
+            --secondary: #2d4373;
+            --accent: #ff9800;
+            --light: #f5f5f5;
+            --dark: #333;
+            --success: #4CAF50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .login-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .auth-tab.active {
+            background: var(--accent);
+            font-weight: bold;
+        }
+        
+        .auth-tab:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: #e68900;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .info-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .info-section h2 {
+            margin-bottom: 20px;
+            color: var(--accent);
+            text-align: center;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .service-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+        
+        .service-card h3 {
+            margin-bottom: 10px;
+        }
+        
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .pricing-table th, .pricing-table td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+        
+        .pricing-table th {
+            background: var(--accent);
+            font-weight: bold;
+        }
+        
+        .pricing-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .contact-info {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        
+        .contact-info a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: var(--accent);
+
+        /* ===== BOUTON SCAN QR ===== */
+        .btn-qr {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 11px;
+            margin-bottom: 14px;
+            background: rgba(255,255,255,0.15);
+            border: 2px dashed rgba(255,255,255,0.5);
+            border-radius: 8px;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.3px;
+        }
+        .btn-qr:hover {
+            background: rgba(255,255,255,0.25);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .btn-qr svg { flex-shrink: 0; }
+
+        /* ===== MODALE SCANNER ===== */
+        #qr-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.82);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        #qr-modal.open { display: flex; }
+
+        .qr-box {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 20px;
+            width: 320px;
+            max-width: 92vw;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+        .qr-title {
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        .qr-subtitle {
+            color: rgba(255,255,255,0.55);
+            font-size: 0.78rem;
+            text-align: center;
+            margin-top: -8px;
+        }
+        .qr-viewport {
+            position: relative;
+            width: 260px;
+            height: 260px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+        }
+        #qr-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        /* Cadre de visée animé */
+        .qr-frame {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+        .qr-frame::before,
+        .qr-frame::after {
+            content: '';
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            border-color: var(--accent);
+            border-style: solid;
+        }
+        .qr-frame::before {
+            top: 14px; left: 14px;
+            border-width: 3px 0 0 3px;
+            border-radius: 6px 0 0 0;
+        }
+        .qr-frame::after {
+            bottom: 14px; right: 14px;
+            border-width: 0 3px 3px 0;
+            border-radius: 0 0 6px 0;
+        }
+        /* Coins supplémentaires via spans */
+        .qr-corner-tr, .qr-corner-bl {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            border-color: var(--accent);
+            border-style: solid;
+        }
+        .qr-corner-tr { top: 14px; right: 14px; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
+        .qr-corner-bl { bottom: 14px; left: 14px; border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
+
+        /* Ligne de scan animée */
+        .qr-scanline {
+            position: absolute;
+            left: 14px; right: 14px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--accent), transparent);
+            animation: scanline 2s ease-in-out infinite;
+            top: 14px;
+        }
+        @keyframes scanline {
+            0%   { top: 14px; opacity: 1; }
+            50%  { opacity: 0.7; }
+            100% { top: calc(100% - 16px); opacity: 1; }
+        }
+
+        /* Feedback succès */
+        .qr-viewport.success { outline: 3px solid var(--success); }
+
+        .qr-status {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            min-height: 18px;
+        }
+        .qr-status.ok { color: var(--success); font-weight: 700; }
+        .qr-status.err { color: #ff6b6b; }
+
+        .btn-close-qr {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: white;
+            padding: 9px 28px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-close-qr:hover { background: rgba(255,255,255,0.2); }
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .contact-info a:hover {
+            background: #e68900;
+            transform: scale(1.05);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            width: 100%;
+        }
+        
+        .copyright {
+            margin-bottom: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .info-message {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-wifi"></i>
+            </div>
+            <h1>BKM WIFI ZONE</h1>
+            <p class="tagline">Contacter le +226 54641531 pour acheter un ticket</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="login-section">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" id="tab-ticket">Accès par Ticket</div>
+                    <div class="auth-tab" id="tab-member">Accès Membre</div>
+                </div>
+                
+                <div class="info-message" id="info-login">
+                    Tapez votre code ticket pour vous connecter
+                </div>
+                
+                <form autocomplete="off" name="login" action="$(link-login-only)" method="post" $(if chap-id) onSubmit="return doLogin()" $(endif)>
+                    <input type="hidden" name="dst" value="$(link-orig)" />
+                    <input type="hidden" name="popup" value="true" />
+                    
+                    <!-- Bouton Scanner QR -->
+                    <button type="button" class="btn-qr" id="btn-open-qr">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                            <path d="M14 14h3v3m0 4h4v-4m-4 0h-3"/>
+                        </svg>
+                        Scanner un QR Code
+                    </button>
+
+                    <div class="form-group">
+                        <input class="form-control" id="username" name="username" type="text" placeholder="Code Ticket" required />
+                    </div>
+                    
+                    <div class="form-group hidden" id="password-group">
+                        <input class="form-control" id="password" name="password" type="password" placeholder="Mot de passe" />
+                    </div>
+                    
+                    <button class="btn" type="submit">
+                        <i class="fas fa-sign-in-alt"></i> Se Connecter
+                    </button>
+                </form>
+                
+                <form name="sendin" action="$(link-login-only)" method="post" class="hidden">
+                    <input type="hidden" name="username" />
+                    <input type="hidden" name="password" />
+                    <input type="hidden" name="dst" value="$(link-orig)" />
+                    <input type="hidden" name="popup" value="true" />
+                </form>
+            </div>
+            
+            <div class="info-section">
+                <h2>Nos Services Wi-Fi</h2>
+                
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-wifi"></i>
+                        </div>
+                        <h3>Installation Wi-Fi Zone</h3>
+                        <p>Installation professionnelle de zones Wi-Fi couvrant tous vos espaces</p>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3>Configuration Réseau</h3>
+                        <p>Configuration et optimisation de votre réseau pour des performances maximales</p>
+                    </div>
+                    
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3>Support Technique</h3>
+                        <p>Assistance technique 24h/24 pour tous vos problèmes de connexion</p>
+                    </div>
+                </div>
+                
+                <h2>Nos Forfaits Internet</h2>
+                
+                <table class="pricing-table">
+                    <thead>
+                        <tr>
+                            <th>Durée</th>
+                            <th>Prix</th>
+                            <th>Validité</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1 Heure</td>
+                            <td>100 FCFA</td>
+                            <td>1 Heure</td>
+                        </tr>
+                        <tr>
+                            <td>3 Heures</td>
+                            <td>200 FCFA</td>
+                            <td>3 Heures</td>
+                        </tr>
+                        <tr>
+                            <td>24 Heures</td>
+                            <td>400 FCFA</td>
+                            <td>24 Heures</td>
+                        </tr>
+                        <tr>
+                            <td>3 Jours</td>
+                            <td>700 FCFA</td>
+                            <td>3 Jours</td>
+                        </tr>
+                        <tr>
+                            <td>7 Jours</td>
+                            <td>1000 FCFA</td>
+                            <td>7 Jours</td>
+                        </tr>
+                        <tr>
+                            <td>30 Jours</td>
+                            <td>3000 FCFA</td>
+                            <td>30 Jours</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="contact-info">
+                    <p>Pour tous vos besoins en matériel Wi-Fi, installation ou configuration</p>
+                    <a href="tel:+22654641531">
+                        <i class="fas fa-phone"></i> Contactez-nous au 54 64 15 31
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+    <!-- ===== MODALE SCANNER QR ===== -->
+    <div id="qr-modal">
+        <div class="qr-box">
+            <div class="qr-title">📷 Scanner votre ticket</div>
+            <div class="qr-subtitle">Pointez la caméra vers le QR code du ticket</div>
+
+            <div class="qr-viewport" id="qr-viewport">
+                <video id="qr-video" playsinline muted></video>
+                <canvas id="qr-canvas" style="display:none;"></canvas>
+                <div class="qr-frame">
+                    <span class="qr-corner-tr"></span>
+                    <span class="qr-corner-bl"></span>
+                </div>
+                <div class="qr-scanline"></div>
+            </div>
+
+            <div class="qr-status" id="qr-status">Initialisation de la caméra...</div>
+
+            <button class="btn-close-qr" id="btn-close-qr">✕ Fermer</button>
+        </div>
+    </div>
+
+    <!-- jsQR : décodage QR en JavaScript pur -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+    <script>
+    (function() {
+        var modal      = document.getElementById('qr-modal');
+        var video      = document.getElementById('qr-video');
+        var canvas     = document.getElementById('qr-canvas');
+        var viewport   = document.getElementById('qr-viewport');
+        var statusEl   = document.getElementById('qr-status');
+        var btnOpen    = document.getElementById('btn-open-qr');
+        var btnClose   = document.getElementById('btn-close-qr');
+        var usernameIn = document.getElementById('username');
+        var passwordIn = document.getElementById('password');
+        var loginForm  = document.login;
+
+        var stream   = null;
+        var rafId    = null;
+        var ctx      = null;
+        var scanning = false;
+
+        // ── Cacher le bouton si HTTP sur mobile (caméra impossible) ──────────
+        var isHTTP      = location.protocol === 'http:';
+        var isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        var isMobile    = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        var hasMedia    = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+
+        if (isHTTP && !isLocalhost) {
+            // Portail captif HTTP : caméra bloquée sur mobile par le navigateur
+            // On affiche le bouton mais avec un message explicatif au clic
+            btnOpen.title = 'Nécessite HTTPS ou un navigateur compatible';
+        }
+
+        // ── Événements ───────────────────────────────────────────────────────
+        btnOpen.addEventListener('click', function(e) {
+            e.preventDefault();
+            openScanner();
+        });
+
+        btnClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeScanner();
+        });
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeScanner();
+        });
+
+        // ── Ouverture ────────────────────────────────────────────────────────
+        function openScanner() {
+            modal.classList.add('open');
+            statusEl.className = 'qr-status';
+            viewport.classList.remove('success');
+            scanning = true;
+
+            // Vérification API disponible
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showFallback('Caméra non supportée sur ce navigateur.\nEntrez le code manuellement ci-dessous.');
+                return;
+            }
+
+            statusEl.textContent = 'Demande d\'accès à la caméra...';
+
+            // On essaie d'abord avec la caméra arrière (mobile)
+            // puis simplement { video: true } en fallback
+            startCamera({ video: { facingMode: 'environment' } })
+                .catch(function() {
+                    // fallback : sans contrainte de facing
+                    return startCamera({ video: true });
+                })
+                .catch(function(err) {
+                    var msg = 'Impossible d\'accéder à la caméra.';
+                    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                        msg = 'Permission caméra refusée.\nAccordez l\'accès dans les réglages du navigateur.';
+                    } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                        msg = 'Aucune caméra trouvée sur cet appareil.';
+                    } else if (err.name === 'NotSupportedError' || isHTTP && !isLocalhost) {
+                        msg = 'La caméra nécessite une connexion sécurisée (HTTPS).\nEntrez le code manuellement ci-dessous.';
+                    } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                        msg = 'Caméra occupée par une autre application.';
+                    }
+                    showFallback(msg);
+                });
+        }
+
+        function startCamera(constraints) {
+            return navigator.mediaDevices.getUserMedia(constraints)
+                .then(function(s) {
+                    stream = s;
+                    video.srcObject = stream;
+                    // play() retourne une Promise sur les navigateurs modernes
+                    var p = video.play();
+                    if (p && p.then) {
+                        return p.then(function() { onCameraReady(); });
+                    } else {
+                        onCameraReady();
+                    }
+                });
+        }
+
+        function onCameraReady() {
+            hideFallback();
+            statusEl.textContent = 'Pointez vers le QR code du ticket';
+            statusEl.className = 'qr-status';
+            rafId = requestAnimationFrame(scanFrame);
+        }
+
+        // ── Fermeture ────────────────────────────────────────────────────────
+        function closeScanner() {
+            scanning = false;
+            modal.classList.remove('open');
+            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+            if (stream) { stream.getTracks().forEach(function(t) { t.stop(); }); stream = null; }
+            video.srcObject = null;
+            hideFallback();
+        }
+
+        // ── Boucle de scan ───────────────────────────────────────────────────
+        function scanFrame() {
+            if (!scanning) return;
+
+            if (video.readyState >= 2) {  // HAVE_CURRENT_DATA ou plus
+                var w = video.videoWidth;
+                var h = video.videoHeight;
+                if (w > 0 && h > 0) {
+                    canvas.width  = w;
+                    canvas.height = h;
+                    if (!ctx) ctx = canvas.getContext('2d', { willReadFrequently: true });
+                    ctx.drawImage(video, 0, 0, w, h);
+                    var imageData = ctx.getImageData(0, 0, w, h);
+                    var code = jsQR(imageData.data, w, h, { inversionAttempts: 'dontInvert' });
+                    if (code && code.data && code.data.trim().length > 0) {
+                        onQRDetected(code.data.trim());
+                        return;
+                    }
+                }
+            }
+
+            rafId = requestAnimationFrame(scanFrame);
+        }
+
+        // ── QR détecté ───────────────────────────────────────────────────────
+        function onQRDetected(value) {
+            scanning = false;
+            viewport.classList.add('success');
+            statusEl.textContent = '✅ ' + value;
+            statusEl.className = 'qr-status ok';
+
+            usernameIn.value = value;
+            if (passwordIn) passwordIn.value = value;
+
+            setTimeout(function() {
+                closeScanner();
+                setTimeout(function() {
+                    submitLogin();
+                }, 150);
+            }, 800);
+        }
+
+        function submitLogin() {
+            if (!loginForm) return;
+            try {
+                if (typeof loginForm.onsubmit === 'function') {
+                    var ret = loginForm.onsubmit();
+                    if (ret === false) return;
+                }
+                loginForm.submit();
+            } catch(e) {
+                loginForm.submit();
+            }
+        }
+
+        // ── Fallback saisie manuelle ─────────────────────────────────────────
+        // Affiché quand la caméra est inaccessible (HTTP, permission refusée…)
+        var fallbackDiv = null;
+
+        function showFallback(msg) {
+            statusEl.textContent = '';
+            statusEl.className = 'qr-status err';
+
+            if (!fallbackDiv) {
+                fallbackDiv = document.createElement('div');
+                fallbackDiv.style.cssText = 'width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;';
+                fallbackDiv.innerHTML =
+                    '<div id="qr-err-msg" style="color:#ff6b6b;font-size:0.78rem;text-align:center;white-space:pre-line;"></div>' +
+                    '<input id="qr-manual-input" type="text" placeholder="Tapez le code du ticket" ' +
+                        'style="width:100%;padding:10px 12px;border-radius:7px;border:1.5px solid rgba(255,255,255,0.4);' +
+                        'background:rgba(255,255,255,0.12);color:white;font-size:1rem;text-align:center;' +
+                        'letter-spacing:1px;outline:none;" autocomplete="off" autocorrect="off" spellcheck="false"/>' +
+                    '<button id="qr-manual-btn" style="background:var(--accent);color:white;border:none;border-radius:7px;' +
+                        'padding:10px 30px;font-size:0.95rem;font-weight:bold;cursor:pointer;width:100%;">Valider</button>';
+
+                // Insérer avant le bouton Fermer
+                var box = document.querySelector('.qr-box');
+                var closeBtn = document.getElementById('btn-close-qr');
+                box.insertBefore(fallbackDiv, closeBtn);
+
+                // Événements
+                document.getElementById('qr-manual-btn').addEventListener('click', function() {
+                    var val = document.getElementById('qr-manual-input').value.trim();
+                    if (val.length > 0) onQRDetected(val);
+                });
+                document.getElementById('qr-manual-input').addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        var val = this.value.trim();
+                        if (val.length > 0) onQRDetected(val);
+                    }
+                });
+            }
+
+            document.getElementById('qr-err-msg').textContent = msg;
+            fallbackDiv.style.display = 'flex';
+            // Cacher la vidéo, garder la modale ouverte
+            viewport.style.display = 'none';
+        }
+
+        function hideFallback() {
+            viewport.style.display = '';
+            if (fallbackDiv) fallbackDiv.style.display = 'none';
+        }
+
+    })();
+    </script>
+
+        <footer>
+            <p class="copyright">BKM WIFI ZONE - Internet Haut Débit 24h/24</p>
+            <p>Merci pour votre confiance</p>
+        </footer>
+    </div>
+<div style="display: flex; justify-content: center; margin: 30px 0;">
+    <div onclick="window.location.href='https://lebinaire10.github.io/palga_tools/user/bypass/clavier/'" style="
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 50px;
+        padding: 15px 35px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border: 1px solid rgba(255,255,255,0.2);
+        transition: all 0.3s;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    " onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='translateY(-3px)';" 
+       onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateY(0)';">
+        
+        <div style="
+            background: linear-gradient(135deg, #00d4ff, #e94560);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        ">
+            <span style="font-size: 20px;">??</span>
+        </div>
+        
+        <div>
+            <div style="color: white; font-weight: bold; font-size: 16px;">BYPASS CLAVIER</div>
+            <div style="color: rgba(255,255,255,0.7); font-size: 10px;">10 crédits • Instantané</div>
+        </div>
+        
+        <div style="color: #00d4ff; font-size: 20px;">?</div>
+    </div>
+</div>
+    <script type="text/javascript" src="md5.js"></script>
+    <script>
+        // Fonction de connexion pour CHAP
+        function doLogin() {
+            document.sendin.username.value = document.login.username.value;
+            document.sendin.password.value = hexMD5('$(chap-id)' + document.login.password.value + '$(chap-challenge)');
+            document.sendin.submit();
+            return false;
+        }
+        
+        // Gestion des onglets de connexion
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabTicket = document.getElementById('tab-ticket');
+            const tabMember = document.getElementById('tab-member');
+            const passwordGroup = document.getElementById('password-group');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const infoLogin = document.getElementById('info-login');
+            
+            // Mode ticket par défaut
+            function setTicketMode() {
+                tabTicket.classList.add('active');
+                tabMember.classList.remove('active');
+                passwordGroup.classList.add('hidden');
+                usernameInput.placeholder = "Code Ticket";
+                infoLogin.textContent = "Tapez votre code ticket pour vous connecter";
+                
+                // Configuration pour le mode ticket
+                usernameInput.onkeyup = function() {
+                    passwordInput.value = usernameInput.value;
+                };
+            }
+            
+            // Mode membre
+            function setMemberMode() {
+                tabTicket.classList.remove('active');
+                tabMember.classList.add('active');
+                passwordGroup.classList.remove('hidden');
+                usernameInput.placeholder = "Nom d'utilisateur";
+                infoLogin.textContent = "Entrez votre nom d'utilisateur et mot de passe";
+                
+                // Réinitialiser le gestionnaire d'événements
+                usernameInput.onkeyup = null;
+            }
+            
+            // Événements pour les onglets
+            tabTicket.addEventListener('click', setTicketMode);
+            tabMember.addEventListener('click', setMemberMode);
+            
+            // Initialisation en mode ticket
+            setTicketMode();
+            
+            // Focus sur le champ de nom d'utilisateur
+            usernameInput.focus();
+        });
+    </script>
+</body>
+</html>
