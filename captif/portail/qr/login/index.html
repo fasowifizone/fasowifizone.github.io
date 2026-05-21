@@ -38,7 +38,7 @@
       border: 2px solid #ff9800;
       margin-bottom: 15px;
       position: relative;
-      min-height: 300px;
+      min-height: 280px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -116,13 +116,20 @@
       color: #ff9800;
       word-break: break-all;
     }
-    .debug {
-      font-size: 10px;
-      color: #888;
-      margin-top: 10px;
-      padding: 8px;
-      background: rgba(0,0,0,0.3);
-      border-radius: 8px;
+    .gateway-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .gateway-btn {
+      background: rgba(255,152,0,0.2);
+      border: 1px solid #ff9800;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      cursor: pointer;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
@@ -135,10 +142,18 @@
   </div>
 
   <div class="info-box" id="gatewayInfo">
-    🔐 Chargement...
+    🔍 Recherche de la passerelle...
   </div>
 
-  <div class="camera-box" id="cameraBox">
+  <div class="gateway-buttons" id="gatewayButtons" style="display:none;">
+    <button class="gateway-btn" data-ip="192.168.1.1">192.168.1.1</button>
+    <button class="gateway-btn" data-ip="192.168.0.1">192.168.0.1</button>
+    <button class="gateway-btn" data-ip="10.10.10.1">10.10.10.1</button>
+    <button class="gateway-btn" data-ip="172.16.0.1">172.16.0.1</button>
+    <button class="gateway-btn" data-ip="autre">Autre...</button>
+  </div>
+
+  <div class="camera-box">
     <video id="video" playsinline muted autoplay></video>
     <div class="scan-line"></div>
   </div>
@@ -155,104 +170,118 @@
     <button class="btn btn-primary" id="submitManual" style="width:100%;">✓ VALIDER</button>
   </div>
 
-  <div class="debug" id="debugInfo">
-    📡 Debug: En attente...
-  </div>
-
   <div class="footer">BKM WIFI ZONE</div>
 </div>
 <canvas id="canvas" width="640" height="480"></canvas>
 
 <script>
-  // ========== RÉCUPÉRATION DE LA PASSERELLE ==========
-  const urlParams = new URLSearchParams(window.location.search);
-  let GATEWAY_URL = urlParams.get('gateway');
-  
-  if (!GATEWAY_URL) {
-    document.getElementById('gatewayInfo').innerHTML = "❌ Erreur: Aucune passerelle spécifiée";
-    document.getElementById('gatewayInfo').style.color = "#ff4444";
-  } else {
-    document.getElementById('gatewayInfo').innerHTML = "🔐 Passerelle: " + GATEWAY_URL;
-  }
-  
-  const LOGIN_URL = GATEWAY_URL ? GATEWAY_URL + "/login.html" : null;
-  
+  let GATEWAY_URL = null;
   let video = document.getElementById('video');
   let statusDiv = document.getElementById('status');
-  let debugDiv = document.getElementById('debugInfo');
   let stream = null;
   let scanning = true;
   let animationId = null;
   let manualMode = false;
 
-  function updateDebug(msg) {
-    console.log(msg);
-    debugDiv.innerHTML = "📡 " + msg;
+  // ========== 1. TENTER DE RÉCUPÉRER L'IP DEPUIS L'URL ==========
+  const urlParams = new URLSearchParams(window.location.search);
+  let gatewayFromUrl = urlParams.get('gateway');
+  
+  // ========== 2. TENTER DE RÉCUPÉRER L'IP DEPUIS LE LOCALSTORAGE ==========
+  let gatewayFromStorage = localStorage.getItem('bkm_gateway');
+  
+  // ========== 3. TENTER DE DÉTECTER L'IP PAR L'URL PARENTE ==========
+  let gatewayFromReferrer = null;
+  if (document.referrer) {
+    try {
+      const referrerUrl = new URL(document.referrer);
+      gatewayFromReferrer = referrerUrl.protocol + '//' + referrerUrl.hostname;
+    } catch(e) {}
   }
-
-  // ========== VÉRIFICATION HTTPS ==========
-  updateDebug("Protocole: " + window.location.protocol);
-  if (window.location.protocol !== 'https:') {
-    statusDiv.innerHTML = "⚠️ ATTENTION: Vous n'êtes pas en HTTPS! La caméra peut être bloquée.";
-    statusDiv.className = "status warning";
-    updateDebug("⚠️ Le site doit être en HTTPS pour utiliser la caméra");
+  
+  // ========== 4. TENTER DE DÉTECTER L'IP PAR LE NOM D'HÔTE ==========
+  let gatewayFromHost = null;
+  const hostname = window.location.hostname;
+  if (!hostname.includes('github.io') && !hostname.includes('localhost')) {
+    gatewayFromHost = window.location.protocol + '//' + hostname;
   }
-
-  // ========== VÉRIFICATION SUPPORT CAMÉRA ==========
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    statusDiv.innerHTML = "❌ Votre navigateur ne supporte pas la caméra";
-    statusDiv.className = "status error";
-    updateDebug("API getUserMedia non supportée");
+  
+  // ========== CHOISIR LA MEILLEURE SOURCE ==========
+  if (gatewayFromUrl) {
+    GATEWAY_URL = gatewayFromUrl;
+    localStorage.setItem('bkm_gateway', GATEWAY_URL);
+    document.getElementById('gatewayInfo').innerHTML = "✅ Passerelle (URL): " + GATEWAY_URL;
+  } else if (gatewayFromStorage) {
+    GATEWAY_URL = gatewayFromStorage;
+    document.getElementById('gatewayInfo').innerHTML = "💾 Passerelle (mémoire): " + GATEWAY_URL;
+  } else if (gatewayFromReferrer) {
+    GATEWAY_URL = gatewayFromReferrer;
+    localStorage.setItem('bkm_gateway', GATEWAY_URL);
+    document.getElementById('gatewayInfo').innerHTML = "🔄 Passerelle (référent): " + GATEWAY_URL;
+  } else if (gatewayFromHost) {
+    GATEWAY_URL = gatewayFromHost;
+    localStorage.setItem('bkm_gateway', GATEWAY_URL);
+    document.getElementById('gatewayInfo').innerHTML = "🏠 Passerelle (locale): " + GATEWAY_URL;
+  } else {
+    document.getElementById('gatewayInfo').innerHTML = "⚠️ Passerelle non détectée";
+    document.getElementById('gatewayInfo').style.color = "#ffaa00";
+    // Afficher les boutons de sélection manuelle
+    document.getElementById('gatewayButtons').style.display = 'flex';
   }
-
+  
+  const LOGIN_URL = GATEWAY_URL ? GATEWAY_URL + "/login.html" : null;
+  
+  // ========== SÉLECTION MANUELLE DE LA PASSERELLE ==========
+  document.querySelectorAll('.gateway-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      let ip = btn.getAttribute('data-ip');
+      if (ip === 'autre') {
+        ip = prompt("Entrez l'adresse IP de la passerelle:", "192.168.1.1");
+        if (!ip) return;
+      }
+      GATEWAY_URL = 'http://' + ip;
+      localStorage.setItem('bkm_gateway', GATEWAY_URL);
+      document.getElementById('gatewayInfo').innerHTML = "✅ Passerelle sélectionnée: " + GATEWAY_URL;
+      document.getElementById('gatewayButtons').style.display = 'none';
+      // Redémarrer le scanner
+      if (stream) stream.getTracks().forEach(t => t.stop());
+      initScanner();
+    });
+  });
+  
   // ========== CAMÉRA ==========
   async function startCamera() {
-    updateDebug("Demande d'accès à la caméra...");
-    
-    // Essayer différentes configurations
-    const constraintsList = [
-      { video: { facingMode: { exact: "environment" } } },  // Caméra arrière
-      { video: { facingMode: "environment" } },              // Caméra arrière (soft)
-      { video: true }                                         // Caméra par défaut
-    ];
-    
-    for (let constraints of constraintsList) {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: "environment" } }
+      });
+      return stream;
+    } catch(e) {
       try {
-        updateDebug("Essai: " + JSON.stringify(constraints));
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-        updateDebug("✅ Caméra obtenue !");
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
         return stream;
-      } catch(e) {
-        updateDebug("Échec: " + e.name + " - " + e.message);
+      } catch(e2) {
+        throw new Error("Caméra inaccessible");
       }
     }
-    
-    throw new Error("Aucune caméra disponible");
   }
 
   async function initScanner() {
+    if (!GATEWAY_URL) {
+      statusDiv.innerHTML = "⚠️ Sélectionnez d'abord la passerelle";
+      statusDiv.className = "status warning";
+      return;
+    }
+    
     try {
       const mediaStream = await startCamera();
       video.srcObject = mediaStream;
-      
-      // Attendre que la vidéo soit prête
-      await new Promise((resolve) => {
-        video.onloadedmetadata = () => {
-          updateDebug("Vidéo chargée: " + video.videoWidth + "x" + video.videoHeight);
-          resolve();
-        };
-        setTimeout(resolve, 2000);
-      });
-      
       await video.play();
-      updateDebug("Lecture vidéo démarrée");
-      
       statusDiv.innerHTML = "✅ Caméra active - Scannez le QR code";
       statusDiv.className = "status";
       scanning = true;
       scanFrame();
     } catch(err) {
-      updateDebug("ERREUR: " + err.message);
       statusDiv.innerHTML = "❌ " + err.message + " - Utilisez la saisie manuelle";
       statusDiv.className = "status error";
       scanning = false;
@@ -262,7 +291,6 @@
 
   function scanFrame() {
     if (!scanning || manualMode) return;
-    
     if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
@@ -274,12 +302,10 @@
         inversionAttempts: "dontInvert",
       });
       if (code && code.data && code.data.trim().length > 0) {
-        updateDebug("QR détecté: " + code.data);
         onTicketDetected(code.data.trim());
         return;
       }
     }
-    
     animationId = requestAnimationFrame(scanFrame);
   }
 
@@ -291,7 +317,9 @@
     
     statusDiv.innerHTML = "✅ Ticket: " + ticket + " → Connexion...";
     statusDiv.className = "status success";
-    updateDebug("Redirection vers: " + LOGIN_URL + "?username=" + ticket);
+    
+    // Sauvegarder le ticket dans localStorage pour usage futur
+    localStorage.setItem('bkm_last_ticket', ticket);
     
     if (!GATEWAY_URL) {
       statusDiv.innerHTML = "❌ Erreur: Passerelle non trouvée";
@@ -330,7 +358,6 @@
   document.getElementById('submitManual').onclick = manualSubmit;
   document.getElementById('manualCode').onkeypress = (e) => { if (e.key === 'Enter') manualSubmit(); };
 
-  // Démarrer
   initScanner();
 </script>
 </body>
