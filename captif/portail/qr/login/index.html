@@ -74,9 +74,6 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            border: 2px solid rgba(255, 152, 0, 0.5);
-            border-radius: 18px;
-            box-shadow: 0 0 0 2px rgba(0,0,0,0.3);
         }
 
         .scan-line::after {
@@ -164,6 +161,7 @@
             color: #ff9800;
             text-decoration: none;
             font-size: 0.85rem;
+            cursor: pointer;
         }
 
         .footer {
@@ -204,17 +202,11 @@
     </div>
 </div>
 
-<!-- Librairie jsQR (lightweight) -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
 <script>
-    // Configuration du portail captif (page de login d'origine)
-    // ⚠️ À ADAPTER : URL complète vers ton fichier login.html (hébergé)
-    const CAPTIVE_LOGIN_URL = "https://fasowifizone.github.io/captif/portail/qr/login.html";
-    
-    // Paramètre : on va rediriger vers login.html?ticket=CODE
-    // Mais on peut aussi tenter de soumettre directement via POST si le serveur l'accepte.
-    // Pour être sûr, on utilise la redirection avec ?username=CODE
+    // ⚠️ IMPORTANT : Remplace cette URL par l'URL de ton fichier login.html (portail captif)
+    const CAPTIVE_LOGIN_URL = "https://fasowifizone.github.io/captif/portail/login.html";
     
     let video = document.getElementById('video');
     let statusDiv = document.getElementById('status');
@@ -228,13 +220,11 @@
         statusDiv.className = "status";
         
         try {
-            // Essayer caméra arrière en priorité (environment)
             stream = await navigator.mediaDevices.getUserMedia({
                 video: { facingMode: { exact: "environment" } }
             });
             return stream;
         } catch (err) {
-            // Fallback : caméra avant ou par défaut
             try {
                 stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 return stream;
@@ -262,7 +252,7 @@
         }
     }
 
-    // ========== 3. BOUCLE DE SCAN (jsQR) ==========
+    // ========== 3. BOUCLE DE SCAN ==========
     function scan() {
         if (!scanning) return;
         
@@ -294,7 +284,6 @@
         
         if (animationId) cancelAnimationFrame(animationId);
         
-        // Arrêter la caméra
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
             video.srcObject = null;
@@ -303,36 +292,7 @@
         statusDiv.textContent = "✅ Ticket scanné : " + ticket + " → Redirection...";
         statusDiv.className = "status success";
         
-        // Rediriger vers le portail captif avec le ticket en paramètre username
-        // Méthode 1 : redirection simple (GET)
-        // window.location.href = CAPTIVE_LOGIN_URL + "?username=" + encodeURIComponent(ticket);
-        
-        // Méthode 2 : soumission POST vers le formulaire du portail (plus propre)
-        // Comme ton login.html attend un POST, on va créer un formulaire caché
-        redirectWithTicket(ticket);
-    }
-    
-    function redirectWithTicket(ticket) {
-        // On va soumettre un formulaire vers login.html avec les bons champs
-        // Mais attention : login.html est la page complète. Pour que ça marche,
-        // il faut que le champ "username" soit pré-rempli et que le formulaire se soumette auto.
-        
-        // Solution la plus robuste : on redirige vers login.html#ticket=XXX
-        // et dans login.html, on ajoute un petit script pour lire le hash et soumettre.
-        // Comme tu as le contrôle sur login.html, on peut le modifier.
-        
-        // Version simple : redirection GET (si ton script accepte ?username=...)
-        // Je te conseille d'ajouter dans ton login.html ceci au chargement :
-        /*
-            const urlParams = new URLSearchParams(window.location.search);
-            const ticketFromUrl = urlParams.get('username');
-            if(ticketFromUrl) {
-                document.getElementById('username').value = ticketFromUrl;
-                document.querySelector('form[name="login"]').submit();
-            }
-        */
-        
-        // Ici on utilise la méthode GET (à adapter dans login.html)
+        // Redirection vers le portail captif avec le ticket en paramètre
         window.location.href = CAPTIVE_LOGIN_URL + "?username=" + encodeURIComponent(ticket);
     }
     
