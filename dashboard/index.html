@@ -1071,7 +1071,7 @@
 
                 <div style="display: flex; gap: 10px; justify-content: center;">
                     <button class="btn-secondary" onclick="hideDeleteModal()">Annuler</button>
-                    <button class="btn-danger" onclick="deleteAccount()" id="confirmDeleteBtn">
+                    <button class="btn-danger" onclick="" id="confirmDeleteBtn">
                         Supprimer définitivement
                     </button>
                 </div>
@@ -1084,7 +1084,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Confirmation suppression</h2>
-                <button class="modal-close" onclick="hideDeleteMikrotikModal()">✕</button>
+                <button class="modal-close" onclick="">✕</button>
             </div>
 
             <div style="text-align: center; margin: 30px 0;">
@@ -1097,7 +1097,7 @@
 
                 <div style="display: flex; gap: 10px; justify-content: center;">
                     <button class="btn-secondary" onclick="hideDeleteMikrotikModal()">Annuler</button>
-                    <button class="btn-danger" onclick="confirmDeleteMikrotik()">
+                    <button class="btn-danger" onclick="">
                         Supprimer
                     </button>
                 </div>
@@ -1334,6 +1334,9 @@
                         <div class="mikrotik-actions">
                             <button class="btn-generate" onclick="openTicketGenerator('${mik.mik_id}')">
                                 🎫 Générer des tickets
+                            </button>
+                                                        <button class="btn-secondary" style="flex: 1;" onclick="openMikrotikManagement('${mik.mik_id}')">
+                                Ouvrir
                             </button>
                             <button class="btn-secondary" style="flex: 1;" onclick="openMikrotikManagement('${mik.mik_id}')">
                                 ⚙️ Configuration
