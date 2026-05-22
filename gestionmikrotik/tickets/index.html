@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BF WIFI ZONE - Ticket Generator Pro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --bg: #0a0a14; --panel: #12122a; --gold: #c9a84c;
@@ -50,7 +50,9 @@
         .on { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
         .off { background: rgba(255,68,68,0.1); color: var(--red); border: 1px solid rgba(255,68,68,0.3); }
 
-        .main-grid { display: grid; grid-template-columns: 380px 1fr; gap: 15px; }
+        .main-grid { display: grid; grid-template-columns: 420px 1fr; gap: 15px; }
+        @media (max-width: 850px) { .main-grid { grid-template-columns: 1fr; } }
+
         .panel {
             background: var(--panel); border-radius: 14px; padding: 20px;
             border: 1px solid var(--border);
@@ -62,10 +64,12 @@
             display: block; font-size: 10px; color: var(--text-dim); margin-bottom: 5px;
             text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
         }
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%; padding: 10px 14px; background: #0a0a1f;
             border: 1px solid var(--border); color: #fff; border-radius: 8px; font-size: 14px;
+            font-family: inherit;
         }
+        .form-group textarea { resize: vertical; min-height: 60px; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         .profiles {
@@ -100,7 +104,6 @@
             gap: 10px; max-height: 60vh; overflow-y: auto; padding: 3px;
         }
 
-        /* Ticket classique (écran) */
         .ticket {
             background: #fff; border-radius: 8px; overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3); color: #111; transition: 0.2s;
@@ -128,7 +131,8 @@
             display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; text-align: left;
         }
         .ticket-detail { background: #eef1f5; padding: 4px 8px; border-radius: 4px; }
-        .ticket-detail .lbl { font-size: 7px; color: #888; } .ticket-detail .val { font-size: 11px; font-weight: bold; }
+        .ticket-detail .lbl { font-size: 7px; color: #888; }
+        .ticket-detail .val { font-size: 11px; font-weight: bold; }
         .ticket-foot {
             background: #1a3350; color: #fff; padding: 4px 10px;
             display: flex; justify-content: space-between; align-items: center;
@@ -136,30 +140,6 @@
         }
         .valid { color: var(--gold); font-weight: bold; }
         .price { background: var(--gold); color: #000; padding: 1px 8px; border-radius: 10px; font-weight: bold; }
-
-        /* Version miniature pour PDF */
-        .ticket-mini {
-            width: 3.2cm; height: 4.8cm; background: #fff; border-radius: 4px; overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2); color: #111; font-size: 6px;
-            display: inline-block; margin: 1mm; vertical-align: top;
-        }
-        .ticket-mini .ticket-head {
-            padding: 3px 5px; gap: 4px;
-        }
-        .ticket-mini .ticket-logo {
-            width: 14px; height: 14px; font-size: 8px;
-        }
-        .ticket-mini .ticket-title { font-size: 7px; }
-        .ticket-mini .ticket-subtitle { font-size: 5px; }
-        .ticket-mini .ticket-body { padding: 4px; }
-        .ticket-mini .ticket-code {
-            font-size: 10px; padding: 2px 5px; letter-spacing: 0.5px;
-        }
-        .ticket-mini .ticket-details { grid-template-columns: 1fr 1fr; gap: 3px; margin-top: 4px; }
-        .ticket-mini .ticket-detail { padding: 2px 4px; }
-        .ticket-mini .ticket-detail .lbl { font-size: 5px; }
-        .ticket-mini .ticket-detail .val { font-size: 7px; }
-        .ticket-mini .ticket-foot { padding: 2px 5px; font-size: 6px; }
 
         .overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.7);
@@ -201,9 +181,21 @@
             font-family: monospace; font-size: 11px; color: var(--green);
             white-space: pre-wrap; max-height: 200px; overflow: auto;
         }
-
-        @media (max-width: 850px) {
-            .main-grid { grid-template-columns: 1fr; }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .checkbox-group label {
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text);
+        }
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -252,8 +244,24 @@
                     </div>
                 </div>
 
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>📅 Validité affichée</label>
+                        <input type="text" id="displayValidity" placeholder="Ex: 2h, 1 jour, 30min" value="2h">
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="showQR" checked>
+                        <label>📱 Afficher le QR Code dans le PDF</label>
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label>🖥️ Nom MikroTik</label>
+                    <label>ℹ️ Info supplémentaire (optionnel)</label>
+                    <textarea id="extraInfo" rows="2" placeholder="Ex: Support 24/7, Merci de votre confiance, ..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>🖥️ Nom MikroTik (serveur)</label>
                     <input type="text" id="mikName" readonly style="background:#0a1a2a;color:var(--blue);border-color:#1a3a4a;">
                 </div>
 
@@ -307,14 +315,13 @@
         let connected = false, profiles = [], currentProfile = null;
         let allTickets = [], batchId = '', mikrotikName = 'BF WIFI ZONE';
         let startTime = 0;
+        let extraInfoGlobal = '';
 
-        // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('mikId').value = mikId;
             document.getElementById('accountKey').value = accountKey;
         });
 
-        // Utilitaires
         function toast(msg, type='info') {
             const t = document.createElement('div');
             t.className = 'toast';
@@ -338,7 +345,6 @@
             el.innerHTML = (state==='on' ? '🟢 ' : state==='off' ? '⚫ ' : '🔄 ') + text;
         }
 
-        // Communication avec le MikroTik (identique à Winbox Web)
         async function executeCommand(command) {
             const pushRes = await fetch(API + '/mik/commands/push', {
                 method: 'POST',
@@ -354,13 +360,14 @@
             const pushData = await pushRes.json();
             if (!pushData.success) throw new Error(pushData.message || 'push failed');
 
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 60; i++) {
                 await sleep(1000);
                 const statusRes = await fetch(API + '/mik/commands/status/' + pushData.command_id);
                 const statusData = await statusRes.json();
                 if (statusData.success && statusData.command) {
-                    if (statusData.command.status === 'completed')
+                    if (statusData.command.status === 'completed') {
                         return statusData.response ? statusData.response.text : 'OK';
+                    }
                     if (statusData.command.status === 'failed')
                         throw new Error('Command failed on MikroTik');
                 }
@@ -368,7 +375,24 @@
             throw new Error('Timeout');
         }
 
-        // Analyse des profils
+        // Récupération du nom MikroTik depuis le serveur (dashboard)
+        async function fetchMikrotikName() {
+            try {
+                const res = await fetch(`${API}/dashboard/${accountKey}`);
+                const data = await res.json();
+                if (data.success && data.mikrotiks) {
+                    const found = data.mikrotiks.find(m => m.mik_id === mikId);
+                    if (found && found.hostname && found.hostname !== 'Sans nom') {
+                        return found.hostname;
+                    }
+                }
+                return mikrotikName; // fallback
+            } catch(e) {
+                console.warn("Erreur récupération nom via dashboard:", e);
+                return mikrotikName;
+            }
+        }
+
         function parseProfiles(raw) {
             const result = [];
             if (!raw || raw === 'OK') return result;
@@ -390,11 +414,7 @@
                     case 'j': timeLimit = num+'d'; displayUnit = 'j'; break;
                     default: continue;
                 }
-                result.push({
-                    name, timeLimit,
-                    display: num+letter.toUpperCase()+' ('+num+displayUnit+')',
-                    number: num, letter
-                });
+                result.push({ name, timeLimit, display: num+letter.toUpperCase()+' ('+num+displayUnit+')', number: num, letter });
             }
             const order = {m:1, h:2, d:3, w:4, j:3};
             result.sort((a,b) => (order[a.letter]||9) - (order[b.letter]||9) || a.number - b.number);
@@ -409,7 +429,7 @@
             }
             container.innerHTML = profiles.map((p,i) => `
                 <div class="profile-chip ${i===0?'selected':''}" onclick="selectProfile('${p.name}', this)">
-                    ${p.name} <span class="badge">${p.display}</span>
+                    ${esc(p.name)} <span class="badge">${esc(p.display)}</span>
                 </div>
             `).join('');
             selectProfile(profiles[0].name, container.firstElementChild);
@@ -417,13 +437,12 @@
 
         function selectProfile(name, element) {
             document.querySelectorAll('.profile-chip').forEach(c => c.classList.remove('selected'));
-            element?.classList.add('selected');
+            if (element) element.classList.add('selected');
             document.getElementById('selectedProfile').value = name;
             currentProfile = profiles.find(p => p.name === name);
             if (currentProfile) document.getElementById('timeLimit').value = currentProfile.timeLimit;
         }
 
-        // Connexion
         async function connect() {
             mikId = document.getElementById('mikId').value.trim();
             accountKey = document.getElementById('accountKey').value.trim();
@@ -435,21 +454,18 @@
             overhead(true, 'Connexion et chargement des profils...');
 
             try {
-                await fetch(API + '/health'); // on ignore la réponse, on fait confiance
+                await fetch(API + '/health');
                 const rawProfiles = await executeCommand('/ip hotspot user profile print');
                 profiles = parseProfiles(rawProfiles);
                 renderProfiles();
 
-                try {
-                    const rawId = await executeCommand('/system identity print');
-                    const m = rawId.match(/name="([^"]+)"/);
-                    mikrotikName = m ? m[1] : 'BF WIFI ZONE';
-                } catch { mikrotikName = 'MikroTik'; }
+                // Récupération du nom MikroTik via l'API REST (dashboard)
+                mikrotikName = await fetchMikrotikName();
                 document.getElementById('mikName').value = mikrotikName;
 
                 connected = true;
                 document.getElementById('btnGenerate').disabled = false;
-                updateStatus('on', 'Connecté · '+profiles.length+' profils');
+                updateStatus('on', `Connecté · ${profiles.length} profils · ${mikrotikName}`);
                 overhead(false);
                 toast('✅ Connecté avec succès', 'success');
             } catch(e) {
@@ -461,7 +477,6 @@
             }
         }
 
-        // Génération fiable : codes générés côté client, une seule commande avec toutes les créations
         async function generateTickets() {
             if (!connected) { toast('Connectez-vous', 'error'); return; }
             const profile = document.getElementById('selectedProfile').value;
@@ -469,9 +484,12 @@
             const price = parseInt(document.getElementById('price').value) || 100;
             const quantity = parseInt(document.getElementById('quantity').value) || 5;
             const prefix = document.getElementById('prefix').value.trim() || 'BF';
+            const displayValidity = document.getElementById('displayValidity').value.trim() || timeLimit;
+            const extraInfo = document.getElementById('extraInfo').value.trim();
+            extraInfoGlobal = extraInfo;
+            
             if (!profile) { toast('Sélectionnez un profil', 'error'); return; }
 
-            // Créer un batch ID unique
             const now = new Date();
             batchId = 'B' +
                 String(now.getFullYear()).slice(2) +
@@ -486,7 +504,6 @@
             updateStatus('on', 'Génération...');
             overhead(true, 'Génération de ' + quantity + ' tickets...');
 
-            // Générer les codes aléatoires en JavaScript (rapide et fiable)
             const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
             const tickets = [];
             for (let i = 0; i < quantity; i++) {
@@ -494,86 +511,81 @@
                 for (let j = 0; j < 6; j++) {
                     code += chars.charAt(Math.floor(Math.random() * chars.length));
                 }
-                tickets.push({
-                    name: prefix + code,
-                    password: prefix + code, // voucher
-                    profile: profile,
-                    timeLimit: timeLimit,
-                    price: price,
-                    type: 'voucher'
+                tickets.push({ 
+                    name: prefix + code, 
+                    password: prefix + code, 
+                    profile, 
+                    timeLimit, 
+                    displayValidity,
+                    price,
+                    extraInfo,
+                    type: 'voucher' 
                 });
             }
 
-            // Construire une seule commande avec toutes les créations (séparées par '; ')
-            const commands = tickets.map(t => 
+            const commands = tickets.map(t =>
                 '/ip hotspot user add name="' + t.name +
                 '" password="' + t.password +
                 '" profile="' + profile +
                 '" limit-uptime="' + timeLimit +
                 '" comment="voucher|' + batchId + '"'
             );
-            const batchCommand = commands.join('; ');
-
-            try {
-                await executeCommand(batchCommand);
-
-                // Vérification : récupérer les utilisateurs créés avec ce batch
-                overhead(true, 'Vérification des tickets...');
-                const rawUsers = await executeCommand('/ip hotspot user print detail where comment~"' + batchId + '"');
-                
-                allTickets = [];
-                if (rawUsers && rawUsers !== 'OK') {
-                    const blocks = rawUsers.split(/\n\s*\d+\s+/).filter(b => b.trim());
-                    for (let block of blocks) {
-                        const nm = block.match(/name="([^"]+)"/);
-                        const pm = block.match(/password="([^"]+)"/);
-                        if (!nm) continue;
-                        allTickets.push({
-                            name: nm[1],
-                            password: pm ? pm[1] : nm[1],
-                            profile: profile,
-                            timeLimit: timeLimit,
-                            price: price,
-                            type: 'voucher'
-                        });
-                    }
-                    allTickets.sort((a,b) => a.name.localeCompare(b.name));
-                }
-
-                const elapsed = ((Date.now() - startTime)/1000).toFixed(1);
-                overhead(false);
-                document.getElementById('btnGenerate').disabled = false;
-                updateStatus('on', 'OK · '+allTickets.length+' tickets');
-
-                document.getElementById('statsRow').style.display = 'flex';
-                document.getElementById('statOk').textContent = allTickets.length;
-                document.getElementById('statFail').textContent = quantity - allTickets.length;
-                document.getElementById('statTime').textContent = elapsed + 's';
-                document.getElementById('ticketCount').textContent = '('+allTickets.length+')';
-
-                renderTickets();
-                document.getElementById('jsonBox').style.display = 'block';
-                document.getElementById('jsonOutput').textContent = JSON.stringify({
-                    batch_id: batchId,
-                    mikrotik: mikrotikName,
-                    profile, timeLimit, price,
-                    requested: quantity,
-                    created: allTickets.length,
-                    failed: quantity - allTickets.length,
-                    elapsed_seconds: parseFloat(elapsed),
-                    tickets: allTickets
-                }, null, 2);
-
-                toast('✅ '+allTickets.length+' tickets en '+elapsed+'s', 'success');
-            } catch(e) {
-                overhead(false);
-                document.getElementById('btnGenerate').disabled = false;
-                updateStatus('on', 'Erreur');
-                toast('❌ '+e.message, 'error');
+            
+            const maxPerBatch = 50;
+            for (let i = 0; i < commands.length; i += maxPerBatch) {
+                const batch = commands.slice(i, i + maxPerBatch);
+                await executeCommand(batch.join('; '));
+                if (i + maxPerBatch < commands.length) await sleep(500);
             }
+
+            overhead(true, 'Vérification des tickets...');
+            const rawUsers = await executeCommand('/ip hotspot user print detail where comment~"' + batchId + '"');
+
+            allTickets = [];
+            if (rawUsers && rawUsers !== 'OK') {
+                const blocks = rawUsers.split(/\n\s*\d+\s+/).filter(b => b.trim());
+                for (let block of blocks) {
+                    const nm = block.match(/name="([^"]+)"/);
+                    const pm = block.match(/password="([^"]+)"/);
+                    if (!nm) continue;
+                    allTickets.push({ 
+                        name: nm[1], 
+                        password: pm ? pm[1] : nm[1], 
+                        profile, 
+                        timeLimit,
+                        displayValidity,
+                        price,
+                        extraInfo,
+                        type: 'voucher' 
+                    });
+                }
+                allTickets.sort((a,b) => a.name.localeCompare(b.name));
+            }
+
+            const elapsed = ((Date.now() - startTime)/1000).toFixed(1);
+            overhead(false);
+            document.getElementById('btnGenerate').disabled = false;
+            updateStatus('on', 'OK · '+allTickets.length+' tickets');
+
+            document.getElementById('statsRow').style.display = 'flex';
+            document.getElementById('statOk').textContent = allTickets.length;
+            document.getElementById('statFail').textContent = quantity - allTickets.length;
+            document.getElementById('statTime').textContent = elapsed + 's';
+            document.getElementById('ticketCount').textContent = '('+allTickets.length+')';
+
+            renderTickets();
+            document.getElementById('jsonBox').style.display = 'block';
+            document.getElementById('jsonOutput').textContent = JSON.stringify({
+                batch_id: batchId, mikrotik: mikrotikName, profile, timeLimit, displayValidity, price,
+                extraInfo: extraInfo || null,
+                requested: quantity, created: allTickets.length,
+                failed: quantity - allTickets.length,
+                elapsed_seconds: parseFloat(elapsed), tickets: allTickets
+            }, null, 2);
+
+            toast('✅ '+allTickets.length+' tickets en '+elapsed+'s', 'success');
         }
 
-        // Vérification manuelle
         async function verifyBatch() {
             if (!batchId) { toast('Aucun batch', 'error'); return; }
             if (!connected) { toast('Connectez-vous', 'error'); return; }
@@ -583,6 +595,8 @@
                 const price = parseInt(document.getElementById('price').value) || 100;
                 const timeLimit = document.getElementById('timeLimit').value;
                 const profile = document.getElementById('selectedProfile').value;
+                const displayValidity = document.getElementById('displayValidity').value.trim() || timeLimit;
+                const extraInfo = document.getElementById('extraInfo').value.trim();
 
                 allTickets = [];
                 if (raw && raw !== 'OK') {
@@ -591,11 +605,7 @@
                         const nm = block.match(/name="([^"]+)"/);
                         const pm = block.match(/password="([^"]+)"/);
                         if (!nm) continue;
-                        allTickets.push({
-                            name: nm[1],
-                            password: pm ? pm[1] : nm[1],
-                            profile, timeLimit, price, type: 'voucher'
-                        });
+                        allTickets.push({ name: nm[1], password: pm ? pm[1] : nm[1], profile, timeLimit, displayValidity, price, extraInfo, type: 'voucher' });
                     }
                     allTickets.sort((a,b) => a.name.localeCompare(b.name));
                 }
@@ -614,7 +624,6 @@
             }
         }
 
-        // Rendu des tickets dans l'interface
         function renderTickets() {
             const grid = document.getElementById('ticketsGrid');
             if (!allTickets.length) {
@@ -631,133 +640,281 @@
                         </div>
                     </div>
                     <div class="ticket-body">
-                        <div style="font-size:8px;color:#888;">Code</div>
+                        <div style="font-size:8px;color:#888;">Code Voucher</div>
                         <div class="ticket-code">${esc(t.name)}</div>
                         <div class="ticket-details">
-                            <div class="ticket-detail"><div class="lbl">Validité</div><div class="val">${esc(t.timeLimit)}</div></div>
+                            <div class="ticket-detail"><div class="lbl">Validité</div><div class="val">${esc(t.displayValidity || t.timeLimit)}</div></div>
                             <div class="ticket-detail"><div class="lbl">Profil</div><div class="val">${esc(t.profile)}</div></div>
                         </div>
+                        ${t.extraInfo ? `<div style="margin-top:6px; font-size:9px; color:#555; border-top:1px solid #ddd; padding-top:4px;">${esc(t.extraInfo)}</div>` : ''}
                     </div>
                     <div class="ticket-foot">
-                        <span class="valid">${esc(t.timeLimit)}</span>
+                        <span class="valid">${esc(t.displayValidity || t.timeLimit)}</span>
                         <span class="price">${t.price} FCFA</span>
                     </div>
                 </div>
             `).join('');
         }
 
-        function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+        function esc(s) {
+            if (!s) return '';
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
 
-        // PDF avec 36 tickets par page
+        async function getQRMatrix(text) {
+            return new Promise((resolve) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'position:absolute;left:-9999px;top:0;';
+                document.body.appendChild(div);
+                
+                new QRCode(div, {
+                    text: text,
+                    width: 64, height: 64,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+                
+                setTimeout(() => {
+                    const canvas = div.querySelector('canvas');
+                    if (!canvas) {
+                        document.body.removeChild(div);
+                        resolve(null);
+                        return;
+                    }
+                    const ctx = canvas.getContext('2d');
+                    const size = canvas.width;
+                    const data = ctx.getImageData(0, 0, size, size).data;
+                    const matrix = [];
+                    for (let r = 0; r < size; r++) {
+                        const row = [];
+                        for (let c = 0; c < size; c++) {
+                            const i = (r * size + c) * 4;
+                            row.push(data[i] < 128);
+                        }
+                        matrix.push(row);
+                    }
+                    document.body.removeChild(div);
+                    resolve(matrix);
+                }, 100);
+            });
+        }
+
+        function drawQR(pdf, matrix, x, y, size) {
+            if (!matrix) return;
+            const n = matrix.length;
+            const cell = size / n;
+            pdf.setFillColor(0, 0, 0);
+            for (let r = 0; r < n; r++) {
+                for (let c = 0; c < n; c++) {
+                    if (matrix[r][c]) {
+                        pdf.rect(x + c * cell, y + r * cell, cell, cell, 'F');
+                    }
+                }
+            }
+        }
+
         async function downloadPDF() {
-            if (!allTickets.length) { toast('Aucun ticket', 'error'); return; }
+            if (!allTickets.length) { toast('Aucun ticket à exporter', 'error'); return; }
+
+            const showQR = document.getElementById('showQR').checked;
+            
+            overhead(true, showQR ? 'Génération des QR codes...' : 'Préparation du PDF...');
+
+            let qrMatrices = [];
+            if (showQR) {
+                for (let i = 0; i < allTickets.length; i++) {
+                    const matrix = await getQRMatrix(allTickets[i].name || 'VOUCHER');
+                    qrMatrices.push(matrix);
+                    if (i % 10 === 0) {
+                        document.getElementById('overlayMsg').textContent = `QR codes: ${i+1}/${allTickets.length}`;
+                    }
+                }
+            }
+
+            overhead(true, 'Création du PDF...');
 
             const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const pageWidth = 210;
-            const pageHeight = 297;
-            const margin = 5;
-            const cols = 6;
-            const rows = 6;
-            const cellWidth = (pageWidth - margin * 2) / cols;
-            const cellHeight = (pageHeight - margin * 2) / rows;
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-            // Créer un conteneur temporaire avec toutes les mini tickets
-            const container = document.createElement('div');
-            container.style.cssText = 'position:absolute;left:-9999px;top:0;width:1000px;';
-            container.innerHTML = allTickets.map(t => `
-                <div class="ticket-mini">
-                    <div class="ticket-head">
-                        <div class="ticket-logo">📶</div>
-                        <div>
-                            <div class="ticket-title">${esc(mikrotikName)}</div>
-                            <div class="ticket-subtitle">WiFi</div>
-                        </div>
-                    </div>
-                    <div class="ticket-body">
-                        <div style="font-size:5px;color:#888;">Code</div>
-                        <div class="ticket-code">${esc(t.name)}</div>
-                        <div class="ticket-details">
-                            <div class="ticket-detail"><div class="lbl">⏱️</div><div class="val">${esc(t.timeLimit)}</div></div>
-                            <div class="ticket-detail"><div class="lbl">📋</div><div class="val">${esc(t.profile)}</div></div>
-                        </div>
-                    </div>
-                    <div class="ticket-foot">
-                        <span class="valid">${esc(t.timeLimit)}</span>
-                        <span class="price">${t.price}F</span>
-                    </div>
-                </div>
-            `).join('');
-            document.body.appendChild(container);
+            const pageW = 210;
+            const pageH = 297;
+            const margin = 4;
+            const cols = 4;
+            const rows = 9;
+            const perPage = cols * rows;
+            const gap = 1.2;
 
-            // Capturer l'image de l'ensemble des mini tickets
-            const canvas = await html2canvas(container, { scale: 2, backgroundColor: '#ffffff' });
-            document.body.removeChild(container);
+            const tw = (pageW - 2 * margin - gap * (cols - 1)) / cols;
+            const th = (pageH - 2 * margin - gap * (rows - 1)) / rows;
 
-            // Calculer combien de pages nécessaires
-            const ticketsPerPage = rows * cols; // 36
-            const totalPages = Math.ceil(allTickets.length / ticketsPerPage);
+            const headH = 5.5;
+            const bodyH = th - headH;
+            const qrPad = 1.2;
+            const qrSize = bodyH - 2 * qrPad;
+            const qrAreaW = showQR ? (qrSize + 2 * qrPad) : 0;
+            const textAreaW = tw - qrAreaW;
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('fr-FR') + ' ' +
+                now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+            pdf.setProperties({
+                title: 'Vouchers-' + (mikrotikName || 'BF WIFI ZONE'),
+                subject: 'Tickets WiFi', author: 'BF WIFI ZONE'
+            });
+
+            const totalPages = Math.ceil(allTickets.length / perPage);
 
             for (let page = 0; page < totalPages; page++) {
                 if (page > 0) pdf.addPage();
 
-                // Pour chaque page, on va dessiner les tickets un par un à partir de l'image globale
-                // Mais plus simple : on découpe l'image ? Trop complexe.
-                // Alternative : on utilise html2canvas sur chaque mini ticket et on les place.
-                // Vu qu'on a déjà le code mini, on peut le faire individuellement pour plus de précision,
-                // mais pour rester rapide, on va recréer un mini conteneur pour chaque page.
-                // Approche pratique : pour chaque page, créer un conteneur avec les tickets de cette page,
-                // capturer, puis insérer l'image dans le PDF en pleine page.
+                pdf.setFontSize(6);
+                pdf.setTextColor(100, 100, 100);
+                pdf.setFont('helvetica', 'normal');
+                const hdr = dateStr + '   ' + (mikrotikName || 'BF WIFI ZONE') +
+                    '   ' + (batchId || '') + '   page ' + (page + 1) + '/' + totalPages;
+                pdf.text(hdr, margin, margin - 0.8);
+
+                const pageTickets = allTickets.slice(page * perPage, (page + 1) * perPage);
+
+                pageTickets.forEach((ticket, idx) => {
+                    const col = idx % cols;
+                    const row = Math.floor(idx / cols);
+                    const x = margin + col * (tw + gap);
+                    const y = margin + row * (th + gap);
+                    const globalIdx = page * perPage + idx + 1;
+
+                    pdf.setDrawColor(0, 0, 0);
+                    pdf.setLineWidth(0.25);
+                    pdf.rect(x, y, tw, th);
+
+                    pdf.setLineWidth(0.2);
+                    pdf.line(x, y + headH, x + tw, y + headH);
+
+                    pdf.setFontSize(6.5);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setTextColor(0, 0, 0);
+                    const mikLabel = (mikrotikName || 'BF WIFI ZONE').toUpperCase();
+                    const mikLW = pdf.getTextWidth(mikLabel);
+                    pdf.text(mikLabel, x + tw / 2 - mikLW / 2, y + headH - 1.4);
+
+                    pdf.setFontSize(5);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setTextColor(130, 130, 130);
+                    const numStr = '#' + globalIdx;
+                    const numW = pdf.getTextWidth(numStr);
+                    pdf.text(numStr, x + tw - numW - 0.8, y + 2.2);
+
+                    const bx = x + 1.5;
+                    const by = y + headH;
+
+                    if (!showQR) {
+                        // Mode sans QR : tout l'espace pour le texte, code voucher centré et plus grand
+                        const centerX = x + tw / 2;
+                        pdf.setFontSize(5);
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setTextColor(100, 100, 100);
+                        pdf.text('Code Voucher', centerX, by + 3.2, { align: 'center' });
+
+                        pdf.setFontSize(13);
+                        pdf.setFont('courier', 'bold');
+                        pdf.setTextColor(0, 0, 0);
+                        pdf.text(ticket.name || '', centerX, by + 9, { align: 'center' });
+
+                        pdf.setDrawColor(180, 180, 180);
+                        pdf.setLineWidth(0.15);
+                        const lineY = by + 10.5;
+                        pdf.line(centerX - 20, lineY, centerX + 20, lineY);
+
+                        pdf.setFontSize(5.5);
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setTextColor(0, 0, 0);
+                        pdf.text(ticket.displayValidity || ticket.timeLimit || '', centerX, by + 13.5, { align: 'center' });
+
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setTextColor(80, 80, 80);
+                        pdf.text(ticket.profile || '', centerX, by + 16.2, { align: 'center' });
+
+                        if (ticket.extraInfo) {
+                            pdf.setFontSize(4.5);
+                            pdf.setFont('helvetica', 'italic');
+                            pdf.setTextColor(60, 60, 60);
+                            const infoLines = pdf.splitTextToSize(ticket.extraInfo, tw - 4);
+                            let infoY = by + bodyH - 4;
+                            for (let k = infoLines.length-1; k >= 0; k--) {
+                                pdf.text(infoLines[k], centerX, infoY, { align: 'center' });
+                                infoY -= 2.5;
+                            }
+                        }
+
+                        pdf.setFontSize(6);
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setTextColor(0, 0, 0);
+                        pdf.text(ticket.price + ' FCFA', centerX, by + bodyH - 1.8, { align: 'center' });
+                    } 
+                    else {
+                        // Mode avec QR : disposition classique (texte à gauche, QR à droite)
+                        pdf.setFontSize(5);
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setTextColor(100, 100, 100);
+                        pdf.text('Code Voucher', bx, by + 3.2);
+
+                        pdf.setFontSize(9.5);
+                        pdf.setFont('courier', 'bold');
+                        pdf.setTextColor(0, 0, 0);
+                        pdf.text(ticket.name || '', bx, by + 7.8);
+
+                        pdf.setDrawColor(180, 180, 180);
+                        pdf.setLineWidth(0.15);
+                        pdf.line(bx, by + 8.8, x + textAreaW - 0.5, by + 8.8);
+
+                        pdf.setFontSize(5.5);
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setTextColor(0, 0, 0);
+                        pdf.text(ticket.displayValidity || ticket.timeLimit || '', bx, by + 11.5);
+
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setTextColor(80, 80, 80);
+                        pdf.text(ticket.profile || '', bx, by + 14.2);
+
+                        // Info supplémentaire (si présente)
+                        if (ticket.extraInfo) {
+                            pdf.setFontSize(4.5);
+                            pdf.setFont('helvetica', 'italic');
+                            pdf.setTextColor(60, 60, 60);
+                            const infoY = by + bodyH - 3;
+                            pdf.text(ticket.extraInfo, bx, infoY, { maxWidth: textAreaW - 2 });
+                        }
+
+                        pdf.setFontSize(6);
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setTextColor(0, 0, 0);
+                        pdf.text(ticket.price + ' FCFA', bx, by + bodyH - 1.8);
+
+                        // Séparateur vertical et QR
+                        pdf.setDrawColor(200, 200, 200);
+                        pdf.setLineWidth(0.15);
+                        pdf.line(x + textAreaW, y + headH + 1, x + textAreaW, y + th - 1);
+                        
+                        const qrX = x + textAreaW + qrPad;
+                        const qrY = y + headH + qrPad;
+                        drawQR(pdf, qrMatrices[page * perPage + idx], qrX, qrY, qrSize);
+                    }
+                });
             }
 
-            // Réimplémentation plus propre : boucle par page avec conteneur dédié
-            for (let page = 0; page < totalPages; page++) {
-                const start = page * ticketsPerPage;
-                const end = Math.min(start + ticketsPerPage, allTickets.length);
-                const pageTickets = allTickets.slice(start, end);
-
-                const pageContainer = document.createElement('div');
-                pageContainer.style.cssText = 'position:absolute;left:-9999px;top:0;width:' + (cellWidth * cols + 20) + 'px;';
-                pageContainer.innerHTML = pageTickets.map(t => `
-                    <div class="ticket-mini" style="width:${cellWidth - 2}mm;height:${cellHeight - 2}mm;margin:1mm;">
-                        <div class="ticket-head">
-                            <div class="ticket-logo">📶</div>
-                            <div>
-                                <div class="ticket-title">${esc(mikrotikName)}</div>
-                                <div class="ticket-subtitle">WiFi</div>
-                            </div>
-                        </div>
-                        <div class="ticket-body">
-                            <div style="font-size:5px;color:#888;">Code</div>
-                            <div class="ticket-code">${esc(t.name)}</div>
-                            <div class="ticket-details">
-                                <div class="ticket-detail"><div class="lbl">⏱️</div><div class="val">${esc(t.timeLimit)}</div></div>
-                                <div class="ticket-detail"><div class="lbl">📋</div><div class="val">${esc(t.profile)}</div></div>
-                            </div>
-                        </div>
-                        <div class="ticket-foot">
-                            <span class="valid">${esc(t.timeLimit)}</span>
-                            <span class="price">${t.price}F</span>
-                        </div>
-                    </div>
-                `).join('');
-                document.body.appendChild(pageContainer);
-
-                const canvas = await html2canvas(pageContainer, { scale: 2, backgroundColor: '#ffffff' });
-                document.body.removeChild(pageContainer);
-
-                if (page > 0) pdf.addPage();
-                const imgData = canvas.toDataURL('image/png');
-                pdf.addImage(imgData, 'PNG', margin, margin, pageWidth - margin * 2, pageHeight - margin * 2);
-            }
-
-            pdf.save('BF_WIFI_Tickets_' + batchId + '.pdf');
-            toast('📥 PDF avec ' + allTickets.length + ' tickets téléchargé', 'success');
+            const filename = 'BF_WIFI_Tickets_' + (batchId || 'export') + '.pdf';
+            pdf.save(filename);
+            overhead(false);
+            toast('📥 PDF exporté · ' + allTickets.length + ' tickets', 'success');
         }
 
         function copyJSON() {
             const json = document.getElementById('jsonOutput').textContent;
-            navigator.clipboard.writeText(json).then(() => toast('📋 JSON copié'));
+            navigator.clipboard.writeText(json).then(() => toast('📋 JSON copié', 'success'));
         }
     </script>
 </body>
