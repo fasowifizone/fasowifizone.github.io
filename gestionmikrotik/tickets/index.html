@@ -317,10 +317,33 @@
         let startTime = 0;
         let extraInfoGlobal = '';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('mikId').value = mikId;
-            document.getElementById('accountKey').value = accountKey;
-        });
+// REMPLACER cette partie existante :
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('mikId').value = mikId;
+    document.getElementById('accountKey').value = accountKey;
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('mikId').value = mikId;
+    document.getElementById('accountKey').value = accountKey;
+    
+    // Tentative de connexion auto depuis l'URL
+    const urlMikId = new URLSearchParams(window.location.search).get('mikid') || 
+                     new URLSearchParams(window.location.search).get('mikId') || 
+                     new URLSearchParams(window.location.search).get('mik_id');
+    const urlAccountKey = new URLSearchParams(window.location.search).get('accountkey') || 
+                          new URLSearchParams(window.location.search).get('accountKey') || 
+                          new URLSearchParams(window.location.search).get('account_key');
+    
+    if (urlMikId && urlAccountKey) {
+        document.getElementById('mikId').value = urlMikId;
+        document.getElementById('accountKey').value = urlAccountKey;
+        localStorage.setItem('mikId', urlMikId);
+        localStorage.setItem('accountKey', urlAccountKey);
+        setTimeout(() => connect(), 500);
+    }
+});
 
         function toast(msg, type='info') {
             const t = document.createElement('div');
