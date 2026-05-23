@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/>
   <title>BKM WIFI - QR SCANNER</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
     body {
       background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
       color: white;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -17,31 +22,32 @@
       padding: 15px;
     }
     .container {
-      max-width: 500px;
+      max-width: 520px;
       width: 100%;
       text-align: center;
     }
     .header h1 {
-      font-size: 24px;
+      font-size: 26px;
       color: #ff9800;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
     .header p {
-      font-size: 12px;
-      color: #aaa;
+      font-size: 13px;
+      color: #bbb;
       margin-bottom: 20px;
     }
     .camera-box {
       background: #000;
-      border-radius: 16px;
+      border-radius: 20px;
       overflow: hidden;
       border: 2px solid #ff9800;
-      margin-bottom: 15px;
+      margin-bottom: 16px;
       position: relative;
       min-height: 280px;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
     video {
       width: 100% !important;
@@ -53,118 +59,128 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 3px;
+      height: 4px;
       background: #ff9800;
-      animation: scan 2s linear infinite;
+      animation: scan 2.2s ease-in-out infinite;
       pointer-events: none;
+      box-shadow: 0 0 8px #ff9800;
     }
     @keyframes scan {
       0% { bottom: 100%; }
-      100% { bottom: 0%; }
+      50% { bottom: 0%; }
+      100% { bottom: 100%; }
     }
     .btn-group {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       justify-content: center;
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
     .btn {
-      padding: 12px 24px;
-      background: #333;
+      padding: 12px 28px;
+      background: #2c2c3a;
       color: white;
       border: none;
-      border-radius: 30px;
+      border-radius: 50px;
       cursor: pointer;
       font-size: 14px;
       font-weight: bold;
-      transition: all 0.3s;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     .btn:active {
       transform: scale(0.96);
     }
     .btn-primary {
       background: #ff9800;
-      color: #000;
+      color: #1e1e2a;
       font-weight: bold;
     }
     .btn-primary:hover {
       background: #e68900;
     }
     .status {
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.65);
       padding: 12px;
-      border-radius: 12px;
+      border-radius: 40px;
       font-size: 13px;
-      margin-bottom: 15px;
-      transition: all 0.3s;
+      margin-bottom: 16px;
+      backdrop-filter: blur(4px);
+      transition: all 0.2s;
+      font-weight: 500;
     }
-    .status.success { background: #2e7d32; }
+    .status.success { background: #2e7d32; color: white; }
     .status.error { background: #c62828; }
     .status.warning { background: #ff9800; color: #000; }
     .status.info { background: #2196f3; }
     .manual-input {
       width: 100%;
-      padding: 14px;
+      padding: 14px 20px;
       border: none;
-      border-radius: 30px;
+      border-radius: 60px;
       text-align: center;
-      font-size: 16px;
+      font-size: 18px;
+      font-weight: bold;
       font-family: monospace;
-      margin-bottom: 10px;
+      letter-spacing: 1px;
       background: white;
+      color: #1e1e2a;
+      margin-bottom: 12px;
     }
     .footer {
       margin-top: 20px;
-      font-size: 10px;
-      color: #666;
+      font-size: 11px;
+      color: #888;
     }
     canvas { display: none; }
     .info-box {
-      background: rgba(0,0,0,0.5);
-      border-radius: 12px;
-      padding: 10px;
-      margin-bottom: 15px;
-      font-size: 11px;
-      color: #ff9800;
+      background: rgba(0,0,0,0.55);
+      border-radius: 40px;
+      padding: 10px 18px;
+      margin-bottom: 18px;
+      font-size: 12px;
+      color: #ffb347;
       word-break: break-all;
+      backdrop-filter: blur(4px);
+      display: inline-block;
     }
     .gateway-buttons {
       display: flex;
-      gap: 8px;
-      margin-bottom: 15px;
+      gap: 10px;
+      margin-bottom: 18px;
       flex-wrap: wrap;
       justify-content: center;
     }
     .gateway-btn {
-      background: rgba(255,152,0,0.2);
+      background: rgba(255,152,0,0.25);
       border: 1px solid #ff9800;
-      padding: 8px 14px;
-      border-radius: 20px;
-      font-size: 12px;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 13px;
       cursor: pointer;
       color: white;
-      transition: all 0.3s;
+      transition: all 0.2s;
     }
     .gateway-btn:active {
-      transform: scale(0.95);
-      background: rgba(255,152,0,0.4);
+      transform: scale(0.96);
+      background: rgba(255,152,0,0.5);
     }
     .back-link {
       display: inline-block;
-      margin-top: 10px;
+      margin-top: 12px;
       color: #ff9800;
       text-decoration: none;
-      font-size: 12px;
+      font-size: 13px;
       cursor: pointer;
-    }
-    .camera-placeholder {
-      padding: 40px;
-      text-align: center;
-      color: #666;
+      font-weight: bold;
+      background: rgba(0,0,0,0.4);
+      padding: 6px 18px;
+      border-radius: 30px;
     }
   </style>
-  <script src="jsQR.min.js"></script>
+  <!-- jsQR via CDN fiable (vous pouvez remplacer par votre fichier local jsQR.min.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -186,7 +202,7 @@
   </div>
 
   <div class="camera-box" id="cameraBox">
-    <video id="video" playsinline muted autoplay style="width:100%; height:auto;"></video>
+    <video id="video" playsinline muted autoplay></video>
     <div class="scan-line"></div>
   </div>
 
@@ -198,33 +214,33 @@
   <div class="status" id="status">🔍 Initialisation caméra...</div>
 
   <div id="manualArea" style="display:none;">
-    <input type="text" id="manualCode" class="manual-input" placeholder="Entrez le code ticket" autocomplete="off">
-    <button class="btn btn-primary" id="submitManual" style="width:100%; margin-top:5px;">✓ VALIDER</button>
+    <input type="text" id="manualCode" class="manual-input" placeholder="Code ticket" autocomplete="off">
+    <button class="btn btn-primary" id="submitManual" style="width:100%;">✓ VALIDER</button>
     <button class="back-link" id="backToScanBtn">← Retour au scanner</button>
   </div>
 
-  <div class="footer">BKM WIFI ZONE</div>
+  <div class="footer">BKM WIFI ZONE • Sécurité et rapidité</div>
 </div>
 <canvas id="canvas" width="640" height="480"></canvas>
 
 <script>
+  // ---------- CONFIGURATION GLOBALE ----------
   let GATEWAY_URL = null;
-  let video = document.getElementById('video');
-  let statusDiv = document.getElementById('status');
+  const video = document.getElementById('video');
+  const statusDiv = document.getElementById('status');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
   let stream = null;
-  let scanning = true;
-  let animationId = null;
-  let manualMode = false;
-  let scanRequestId = null;
+  let scanningActive = true;       // active tant qu'aucun ticket trouvé
+  let manualModeActive = false;
+  let animationFrameId = null;
+  let lastTimestamp = 0;
+  const SCAN_INTERVAL_MS = 180;    // scan max ~5-6 fps pour fluidité
 
-  // ========== 1. TENTER DE RÉCUPÉRER L'IP DEPUIS L'URL ==========
+  // ---------- DÉTECTION DE LA PASSERELLE ----------
   const urlParams = new URLSearchParams(window.location.search);
   let gatewayFromUrl = urlParams.get('gateway');
-  
-  // ========== 2. TENTER DE RÉCUPÉRER L'IP DEPUIS LE LOCALSTORAGE ==========
   let gatewayFromStorage = localStorage.getItem('bkm_gateway');
-  
-  // ========== 3. TENTER DE DÉTECTER L'IP PAR L'URL PARENTE ==========
   let gatewayFromReferrer = null;
   if (document.referrer) {
     try {
@@ -232,348 +248,258 @@
       gatewayFromReferrer = referrerUrl.protocol + '//' + referrerUrl.hostname;
     } catch(e) {}
   }
-  
-  // ========== 4. TENTER DE DÉTECTER L'IP PAR LE NOM D'HÔTE ==========
   let gatewayFromHost = null;
   const hostname = window.location.hostname;
-  if (!hostname.includes('github.io') && !hostname.includes('localhost')) {
+  if (!hostname.includes('github.io') && !hostname.includes('localhost') && !hostname.match(/^\d+\.\d+\.\d+\.\d+$/)) {
     gatewayFromHost = window.location.protocol + '//' + hostname;
   }
-  
-  // ========== CHOISIR LA MEILLEURE SOURCE ==========
+
   if (gatewayFromUrl) {
     GATEWAY_URL = gatewayFromUrl;
     localStorage.setItem('bkm_gateway', GATEWAY_URL);
-    document.getElementById('gatewayInfo').innerHTML = "✅ Passerelle (URL): " + GATEWAY_URL;
+    document.getElementById('gatewayInfo').innerHTML = "✅ Passerelle: " + GATEWAY_URL;
   } else if (gatewayFromStorage) {
     GATEWAY_URL = gatewayFromStorage;
-    document.getElementById('gatewayInfo').innerHTML = "💾 Passerelle (mémoire): " + GATEWAY_URL;
+    document.getElementById('gatewayInfo').innerHTML = "💾 Passerelle: " + GATEWAY_URL;
   } else if (gatewayFromReferrer) {
     GATEWAY_URL = gatewayFromReferrer;
     localStorage.setItem('bkm_gateway', GATEWAY_URL);
-    document.getElementById('gatewayInfo').innerHTML = "🔄 Passerelle (référent): " + GATEWAY_URL;
+    document.getElementById('gatewayInfo').innerHTML = "🔄 Passerelle: " + GATEWAY_URL;
   } else if (gatewayFromHost) {
     GATEWAY_URL = gatewayFromHost;
     localStorage.setItem('bkm_gateway', GATEWAY_URL);
-    document.getElementById('gatewayInfo').innerHTML = "🏠 Passerelle (locale): " + GATEWAY_URL;
+    document.getElementById('gatewayInfo').innerHTML = "🏠 Passerelle: " + GATEWAY_URL;
   } else {
     document.getElementById('gatewayInfo').innerHTML = "⚠️ Passerelle non détectée";
     document.getElementById('gatewayInfo').style.color = "#ffaa00";
     document.getElementById('gatewayButtons').style.display = 'flex';
   }
-  
-  // ========== FERMETURE COMPLÈTE DE LA CAMÉRA ==========
-  function stopCamera() {
+
+  // ---------- FERMETURE TOTALE CAMÉRA ----------
+  function stopCameraAndScan() {
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
     if (stream) {
-      stream.getTracks().forEach(track => {
-        if (track.readyState === 'live') {
-          track.stop();
-        }
-      });
+      stream.getTracks().forEach(track => track.stop());
       stream = null;
     }
-    if (video) {
-      video.srcObject = null;
-    }
-    if (animationId) {
-      cancelAnimationFrame(animationId);
-      animationId = null;
-    }
-    if (scanRequestId) {
-      cancelAnimationFrame(scanRequestId);
-      scanRequestId = null;
-    }
+    video.srcObject = null;
+    scanningActive = false;
   }
 
-  // ========== RÉINITIALISATION COMPLÈTE ==========
+  // ---------- RÉINITIALISATION COMPLÈTE ----------
   function resetScanner() {
-    scanning = false;
-    stopCamera();
-    manualMode = false;
+    stopCameraAndScan();
+    manualModeActive = false;
     document.getElementById('manualArea').style.display = 'none';
-    const cameraBox = document.getElementById('cameraBox');
-    if (cameraBox) {
-      cameraBox.style.display = 'block';
-    }
-    setTimeout(() => {
-      initScanner();
-    }, 500);
+    document.getElementById('cameraBox').style.display = 'block';
+    scanningActive = true;
+    setTimeout(() => initScanner(), 300);
   }
 
-  // ========== SÉLECTION MANUELLE DE LA PASSERELLE ==========
+  // ---------- SÉLECTION MANUELLE PASSERELLE ----------
   document.querySelectorAll('.gateway-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       let ip = btn.getAttribute('data-ip');
       if (ip === 'autre') {
-        ip = prompt("Entrez l'adresse IP de la passerelle:", "192.168.1.1");
+        ip = prompt("Adresse IP de la passerelle (ex: 192.168.1.1)", "192.168.1.1");
         if (!ip) return;
       }
       GATEWAY_URL = 'http://' + ip;
       localStorage.setItem('bkm_gateway', GATEWAY_URL);
-      document.getElementById('gatewayInfo').innerHTML = "✅ Passerelle sélectionnée: " + GATEWAY_URL;
+      document.getElementById('gatewayInfo').innerHTML = "✅ Passerelle: " + GATEWAY_URL;
       document.getElementById('gatewayButtons').style.display = 'none';
       resetScanner();
     });
   });
-  
-  // ========== CAMÉRA ==========
+
+  // ---------- DÉMARRAGE CAMÉRA (priorité arrière) ----------
   async function startCamera() {
     try {
-      stream = await navigator.mediaDevices.getUserMedia({
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { exact: "environment" } }
       });
-      return stream;
-    } catch(e) {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        return stream;
-      } catch(e2) {
-        throw new Error("Caméra inaccessible - Utilisez la saisie manuelle");
-      }
+      return mediaStream;
+    } catch (err) {
+      // Fallback: n'importe quelle caméra
+      return await navigator.mediaDevices.getUserMedia({ video: true });
     }
   }
 
+  // ---------- SCAN OPTIMISÉ (avec throttling + inversion automatique) ----------
+  function startScanLoop() {
+    let lastScanTime = 0;
+
+    function scanFrame(now) {
+      if (!scanningActive || manualModeActive) return;
+      if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0 && video.videoHeight > 0) {
+        if (now - lastScanTime >= SCAN_INTERVAL_MS) {
+          lastScanTime = now;
+          // Adapter canvas aux dimensions réelles de la vidéo
+          if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+          }
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          // Détection avec inversion automatique (plus robuste)
+          const code = jsQR(imageData.data, canvas.width, canvas.height, {
+            inversionAttempts: "attemptBoth"  // crucial pour QR blanc sur fond sombre
+          });
+          if (code && code.data && code.data.trim().length > 0) {
+            onTicketDetected(code.data.trim());
+            return;
+          }
+        }
+      }
+      animationFrameId = requestAnimationFrame(scanFrame);
+    }
+    animationFrameId = requestAnimationFrame(scanFrame);
+  }
+
+  // ---------- INITIALISATION DU SCANNER ----------
   async function initScanner() {
     if (!GATEWAY_URL) {
-      statusDiv.innerHTML = "⚠️ Sélectionnez d'abord la passerelle";
+      statusDiv.innerHTML = "⚠️ Sélectionnez la passerelle";
       statusDiv.className = "status warning";
       return;
     }
-    
-    if (manualMode) return;
-    
+    if (manualModeActive) return;
+
     try {
-      statusDiv.innerHTML = "📷 Demande d'accès à la caméra...";
+      statusDiv.innerHTML = "📷 Accès caméra...";
       statusDiv.className = "status info";
-      
       const mediaStream = await startCamera();
-      video.srcObject = mediaStream;
+      stream = mediaStream;
+      video.srcObject = stream;
       await video.play();
-      
-      statusDiv.innerHTML = "✅ Caméra active - Scannez le QR code";
+      statusDiv.innerHTML = "✅ Caméra active – Scannez le QR code";
       statusDiv.className = "status";
-      scanning = true;
-      
-      function scanLoop() {
-        if (!scanning || manualMode) return;
-        if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
-          const canvas = document.getElementById('canvas');
-          const ctx = canvas.getContext('2d');
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          
-          if (typeof jsQR !== 'undefined') {
-            const code = jsQR(imageData.data, canvas.width, canvas.height, {
-              inversionAttempts: "dontInvert",
-            });
-            if (code && code.data && code.data.trim().length > 0) {
-              onTicketDetected(code.data.trim());
-              return;
-            }
-          }
-        }
-        scanRequestId = requestAnimationFrame(scanLoop);
-      }
-      
-      scanLoop();
-      
-    } catch(err) {
-      statusDiv.innerHTML = "❌ " + err.message;
+      scanningActive = true;
+      startScanLoop();
+    } catch (err) {
+      console.error("Erreur caméra", err);
+      statusDiv.innerHTML = "❌ Caméra inaccessible. Utilisez la saisie manuelle.";
       statusDiv.className = "status error";
-      scanning = false;
+      scanningActive = false;
       setTimeout(() => {
-        if (!manualMode) {
-          manualMode = true;
+        if (!manualModeActive) {
+          manualModeActive = true;
           document.getElementById('manualArea').style.display = 'block';
           document.getElementById('cameraBox').style.display = 'none';
-          statusDiv.innerHTML = "📝 Saisissez votre code ticket manuellement";
+          statusDiv.innerHTML = "📝 Saisie manuelle du ticket";
           statusDiv.className = "status info";
         }
-      }, 1000);
+      }, 800);
     }
   }
 
-  // ========== TICKET DÉTECTÉ - AVEC FERMETURE CAMÉRA ==========
+  // ---------- TICKET DÉTECTÉ (scan ou manuel) ----------
   function onTicketDetected(ticket) {
-    if (!scanning) return;
-    
-    // Arrêter le scan immédiatement
-    scanning = false;
-    
-    // Annuler les animations
-    if (scanRequestId) {
-      cancelAnimationFrame(scanRequestId);
-      scanRequestId = null;
+    if (!scanningActive) return;
+    scanningActive = false;          // bloque toute détection ultérieure
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
     }
-    if (animationId) {
-      cancelAnimationFrame(animationId);
-      animationId = null;
-    }
-    
-    // FERMER LA CAMÉRA
-    stopCamera();
-    
-    // Cacher la boîte caméra
-    const cameraBox = document.getElementById('cameraBox');
-    if (cameraBox) {
-      cameraBox.style.display = 'none';
-    }
-    
-    statusDiv.innerHTML = "✅ Ticket trouvé: " + ticket + " → Connexion en cours...";
+    // Fermeture immédiate de la caméra
+    stopCameraAndScan();
+    document.getElementById('cameraBox').style.display = 'none';
+    statusDiv.innerHTML = `✅ Ticket: ${ticket} → connexion...`;
     statusDiv.className = "status success";
-    
     localStorage.setItem('bkm_last_ticket', ticket);
-    
     if (!GATEWAY_URL) {
-      statusDiv.innerHTML = "❌ Erreur: Passerelle non trouvée";
+      statusDiv.innerHTML = "❌ Passerelle manquante";
       statusDiv.className = "status error";
       return;
     }
-    
     const loginUrl = GATEWAY_URL + "/login";
-    
     setTimeout(() => {
-      window.location.href = loginUrl + "?username=" + encodeURIComponent(ticket) + "&password=" + encodeURIComponent(ticket);
-    }, 800);
+      window.location.href = `${loginUrl}?username=${encodeURIComponent(ticket)}&password=${encodeURIComponent(ticket)}`;
+    }, 700);
   }
 
-  // ========== SAISIE MANUELLE CORRIGÉE ==========
+  // ---------- SAISIE MANUELLE ----------
   function manualSubmit() {
-    const codeInput = document.getElementById('manualCode');
-    const code = codeInput ? codeInput.value.trim() : '';
-    
-    if (code.length === 0) {
+    const input = document.getElementById('manualCode');
+    let code = input.value.trim();
+    if (code === "") {
       statusDiv.innerHTML = "⚠️ Entrez un code ticket valide";
       statusDiv.className = "status error";
-      if (codeInput) {
-        codeInput.style.border = "2px solid #c62828";
-        setTimeout(() => {
-          codeInput.style.border = "none";
-        }, 500);
-      }
+      input.style.border = "2px solid #c62828";
+      setTimeout(() => input.style.border = "", 500);
       return;
     }
-    
-    // Désactiver le bouton pour éviter double soumission
     const submitBtn = document.getElementById('submitManual');
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Connexion...";
+    if (submitBtn) submitBtn.disabled = true;
+    // Simuler la détection (sans caméra)
+    if (scanningActive) {
+      scanningActive = false;
+      stopCameraAndScan();
     }
-    
-    // Utiliser la même fonction que le scan pour la redirection
-    if (!scanning) return;
-    
-    // Arrêter le scan
-    scanning = false;
-    
-    // Fermer la caméra si elle est encore active
-    stopCamera();
-    
-    // Cacher la boîte caméra
-    const cameraBox = document.getElementById('cameraBox');
-    if (cameraBox) {
-      cameraBox.style.display = 'none';
-    }
-    
-    statusDiv.innerHTML = "✅ Code saisi: " + code + " → Connexion en cours...";
+    document.getElementById('cameraBox').style.display = 'none';
+    statusDiv.innerHTML = `✅ Code saisi: ${code} → connexion...`;
     statusDiv.className = "status success";
-    
     localStorage.setItem('bkm_last_ticket', code);
-    
     if (!GATEWAY_URL) {
-      statusDiv.innerHTML = "❌ Erreur: Passerelle non trouvée";
+      statusDiv.innerHTML = "❌ Passerelle non trouvée";
       statusDiv.className = "status error";
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "✓ VALIDER";
-      }
+      if (submitBtn) submitBtn.disabled = false;
       return;
     }
-    
     const loginUrl = GATEWAY_URL + "/login";
-    
     setTimeout(() => {
-      window.location.href = loginUrl + "?username=" + encodeURIComponent(code) + "&password=" + encodeURIComponent(code);
-    }, 800);
+      window.location.href = `${loginUrl}?username=${encodeURIComponent(code)}&password=${encodeURIComponent(code)}`;
+    }, 700);
   }
 
-  // ========== RETOUR AU SCANNER ==========
+  // ---------- RETOUR AU SCANNER ----------
   function backToScanner() {
-    manualMode = false;
+    manualModeActive = false;
+    scanningActive = true;
     document.getElementById('manualArea').style.display = 'none';
     document.getElementById('cameraBox').style.display = 'block';
-    
-    const manualInput = document.getElementById('manualCode');
-    if (manualInput) {
-      manualInput.value = '';
-      manualInput.style.border = "none";
-    }
-    
+    const input = document.getElementById('manualCode');
+    if (input) input.value = "";
     const submitBtn = document.getElementById('submitManual');
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "✓ VALIDER";
-    }
-    
+    if (submitBtn) submitBtn.disabled = false;
     statusDiv.innerHTML = "🔄 Redémarrage du scanner...";
     statusDiv.className = "status info";
-    
-    setTimeout(() => {
-      initScanner();
-    }, 500);
+    setTimeout(() => initScanner(), 400);
   }
 
-  // ========== GESTIONNAIRES D'ÉVÉNEMENTS ==========
-  document.getElementById('reloadBtn').onclick = () => { 
-    resetScanner();
-  };
-  
+  // ---------- GESTION DES BOUTONS ----------
+  document.getElementById('reloadBtn').onclick = () => resetScanner();
   document.getElementById('manualBtn').onclick = () => {
-    if (manualMode) return;
-    
-    manualMode = true;
-    scanning = false;
-    
-    if (scanRequestId) {
-      cancelAnimationFrame(scanRequestId);
-      scanRequestId = null;
-    }
-    stopCamera();
-    
+    if (manualModeActive) return;
+    manualModeActive = true;
+    scanningActive = false;
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    stopCameraAndScan();
     document.getElementById('cameraBox').style.display = 'none';
     document.getElementById('manualArea').style.display = 'block';
-    
-    const manualInput = document.getElementById('manualCode');
-    if (manualInput) {
-      manualInput.value = '';
-      manualInput.focus();
-    }
-    
-    statusDiv.innerHTML = "📝 Saisissez votre code ticket ci-dessous";
+    const input = document.getElementById('manualCode');
+    if (input) input.value = "";
+    input.focus();
+    statusDiv.innerHTML = "📝 Saisissez votre code ticket";
     statusDiv.className = "status info";
   };
-  
   document.getElementById('submitManual').onclick = manualSubmit;
-  
   document.getElementById('backToScanBtn').onclick = (e) => {
     e.preventDefault();
     backToScanner();
   };
-  
   document.getElementById('manualCode').onkeypress = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       manualSubmit();
     }
   };
-  
-  window.addEventListener('beforeunload', () => {
-    stopCamera();
-  });
-  
+  window.addEventListener('beforeunload', () => stopCameraAndScan());
+
+  // DÉMARRAGE
   initScanner();
 </script>
 </body>
