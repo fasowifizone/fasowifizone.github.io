@@ -56,6 +56,7 @@
       height: 3px;
       background: #ff9800;
       animation: scan 2s linear infinite;
+      pointer-events: none;
     }
     @keyframes scan {
       0% { bottom: 100%; }
@@ -69,17 +70,26 @@
       flex-wrap: wrap;
     }
     .btn {
-      padding: 10px 20px;
+      padding: 12px 24px;
       background: #333;
       color: white;
       border: none;
       border-radius: 30px;
       cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    .btn:active {
+      transform: scale(0.96);
     }
     .btn-primary {
       background: #ff9800;
       color: #000;
       font-weight: bold;
+    }
+    .btn-primary:hover {
+      background: #e68900;
     }
     .status {
       background: rgba(0,0,0,0.6);
@@ -87,19 +97,22 @@
       border-radius: 12px;
       font-size: 13px;
       margin-bottom: 15px;
+      transition: all 0.3s;
     }
     .status.success { background: #2e7d32; }
     .status.error { background: #c62828; }
     .status.warning { background: #ff9800; color: #000; }
+    .status.info { background: #2196f3; }
     .manual-input {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       border: none;
       border-radius: 30px;
       text-align: center;
       font-size: 16px;
       font-family: monospace;
       margin-bottom: 10px;
+      background: white;
     }
     .footer {
       margin-top: 20px;
@@ -126,13 +139,31 @@
     .gateway-btn {
       background: rgba(255,152,0,0.2);
       border: 1px solid #ff9800;
-      padding: 6px 12px;
+      padding: 8px 14px;
       border-radius: 20px;
-      font-size: 11px;
+      font-size: 12px;
       cursor: pointer;
+      color: white;
+      transition: all 0.3s;
+    }
+    .gateway-btn:active {
+      transform: scale(0.95);
+      background: rgba(255,152,0,0.4);
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: #ff9800;
+      text-decoration: none;
+      font-size: 12px;
+    }
+    .camera-placeholder {
+      padding: 40px;
+      text-align: center;
+      color: #666;
     }
   </style>
-  <script src="jsQR.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -153,8 +184,8 @@
     <button class="gateway-btn" data-ip="autre">Autre...</button>
   </div>
 
-  <div class="camera-box">
-    <video id="video" playsinline muted autoplay></video>
+  <div class="camera-box" id="cameraBox">
+    <video id="video" playsinline muted autoplay style="width:100%; height:auto;"></video>
     <div class="scan-line"></div>
   </div>
 
@@ -167,7 +198,8 @@
 
   <div id="manualArea" style="display:none;">
     <input type="text" id="manualCode" class="manual-input" placeholder="Entrez le code ticket" autocomplete="off">
-    <button class="btn btn-primary" id="submitManual" style="width:100%;">✓ VALIDER</button>
+    <button class="btn btn-primary" id="submitManual" style="width:100%; margin-top:5px;">✓ VALIDER</button>
+    <button class="back-link" id="backToScanBtn">← Retour au scanner</button>
   </div>
 
   <div class="footer">BKM WIFI ZONE</div>
@@ -182,6 +214,7 @@
   let scanning = true;
   let animationId = null;
   let manualMode = false;
+  let scanRequestId = null;
 
   // ========== 1. TENTER DE RÉCUPÉRER L'IP DEPUIS L'URL ==========
   const urlParams = new URLSearchParams(window.location.search);
@@ -229,8 +262,54 @@
     document.getElementById('gatewayButtons').style.display = 'flex';
   }
   
-  const LOGIN_URL = GATEWAY_URL ? GATEWAY_URL + "/login.html" : null;
-  
+  // ========== FERMETURE COMPLÈTE DE LA CAMÉRA ==========
+  function stopCamera() {
+    if (stream) {
+      stream.getTracks().forEach(track => {
+        if (track.readyState === 'live') {
+          track.stop();
+        }
+      });
+      stream = null;
+    }
+    if (video) {
+      video.srcObject = null;
+    }
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+    if (scanRequestId) {
+      cancelAnimationFrame(scanRequestId);
+      scanRequestId = null;
+    }
+    console.log('[CAMERA] Caméra fermée');
+  }
+
+  // ========== RÉINITIALISATION COMPLÈTE ==========
+  function resetScanner() {
+    // Arrêter le scan et la caméra
+    scanning = false;
+    stopCamera();
+    
+    // Réinitialiser les flags
+    manualMode = false;
+    
+    // Cacher la zone manuelle
+    document.getElementById('manualArea').style.display = 'none';
+    
+    // Réafficher la caméra
+    const cameraBox = document.getElementById('cameraBox');
+    if (cameraBox) {
+      cameraBox.style.display = 'block';
+    }
+    
+    // Redémarrer
+    setTimeout(() => {
+      initScanner();
+    }, 500);
+  }
+
   // ========== SÉLECTION MANUELLE DE LA PASSERELLE ==========
   document.querySelectorAll('.gateway-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -244,24 +323,25 @@
       document.getElementById('gatewayInfo').innerHTML = "✅ Passerelle sélectionnée: " + GATEWAY_URL;
       document.getElementById('gatewayButtons').style.display = 'none';
       // Redémarrer le scanner
-      if (stream) stream.getTracks().forEach(t => t.stop());
-      initScanner();
+      resetScanner();
     });
   });
   
   // ========== CAMÉRA ==========
   async function startCamera() {
     try {
+      // Essayer d'abord la caméra arrière
       stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { exact: "environment" } }
       });
       return stream;
     } catch(e) {
+      console.log('Caméra arrière non disponible, tentative caméra avant...');
       try {
         stream = await navigator.mediaDevices.getUserMedia({ video: true });
         return stream;
       } catch(e2) {
-        throw new Error("Caméra inaccessible");
+        throw new Error("Caméra inaccessible - Utilisez la saisie manuelle");
       }
     }
   }
@@ -273,52 +353,96 @@
       return;
     }
     
+    if (manualMode) return;
+    
     try {
+      statusDiv.innerHTML = "📷 Demande d'accès à la caméra...";
+      statusDiv.className = "status info";
+      
       const mediaStream = await startCamera();
       video.srcObject = mediaStream;
       await video.play();
+      
       statusDiv.innerHTML = "✅ Caméra active - Scannez le QR code";
       statusDiv.className = "status";
       scanning = true;
-      scanFrame();
+      
+      // Lancer le scan frame
+      function scanLoop() {
+        if (!scanning || manualMode) return;
+        if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
+          const canvas = document.getElementById('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          
+          if (typeof jsQR !== 'undefined') {
+            const code = jsQR(imageData.data, canvas.width, canvas.height, {
+              inversionAttempts: "dontInvert",
+            });
+            if (code && code.data && code.data.trim().length > 0) {
+              onTicketDetected(code.data.trim());
+              return;
+            }
+          }
+        }
+        scanRequestId = requestAnimationFrame(scanLoop);
+      }
+      
+      scanLoop();
+      
     } catch(err) {
-      statusDiv.innerHTML = "❌ " + err.message + " - Utilisez la saisie manuelle";
+      console.error('Erreur caméra:', err);
+      statusDiv.innerHTML = "❌ " + err.message;
       statusDiv.className = "status error";
       scanning = false;
-      document.getElementById('manualArea').style.display = 'block';
+      // Proposer automatiquement la saisie manuelle
+      setTimeout(() => {
+        if (!manualMode) {
+          manualMode = true;
+          document.getElementById('manualArea').style.display = 'block';
+          document.getElementById('cameraBox').style.display = 'none';
+          statusDiv.innerHTML = "📝 Saisissez votre code ticket manuellement";
+          statusDiv.className = "status info";
+        }
+      }, 1000);
     }
-  }
-
-  function scanFrame() {
-    if (!scanning || manualMode) return;
-    if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, canvas.width, canvas.height, {
-        inversionAttempts: "dontInvert",
-      });
-      if (code && code.data && code.data.trim().length > 0) {
-        onTicketDetected(code.data.trim());
-        return;
-      }
-    }
-    animationId = requestAnimationFrame(scanFrame);
   }
 
   function onTicketDetected(ticket) {
     if (!scanning) return;
-    scanning = false;
-    if (animationId) cancelAnimationFrame(animationId);
-    if (stream) stream.getTracks().forEach(t => t.stop());
     
-    statusDiv.innerHTML = "✅ Ticket: " + ticket + " → Connexion...";
+    console.log('[SCAN] Ticket détecté:', ticket);
+    
+    // Arrêter immédiatement le scan
+    scanning = false;
+    
+    // ANNULER TOUTE REQUÊTE D'ANIMATION EN COURS
+    if (scanRequestId) {
+      cancelAnimationFrame(scanRequestId);
+      scanRequestId = null;
+    }
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+    
+    // FERMER COMPLÈTEMENT LA CAMÉRA
+    stopCamera();
+    
+    // Cacher la boîte caméra
+    const cameraBox = document.getElementById('cameraBox');
+    if (cameraBox) {
+      cameraBox.style.display = 'none';
+    }
+    
+    // Afficher le statut de succès
+    statusDiv.innerHTML = "✅ Ticket trouvé: " + ticket + " → Connexion en cours...";
     statusDiv.className = "status success";
     
-    // Sauvegarder le ticket dans localStorage pour usage futur
+    // Sauvegarder le ticket
     localStorage.setItem('bkm_last_ticket', ticket);
     
     if (!GATEWAY_URL) {
@@ -327,37 +451,134 @@
       return;
     }
     
+    // Construire l'URL de connexion
+    const loginUrl = GATEWAY_URL + "/login";
+    
+    // Rediriger après un court délai
     setTimeout(() => {
-      window.location.href = LOGIN_URL + "?username=" + encodeURIComponent(ticket);
-    }, 500);
+      window.location.href = loginUrl + "?username=" + encodeURIComponent(ticket) + "&password=" + encodeURIComponent(ticket);
+    }, 800);
   }
 
+  // ========== SAISIE MANUELLE CORRIGÉE ==========
   function manualSubmit() {
-    const code = document.getElementById('manualCode').value.trim();
+    const codeInput = document.getElementById('manualCode');
+    const code = codeInput ? codeInput.value.trim() : '';
+    
     if (code.length === 0) {
-      statusDiv.innerHTML = "⚠️ Entrez un code valide";
+      statusDiv.innerHTML = "⚠️ Entrez un code ticket valide";
+      statusDiv.className = "status error";
+      // Faire vibrer l'input
+      if (codeInput) {
+        codeInput.style.border = "2px solid #c62828";
+        setTimeout(() => {
+          codeInput.style.border = "none";
+        }, 500);
+      }
+      return;
+    }
+    
+    if (code.length < 4) {
+      statusDiv.innerHTML = "⚠️ Code trop court (minimum 4 caractères)";
       statusDiv.className = "status error";
       return;
     }
+    
+    // Désactiver le bouton pour éviter double soumission
+    const submitBtn = document.getElementById('submitManual');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Connexion...";
+    }
+    
+    // Appeler la fonction de traitement
     onTicketDetected(code);
   }
 
-  function hideManualMode() {
+  // ========== RETOUR AU SCANNER ==========
+  function backToScanner() {
     manualMode = false;
     document.getElementById('manualArea').style.display = 'none';
-    initScanner();
+    document.getElementById('cameraBox').style.display = 'block';
+    
+    // Réinitialiser l'input
+    const manualInput = document.getElementById('manualCode');
+    if (manualInput) {
+      manualInput.value = '';
+      manualInput.style.border = "none";
+    }
+    
+    // Réactiver le bouton
+    const submitBtn = document.getElementById('submitManual');
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "✓ VALIDER";
+    }
+    
+    statusDiv.innerHTML = "🔄 Redémarrage du scanner...";
+    statusDiv.className = "status info";
+    
+    // Redémarrer le scanner proprement
+    setTimeout(() => {
+      initScanner();
+    }, 500);
   }
 
-  document.getElementById('reloadBtn').onclick = () => { location.reload(); };
-  document.getElementById('manualBtn').onclick = () => {
-    manualMode = true;
-    if (stream) stream.getTracks().forEach(t => t.stop());
-    document.getElementById('manualArea').style.display = 'block';
-    statusDiv.innerHTML = "📝 Saisissez votre code ticket";
+  // ========== GESTIONNAIRES D'ÉVÉNEMENTS ==========
+  document.getElementById('reloadBtn').onclick = () => { 
+    resetScanner();
   };
+  
+  document.getElementById('manualBtn').onclick = () => {
+    if (manualMode) return;
+    
+    manualMode = true;
+    scanning = false;
+    
+    // Arrêter le scan et fermer la caméra
+    if (scanRequestId) {
+      cancelAnimationFrame(scanRequestId);
+      scanRequestId = null;
+    }
+    stopCamera();
+    
+    // Cacher la caméra
+    document.getElementById('cameraBox').style.display = 'none';
+    
+    // Afficher la zone de saisie manuelle
+    document.getElementById('manualArea').style.display = 'block';
+    
+    // Focus sur l'input
+    const manualInput = document.getElementById('manualCode');
+    if (manualInput) {
+      manualInput.value = '';
+      manualInput.focus();
+    }
+    
+    statusDiv.innerHTML = "📝 Saisissez votre code ticket ci-dessous";
+    statusDiv.className = "status info";
+  };
+  
   document.getElementById('submitManual').onclick = manualSubmit;
-  document.getElementById('manualCode').onkeypress = (e) => { if (e.key === 'Enter') manualSubmit(); };
-
+  
+  document.getElementById('backToScanBtn').onclick = (e) => {
+    e.preventDefault();
+    backToScanner();
+  };
+  
+  document.getElementById('manualCode').onkeypress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      manualSubmit();
+    }
+  };
+  
+  // Nettoyer à la fermeture de la page
+  window.addEventListener('beforeunload', () => {
+    stopCamera();
+  });
+  
+  // Démarrer
   initScanner();
 </script>
 </body>
