@@ -156,6 +156,7 @@
       color: #ff9800;
       text-decoration: none;
       font-size: 12px;
+      cursor: pointer;
     }
     .camera-placeholder {
       padding: 40px;
@@ -258,7 +259,6 @@
   } else {
     document.getElementById('gatewayInfo').innerHTML = "⚠️ Passerelle non détectée";
     document.getElementById('gatewayInfo').style.color = "#ffaa00";
-    // Afficher les boutons de sélection manuelle
     document.getElementById('gatewayButtons').style.display = 'flex';
   }
   
@@ -283,28 +283,18 @@
       cancelAnimationFrame(scanRequestId);
       scanRequestId = null;
     }
-    console.log('[CAMERA] Caméra fermée');
   }
 
   // ========== RÉINITIALISATION COMPLÈTE ==========
   function resetScanner() {
-    // Arrêter le scan et la caméra
     scanning = false;
     stopCamera();
-    
-    // Réinitialiser les flags
     manualMode = false;
-    
-    // Cacher la zone manuelle
     document.getElementById('manualArea').style.display = 'none';
-    
-    // Réafficher la caméra
     const cameraBox = document.getElementById('cameraBox');
     if (cameraBox) {
       cameraBox.style.display = 'block';
     }
-    
-    // Redémarrer
     setTimeout(() => {
       initScanner();
     }, 500);
@@ -322,7 +312,6 @@
       localStorage.setItem('bkm_gateway', GATEWAY_URL);
       document.getElementById('gatewayInfo').innerHTML = "✅ Passerelle sélectionnée: " + GATEWAY_URL;
       document.getElementById('gatewayButtons').style.display = 'none';
-      // Redémarrer le scanner
       resetScanner();
     });
   });
@@ -330,13 +319,11 @@
   // ========== CAMÉRA ==========
   async function startCamera() {
     try {
-      // Essayer d'abord la caméra arrière
       stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { exact: "environment" } }
       });
       return stream;
     } catch(e) {
-      console.log('Caméra arrière non disponible, tentative caméra avant...');
       try {
         stream = await navigator.mediaDevices.getUserMedia({ video: true });
         return stream;
@@ -367,7 +354,6 @@
       statusDiv.className = "status";
       scanning = true;
       
-      // Lancer le scan frame
       function scanLoop() {
         if (!scanning || manualMode) return;
         if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
@@ -394,11 +380,9 @@
       scanLoop();
       
     } catch(err) {
-      console.error('Erreur caméra:', err);
       statusDiv.innerHTML = "❌ " + err.message;
       statusDiv.className = "status error";
       scanning = false;
-      // Proposer automatiquement la saisie manuelle
       setTimeout(() => {
         if (!manualMode) {
           manualMode = true;
@@ -411,15 +395,14 @@
     }
   }
 
+  // ========== TICKET DÉTECTÉ - AVEC FERMETURE CAMÉRA ==========
   function onTicketDetected(ticket) {
     if (!scanning) return;
     
-    console.log('[SCAN] Ticket détecté:', ticket);
-    
-    // Arrêter immédiatement le scan
+    // Arrêter le scan immédiatement
     scanning = false;
     
-    // ANNULER TOUTE REQUÊTE D'ANIMATION EN COURS
+    // Annuler les animations
     if (scanRequestId) {
       cancelAnimationFrame(scanRequestId);
       scanRequestId = null;
@@ -429,7 +412,7 @@
       animationId = null;
     }
     
-    // FERMER COMPLÈTEMENT LA CAMÉRA
+    // FERMER LA CAMÉRA
     stopCamera();
     
     // Cacher la boîte caméra
@@ -438,11 +421,9 @@
       cameraBox.style.display = 'none';
     }
     
-    // Afficher le statut de succès
     statusDiv.innerHTML = "✅ Ticket trouvé: " + ticket + " → Connexion en cours...";
     statusDiv.className = "status success";
     
-    // Sauvegarder le ticket
     localStorage.setItem('bkm_last_ticket', ticket);
     
     if (!GATEWAY_URL) {
@@ -451,10 +432,8 @@
       return;
     }
     
-    // Construire l'URL de connexion
     const loginUrl = GATEWAY_URL + "/login";
     
-    // Rediriger après un court délai
     setTimeout(() => {
       window.location.href = loginUrl + "?username=" + encodeURIComponent(ticket) + "&password=" + encodeURIComponent(ticket);
     }, 800);
@@ -468,19 +447,12 @@
     if (code.length === 0) {
       statusDiv.innerHTML = "⚠️ Entrez un code ticket valide";
       statusDiv.className = "status error";
-      // Faire vibrer l'input
       if (codeInput) {
         codeInput.style.border = "2px solid #c62828";
         setTimeout(() => {
           codeInput.style.border = "none";
         }, 500);
       }
-      return;
-    }
-    
-    if (code.length < 4) {
-      statusDiv.innerHTML = "⚠️ Code trop court (minimum 4 caractères)";
-      statusDiv.className = "status error";
       return;
     }
     
@@ -491,8 +463,41 @@
       submitBtn.textContent = "Connexion...";
     }
     
-    // Appeler la fonction de traitement
-    onTicketDetected(code);
+    // Utiliser la même fonction que le scan pour la redirection
+    if (!scanning) return;
+    
+    // Arrêter le scan
+    scanning = false;
+    
+    // Fermer la caméra si elle est encore active
+    stopCamera();
+    
+    // Cacher la boîte caméra
+    const cameraBox = document.getElementById('cameraBox');
+    if (cameraBox) {
+      cameraBox.style.display = 'none';
+    }
+    
+    statusDiv.innerHTML = "✅ Code saisi: " + code + " → Connexion en cours...";
+    statusDiv.className = "status success";
+    
+    localStorage.setItem('bkm_last_ticket', code);
+    
+    if (!GATEWAY_URL) {
+      statusDiv.innerHTML = "❌ Erreur: Passerelle non trouvée";
+      statusDiv.className = "status error";
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "✓ VALIDER";
+      }
+      return;
+    }
+    
+    const loginUrl = GATEWAY_URL + "/login";
+    
+    setTimeout(() => {
+      window.location.href = loginUrl + "?username=" + encodeURIComponent(code) + "&password=" + encodeURIComponent(code);
+    }, 800);
   }
 
   // ========== RETOUR AU SCANNER ==========
@@ -501,14 +506,12 @@
     document.getElementById('manualArea').style.display = 'none';
     document.getElementById('cameraBox').style.display = 'block';
     
-    // Réinitialiser l'input
     const manualInput = document.getElementById('manualCode');
     if (manualInput) {
       manualInput.value = '';
       manualInput.style.border = "none";
     }
     
-    // Réactiver le bouton
     const submitBtn = document.getElementById('submitManual');
     if (submitBtn) {
       submitBtn.disabled = false;
@@ -518,7 +521,6 @@
     statusDiv.innerHTML = "🔄 Redémarrage du scanner...";
     statusDiv.className = "status info";
     
-    // Redémarrer le scanner proprement
     setTimeout(() => {
       initScanner();
     }, 500);
@@ -535,20 +537,15 @@
     manualMode = true;
     scanning = false;
     
-    // Arrêter le scan et fermer la caméra
     if (scanRequestId) {
       cancelAnimationFrame(scanRequestId);
       scanRequestId = null;
     }
     stopCamera();
     
-    // Cacher la caméra
     document.getElementById('cameraBox').style.display = 'none';
-    
-    // Afficher la zone de saisie manuelle
     document.getElementById('manualArea').style.display = 'block';
     
-    // Focus sur l'input
     const manualInput = document.getElementById('manualCode');
     if (manualInput) {
       manualInput.value = '';
@@ -573,12 +570,10 @@
     }
   };
   
-  // Nettoyer à la fermeture de la page
   window.addEventListener('beforeunload', () => {
     stopCamera();
   });
   
-  // Démarrer
   initScanner();
 </script>
 </body>
