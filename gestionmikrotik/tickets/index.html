@@ -317,33 +317,26 @@
         let startTime = 0;
         let extraInfoGlobal = '';
 
-// REMPLACER cette partie existante :
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('mikId').value = mikId;
-    document.getElementById('accountKey').value = accountKey;
-});
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('mikId').value = mikId;
-    document.getElementById('accountKey').value = accountKey;
-    
-    // Tentative de connexion auto depuis l'URL
-    const urlMikId = new URLSearchParams(window.location.search).get('mikid') || 
-                     new URLSearchParams(window.location.search).get('mikId') || 
-                     new URLSearchParams(window.location.search).get('mik_id');
-    const urlAccountKey = new URLSearchParams(window.location.search).get('accountkey') || 
-                          new URLSearchParams(window.location.search).get('accountKey') || 
-                          new URLSearchParams(window.location.search).get('account_key');
-    
-    if (urlMikId && urlAccountKey) {
-        document.getElementById('mikId').value = urlMikId;
-        document.getElementById('accountKey').value = urlAccountKey;
-        localStorage.setItem('mikId', urlMikId);
-        localStorage.setItem('accountKey', urlAccountKey);
-        setTimeout(() => connect(), 500);
-    }
-});
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('mikId').value = mikId;
+            document.getElementById('accountKey').value = accountKey;
+            
+            // Connexion auto depuis l'URL
+            const urlMikId = new URLSearchParams(window.location.search).get('mikid') || 
+                             new URLSearchParams(window.location.search).get('mikId') || 
+                             new URLSearchParams(window.location.search).get('mik_id');
+            const urlAccountKey = new URLSearchParams(window.location.search).get('accountkey') || 
+                                  new URLSearchParams(window.location.search).get('accountKey') || 
+                                  new URLSearchParams(window.location.search).get('account_key');
+            
+            if (urlMikId && urlAccountKey) {
+                document.getElementById('mikId').value = urlMikId;
+                document.getElementById('accountKey').value = urlAccountKey;
+                localStorage.setItem('mikId', urlMikId);
+                localStorage.setItem('accountKey', urlAccountKey);
+                setTimeout(() => connect(), 500);
+            }
+        });
 
         function toast(msg, type='info') {
             const t = document.createElement('div');
@@ -398,7 +391,6 @@ document.addEventListener('DOMContentLoaded', () => {
             throw new Error('Timeout');
         }
 
-        // Récupération du nom MikroTik depuis le serveur (dashboard)
         async function fetchMikrotikName() {
             try {
                 const res = await fetch(`${API}/dashboard/${accountKey}`);
@@ -409,53 +401,94 @@ document.addEventListener('DOMContentLoaded', () => {
                         return found.hostname;
                     }
                 }
-                return mikrotikName; // fallback
+                return mikrotikName;
             } catch(e) {
                 console.warn("Erreur récupération nom via dashboard:", e);
                 return mikrotikName;
             }
         }
 
-        function parseProfiles(raw) {
+        // Nouvelle fonction de parsing améliorée avec filtrage des noms interdits
+        function parseUserProfilesFromDetail(raw) {
             const result = [];
             if (!raw || raw === 'OK') return result;
-            const lines = raw.split('\n');
-            for (let line of lines) {
-                const nameMatch = line.match(/name="([^"]+)"/);
+            
+            // Découper chaque entrée (commence par un numéro et un espace)
+            const entries = raw.split(/\n\s*\d+\s+/).filter(e => e.trim());
+            
+            for (let entry of entries) {
+                // Extraire le nom du profil
+                const nameMatch = entry.match(/name="([^"]+)"/);
                 if (!nameMatch) continue;
                 const name = nameMatch[1];
-                const analysis = name.match(/^(\d+)\s*([hHdDwWmMjJ])/);
-                if (!analysis) continue;
-                const num = parseInt(analysis[1]);
-                const letter = analysis[2].toLowerCase();
-                let timeLimit = '', displayUnit = '';
-                switch(letter) {
-                    case 'h': timeLimit = num+'h'; displayUnit = 'h'; break;
-                    case 'm': timeLimit = num+'m'; displayUnit = 'min'; break;
-                    case 'd': timeLimit = num+'d'; displayUnit = 'j'; break;
-                    case 'w': timeLimit = num+'w'; displayUnit = 'sem'; break;
-                    case 'j': timeLimit = num+'d'; displayUnit = 'j'; break;
-                    default: continue;
+                
+                // --- FILTRE : exclure les profils contenant "user" (insensible) ou "$" ---
+                if (name.toLowerCase().includes('user') || name.includes('$')) continue;
+                
+                // Extraire limit-uptime (time limit réel)
+                let timeLimit = null;
+                const uptimeMatch = entry.match(/limit-uptime="([^"]+)"/);
+                if (uptimeMatch && uptimeMatch[1]) {
+                    timeLimit = uptimeMatch[1];
                 }
-                result.push({ name, timeLimit, display: num+letter.toUpperCase()+' ('+num+displayUnit+')', number: num, letter });
+                
+                // Fallback : essayer de parser le nom pour deviner la durée
+                if (!timeLimit) {
+                    timeLimit = parseTimeLimitFromName(name);
+                }
+                
+                if (!timeLimit) continue; // ignore les profils sans durée détectable
+                
+                // Déterminer l'unité pour le tri (m, h, d, w)
+                let letter = 'h';
+                if (timeLimit.includes('m') && !timeLimit.includes('h') && !timeLimit.includes('d') && !timeLimit.includes('w')) letter = 'm';
+                else if (timeLimit.includes('h')) letter = 'h';
+                else if (timeLimit.includes('d') || timeLimit.includes('j')) letter = 'd';
+                else if (timeLimit.includes('w')) letter = 'w';
+                
+                let number = parseInt(timeLimit) || 1;
+                let display = timeLimit;
+                
+                result.push({ name, timeLimit: display, display, number, letter });
             }
-            const order = {m:1, h:2, d:3, w:4, j:3};
+            
+            // Tri : d'abord minutes, heures, jours, semaines
+            const order = {m:1, h:2, d:3, w:4};
             result.sort((a,b) => (order[a.letter]||9) - (order[b.letter]||9) || a.number - b.number);
             return result;
+        }
+        
+        function parseTimeLimitFromName(name) {
+            // Regex améliorée : capture nombre + unité (h, heure, m, minute, d, jour, j, w, semaine)
+            const patterns = [
+                /(\d+)\s*[hH](?:eure?s?)?/,           // 2h, 12 heures
+                /(\d+)\s*[mM](?:inute?s?)?/,          // 30m, 45 minutes
+                /(\d+)\s*[dD](?:[ée]s?j?ours?)?/,     // 1d, 2 jours, 3j
+                /(\d+)\s*[wW](?:eeks?|semaines?)?/,   // 1w, 2 semaines
+                /(\d+)\s*[jJ](?:ours?)?/              // 2j
+            ];
+            const units = ['h', 'm', 'd', 'w', 'd'];
+            for (let i = 0; i < patterns.length; i++) {
+                const match = name.match(patterns[i]);
+                if (match) {
+                    return match[1] + units[i];
+                }
+            }
+            return null;
         }
 
         function renderProfiles() {
             const container = document.getElementById('profileList');
             if (!profiles.length) {
-                container.innerHTML = '<span style="color:#ff8c00;">Aucun profil compatible</span>';
+                container.innerHTML = '<span style="color:#ff8c00;">Aucun profil compatible (filtrés ou sans durée)</span>';
                 return;
             }
             container.innerHTML = profiles.map((p,i) => `
                 <div class="profile-chip ${i===0?'selected':''}" onclick="selectProfile('${p.name}', this)">
-                    ${esc(p.name)} <span class="badge">${esc(p.display)}</span>
+                    ${esc(p.name)} <span class="badge">${esc(p.timeLimit)}</span>
                 </div>
             `).join('');
-            selectProfile(profiles[0].name, container.firstElementChild);
+            if (profiles.length) selectProfile(profiles[0].name, container.firstElementChild);
         }
 
         function selectProfile(name, element) {
@@ -474,15 +507,15 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('accountKey', accountKey);
 
             updateStatus('on', 'Connexion...');
-            overhead(true, 'Connexion et chargement des profils...');
+            overhead(true, 'Connexion et chargement des profils détaillés...');
 
             try {
                 await fetch(API + '/health');
-                const rawProfiles = await executeCommand('/ip hotspot user profile print');
-                profiles = parseProfiles(rawProfiles);
+                // Utilisation de print detail pour avoir limit-uptime
+                const rawProfiles = await executeCommand('/ip hotspot user profile print detail without-paging');
+                profiles = parseUserProfilesFromDetail(rawProfiles);
                 renderProfiles();
 
-                // Récupération du nom MikroTik via l'API REST (dashboard)
                 mikrotikName = await fetchMikrotikName();
                 document.getElementById('mikName').value = mikrotikName;
 
@@ -835,7 +868,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const by = y + headH;
 
                     if (!showQR) {
-                        // Mode sans QR : tout l'espace pour le texte, code voucher centré et plus grand
                         const centerX = x + tw / 2;
                         pdf.setFontSize(5);
                         pdf.setFont('helvetica', 'normal');
@@ -879,7 +911,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         pdf.text(ticket.price + ' FCFA', centerX, by + bodyH - 1.8, { align: 'center' });
                     } 
                     else {
-                        // Mode avec QR : disposition classique (texte à gauche, QR à droite)
                         pdf.setFontSize(5);
                         pdf.setFont('helvetica', 'normal');
                         pdf.setTextColor(100, 100, 100);
@@ -903,7 +934,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         pdf.setTextColor(80, 80, 80);
                         pdf.text(ticket.profile || '', bx, by + 14.2);
 
-                        // Info supplémentaire (si présente)
                         if (ticket.extraInfo) {
                             pdf.setFontSize(4.5);
                             pdf.setFont('helvetica', 'italic');
@@ -917,7 +947,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         pdf.setTextColor(0, 0, 0);
                         pdf.text(ticket.price + ' FCFA', bx, by + bodyH - 1.8);
 
-                        // Séparateur vertical et QR
                         pdf.setDrawColor(200, 200, 200);
                         pdf.setLineWidth(0.15);
                         pdf.line(x + textAreaW, y + headH + 1, x + textAreaW, y + th - 1);
