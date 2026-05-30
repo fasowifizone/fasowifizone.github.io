@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BF WIFI ZONE - Ticket Generator Pro</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --bg: #0a0a14;
@@ -34,7 +32,8 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            padding: 15px;
+            padding: 10px;
+            font-size: 13px;
         }
 
         .app {
@@ -42,57 +41,61 @@
             margin: 0 auto;
         }
 
+        /* TOPBAR */
         .topbar {
             background: var(--panel);
-            border-radius: 14px;
-            padding: 15px 25px;
+            border-radius: 12px;
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             border: 1px solid var(--border);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
-
         .topbar h1 {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             background: linear-gradient(to right, var(--gold), #f0d060);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            white-space: nowrap;
         }
-
         .topbar-right {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
             flex-wrap: wrap;
         }
-
         .topbar-right input {
             background: #0a0a1f;
             border: 1px solid var(--border);
             color: #fff;
-            padding: 8px 12px;
+            padding: 7px 10px;
             border-radius: 6px;
-            font-size: 13px;
-            width: 190px;
+            font-size: 12px;
+            width: 160px;
             font-family: monospace;
         }
 
+        /* BUTTONS */
         .btn {
-            padding: 8px 16px;
+            padding: 7px 14px;
             border: none;
             border-radius: 6px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 11px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+            white-space: nowrap;
         }
-
+        .btn:hover {
+            filter: brightness(1.15);
+            transform: translateY(-1px);
+        }
         .btn-gold {
             background: var(--gold);
             color: #000;
@@ -109,10 +112,6 @@
             background: var(--red);
             color: #fff;
         }
-        .btn-orange {
-            background: var(--orange);
-            color: #fff;
-        }
         .btn-purple {
             background: var(--purple);
             color: #fff;
@@ -123,20 +122,24 @@
             color: var(--gold);
         }
         .btn:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             pointer-events: none;
         }
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 10px;
+        }
 
+        /* STATUS */
         .status {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 5px 14px;
+            gap: 5px;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
         }
-
         .on {
             background: rgba(0, 255, 136, 0.1);
             color: var(--green);
@@ -148,251 +151,302 @@
             border: 1px solid rgba(255, 68, 68, 0.3);
         }
 
+        /* GRID */
         .main-grid {
             display: grid;
-            grid-template-columns: 420px 1fr;
-            gap: 15px;
+            grid-template-columns: 400px 1fr;
+            gap: 10px;
         }
-
         @media (max-width: 850px) {
             .main-grid {
                 grid-template-columns: 1fr;
             }
         }
 
+        /* PANELS */
         .panel {
             background: var(--panel);
-            border-radius: 14px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 16px;
             border: 1px solid var(--border);
         }
-
         .panel h3 {
-            font-size: 16px;
+            font-size: 15px;
             color: var(--gold);
-            margin-bottom: 18px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
+        /* SECTIONS */
         .section-title {
-            font-size: 13px;
+            font-size: 11px;
             color: var(--blue);
-            margin: 20px 0 12px;
-            padding-top: 15px;
+            margin: 16px 0 10px;
+            padding-top: 12px;
             border-top: 1px solid var(--border);
             font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-
         .section-title:first-child {
             border-top: none;
             margin-top: 0;
             padding-top: 0;
         }
 
+        /* FORMS */
         .form-group {
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
-
         .form-group label {
             display: block;
-            font-size: 10px;
+            font-size: 9px;
             color: var(--text-dim);
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
         }
-
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 10px 14px;
+            padding: 8px 12px;
             background: #0a0a1f;
             border: 1px solid var(--border);
             color: #fff;
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 7px;
+            font-size: 13px;
             font-family: inherit;
+            transition: border-color 0.2s;
         }
-
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
         .form-group textarea {
             resize: vertical;
-            min-height: 60px;
+            min-height: 50px;
         }
-
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
         }
-
         .form-row-3 {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
+            gap: 8px;
+        }
+        select {
+            background: #0a0a1f;
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 7px;
+            font-size: 12px;
+            cursor: pointer;
+            width: 100%;
         }
 
+        /* PROFILES */
         .profiles {
-            max-height: 180px;
+            max-height: 160px;
             overflow-y: auto;
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 8px;
+            gap: 5px;
+            margin-bottom: 6px;
         }
-
         .profile-chip {
             background: #0a0a1f;
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 5px 12px;
-            font-size: 12px;
+            border-radius: 16px;
+            padding: 4px 10px;
+            font-size: 11px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
-
+        .profile-chip:hover {
+            border-color: var(--gold);
+            background: #0f0f2f;
+        }
         .profile-chip.selected {
             background: var(--gold);
             color: #000;
             border-color: var(--gold);
             font-weight: bold;
         }
-
         .profile-chip .badge {
             background: rgba(0, 255, 136, 0.2);
             color: var(--green);
-            padding: 1px 8px;
-            border-radius: 12px;
-            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: bold;
         }
 
+        /* GENERATE BUTTON */
         .btn-generate {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             background: linear-gradient(135deg, var(--gold), #e0bc4c);
             color: #000;
             border: none;
             border-radius: 10px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
+            margin-top: 8px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-
         .btn-generate:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(201, 168, 76, 0.3);
+            box-shadow: 0 8px 20px rgba(201, 168, 76, 0.4);
         }
         .btn-generate:disabled {
-            filter: grayscale(0.5);
+            filter: grayscale(0.6);
+            transform: none;
         }
 
+        /* MODE BUTTONS */
         .mode-buttons {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 12px;
+            gap: 6px;
+            margin-bottom: 10px;
         }
-
         .mode-btn {
-            padding: 10px;
+            padding: 8px 6px;
             background: #0a0a1f;
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
             border-radius: 8px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
             text-align: center;
             color: var(--text);
-            font-size: 12px;
+            font-size: 10px;
         }
-
+        .mode-btn:hover {
+            border-color: var(--gold);
+            background: #0f0f2f;
+        }
         .mode-btn.active {
-            background: var(--gold);
+            background: linear-gradient(135deg, var(--gold), #d4a830);
             color: #000;
             border-color: var(--gold);
             font-weight: bold;
+            box-shadow: 0 4px 12px rgba(201, 168, 76, 0.3);
         }
-
         .mode-btn .tickets-count {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
+            display: block;
+            line-height: 1.2;
+        }
+        .mode-btn .mode-label {
+            font-size: 9px;
+            opacity: 0.8;
             display: block;
         }
 
+        /* CODE PREVIEW */
+        .code-preview {
+            background: #0a0a1f;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+            color: var(--green);
+            text-align: center;
+            margin-top: 6px;
+            border: 1px solid var(--border);
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        /* TICKETS AREA */
         .tickets-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
-
         .tickets-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 10px;
-            max-height: 60vh;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 8px;
+            max-height: 65vh;
             overflow-y: auto;
-            padding: 3px;
+            padding: 2px;
         }
 
+        /* TICKET CARD */
         .ticket {
             background: #fff;
-            border-radius: 8px;
+            border-radius: 7px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
             color: #111;
-            transition: 0.2s;
-            font-size: 10px;
+            transition: transform 0.2s;
+            font-size: 9px;
         }
-
+        .ticket:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
         .ticket-head {
             background: #1a3350;
             color: #fff;
-            padding: 6px 10px;
+            padding: 5px 8px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
-
         .ticket-logo {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             background: var(--gold);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 12px;
             color: #000;
             font-weight: bold;
+            flex-shrink: 0;
         }
-
         .ticket-title {
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
         }
         .ticket-subtitle {
-            font-size: 8px;
+            font-size: 7px;
             opacity: 0.8;
         }
         .ticket-body {
-            padding: 8px;
+            padding: 6px 8px;
             text-align: center;
             background: #f8f9fa;
         }
         .ticket-code {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 900;
             color: #1a3350;
             font-family: 'Courier New', monospace;
             background: #e9ecef;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 4px;
             display: inline-block;
             letter-spacing: 1px;
@@ -400,31 +454,31 @@
         .ticket-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            margin-top: 8px;
+            gap: 4px;
+            margin-top: 6px;
             text-align: left;
         }
         .ticket-detail {
             background: #eef1f5;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 3px 6px;
+            border-radius: 3px;
         }
         .ticket-detail .lbl {
-            font-size: 7px;
+            font-size: 6px;
             color: #888;
         }
         .ticket-detail .val {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
         }
         .ticket-foot {
             background: #1a3350;
             color: #fff;
-            padding: 4px 10px;
+            padding: 3px 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 9px;
+            font-size: 8px;
         }
         .valid {
             color: var(--gold);
@@ -433,85 +487,110 @@
         .price {
             background: var(--gold);
             color: #000;
-            padding: 1px 8px;
+            padding: 1px 6px;
             border-radius: 10px;
             font-weight: bold;
         }
 
+        /* HISTORY */
         .history-item {
             background: #0a0a1f;
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 8px;
-            font-size: 12px;
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            font-size: 11px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
-
         .history-item:hover {
             border-color: var(--gold);
             background: #0f0f2a;
+            transform: translateX(3px);
         }
-
+        .history-item .batch-info {
+            flex: 1;
+        }
         .history-item .batch-id {
             color: var(--gold);
             font-weight: bold;
+            font-size: 13px;
         }
-
         .history-item .details {
             color: var(--text-dim);
-            font-size: 10px;
-            margin-top: 4px;
+            font-size: 9px;
+            margin-top: 3px;
+        }
+        .history-item .actions {
+            display: flex;
+            gap: 4px;
         }
 
+        /* DANGER ZONE */
+        .danger-zone {
+            border: 1px solid var(--red);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            background: rgba(255, 68, 68, 0.03);
+        }
+        .danger-zone h4 {
+            color: var(--red);
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        /* OVERLAY */
         .overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.75);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 999;
         }
-
         .overlay-box {
             background: var(--panel);
-            padding: 30px 40px;
-            border-radius: 14px;
+            padding: 25px 35px;
+            border-radius: 12px;
             text-align: center;
             border: 1px solid var(--border);
         }
-
         .spinner {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border: 3px solid #444;
             border-top: 3px solid var(--gold);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin: 0 auto 15px;
+            margin: 0 auto 12px;
         }
-
         @keyframes spin {
             to {
                 transform: rotate(360deg);
             }
         }
 
+        /* TOAST */
         .toast {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 22px;
+            top: 15px;
+            right: 15px;
+            padding: 10px 20px;
             border-radius: 8px;
             z-index: 2000;
-            font-size: 14px;
+            font-size: 13px;
             background: var(--panel);
             border: 1px solid var(--border);
             animation: slideIn 0.3s ease;
+            max-width: 350px;
         }
-
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
@@ -519,27 +598,28 @@
             }
         }
 
+        /* STATS */
         .stats {
             display: flex;
-            gap: 14px;
-            margin-bottom: 18px;
+            gap: 10px;
+            margin-bottom: 14px;
         }
         .stat {
             flex: 1;
             background: #0a0a1f;
-            padding: 14px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 8px;
             text-align: center;
             border: 1px solid var(--border);
         }
         .stat .num {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
         }
         .stat .lbl {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--text-dim);
-            margin-top: 4px;
+            margin-top: 2px;
         }
         .green {
             color: var(--green);
@@ -551,311 +631,325 @@
             color: var(--blue);
         }
 
+        /* JSON BOX */
         .json-box {
             background: #050510;
-            border-radius: 10px;
-            padding: 14px;
-            margin-top: 20px;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 15px;
             border: 1px solid var(--border);
             display: none;
         }
         .json-box pre {
-            font-family: monospace;
-            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
             color: var(--green);
             white-space: pre-wrap;
-            max-height: 200px;
+            max-height: 180px;
             overflow: auto;
         }
 
+        /* CHECKBOX */
         .checkbox-group {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 14px;
+            gap: 8px;
+            margin-bottom: 10px;
         }
         .checkbox-group label {
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             color: var(--text);
         }
         .checkbox-group input {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
         }
 
-        .code-preview {
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
             background: #0a0a1f;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 14px;
-            color: var(--green);
-            text-align: center;
-            margin-top: 8px;
-            border: 1px solid var(--border);
-            letter-spacing: 2px;
         }
-
-        select {
-            background: #0a0a1f;
-            border: 1px solid var(--border);
-            color: #fff;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        .danger-zone {
-            border: 1px solid var(--red);
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-            background: rgba(255, 68, 68, 0.05);
-        }
-
-        .danger-zone h4 {
-            color: var(--red);
-            margin-bottom: 10px;
-            font-size: 13px;
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
         }
     </style>
 </head>
 <body>
     <div class="app">
+        <!-- TOP BAR -->
         <div class="topbar">
             <h1>🎫 BF WIFI ZONE · Ticket Generator Pro</h1>
             <div class="topbar-right">
                 <input type="text" id="mikId" placeholder="MikroTik ID">
                 <input type="text" id="accountKey" placeholder="Account Key">
-                <button class="btn btn-gold" onclick="connect()">🔌 Connecter</button>
-                <span id="statusBadge" class="status off">⚫ Déconnecté</span>
+                <button class="btn btn-gold" onclick="connect()">🔌 Connexion</button>
+                <span id="statusBadge" class="status off">⚫ Offline</span>
             </div>
         </div>
 
         <div class="main-grid">
+            <!-- LEFT PANEL -->
             <div class="panel">
-                <h3>⚙️ Configuration</h3>
+                <h3>⚙️ Paramètres</h3>
 
-                <div class="section-title">📡 Profils utilisateur</div>
+                <!-- PROFILS -->
+                <div class="section-title">📡 Profils disponibles</div>
                 <div class="profiles" id="profileList">
                     <span style="color:#888;">Connectez-vous...</span>
                 </div>
                 <input type="hidden" id="selectedProfile">
 
+                <!-- CODE GENERATION -->
                 <div class="section-title">🎨 Génération du code</div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>🏷️ Préfixe (optionnel)</label>
-                        <input type="text" id="prefix" value="BF" maxlength="6" placeholder="Sans préfixe" oninput="updateCodePreview()">
+                        <label>🏷️ Préfixe (vide = sans)</label>
+                        <input type="text" id="prefix" value="BF" maxlength="8" placeholder="Optionnel" oninput="updateCodePreview()">
                     </div>
                     <div class="form-group">
                         <label>🔤 Casse</label>
                         <select id="codeCase" onchange="updateCodePreview()">
                             <option value="upper">MAJUSCULES</option>
                             <option value="lower">minuscules</option>
-                            <option value="mixed">Mixtes (aléatoire)</option>
+                            <option value="mixed">Mixte aléatoire</option>
                         </select>
                     </div>
                 </div>
-
                 <div class="form-row-3">
                     <div class="form-group">
-                        <label>📏 Longueur du code</label>
+                        <label>📏 Longueur</label>
                         <select id="codeLength" onchange="updateCodePreview()">
-                            <option value="4">4 caractères</option>
-                            <option value="5">5 caractères</option>
-                            <option value="6" selected>6 caractères</option>
-                            <option value="7">7 caractères</option>
-                            <option value="8">8 caractères</option>
-                            <option value="10">10 caractères</option>
-                            <option value="12">12 caractères</option>
+                            <option value="4">4 car.</option>
+                            <option value="5">5 car.</option>
+                            <option value="6" selected>6 car.</option>
+                            <option value="7">7 car.</option>
+                            <option value="8">8 car.</option>
+                            <option value="10">10 car.</option>
+                            <option value="12">12 car.</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>🔢 Inclure chiffres</label>
+                        <label>🔢 Chiffres</label>
                         <select id="includeNumbers" onchange="updateCodePreview()">
-                            <option value="yes">Oui (Lettres+Chiffres)</option>
-                            <option value="no">Non (Lettres uniquement)</option>
+                            <option value="yes">Avec chiffres</option>
+                            <option value="no">Sans chiffres</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>🎲 Caractères spéciaux</label>
+                        <label>🎲 Spéciaux</label>
                         <select id="includeSpecial" onchange="updateCodePreview()">
                             <option value="no">Non</option>
                             <option value="yes">Oui (-_@)</option>
                         </select>
                     </div>
                 </div>
-                <div class="code-preview" id="codePreview">BF-XXXXXX</div>
+                <div class="code-preview" id="codePreview">BFXXXX</div>
 
-                <div class="section-title">⏱️ Paramètres</div>
+                <!-- PARAMETRES -->
+                <div class="section-title">⏱️ Durée & Prix</div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>⏱️ Time Limit (auto)</label>
-                        <input type="text" id="timeLimit" readonly style="background:#0a2a0a;color:var(--green);border-color:#1a4a1a;">
+                        <label>⏱️ Limite (auto)</label>
+                        <input type="text" id="timeLimit" readonly style="background:#0a2a0a;color:var(--green);border-color:#1a4a1a;font-weight:bold;">
                     </div>
                     <div class="form-group">
                         <label>💰 Prix (FCFA)</label>
-                        <input type="number" id="price" value="100" min="0">
+                        <input type="number" id="price" value="100" min="0" max="50000">
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label>📅 Validité affichée</label>
-                    <input type="text" id="displayValidity" placeholder="Ex: 2h, 1 jour, 30min" value="2h">
+                    <label>📅 Durée affichée</label>
+                    <input type="text" id="displayValidity" placeholder="Ex: 2h, 1 jour" value="2h">
                 </div>
 
+                <!-- MODE IMPRESSION -->
                 <div class="section-title">📦 Mode d'impression</div>
-                <div class="mode-buttons" id="modeButtons">
-                    <div class="mode-btn active" onclick="selectMode('eco', this)" data-mode="eco">
+                <div class="mode-buttons">
+                    <div class="mode-btn active" onclick="selectMode('eco', this)">
                         <span class="tickets-count">40</span>
-                        Mode Éco
+                        <span class="mode-label">ÉCO (4×10)</span>
                     </div>
-                    <div class="mode-btn" onclick="selectMode('supereco', this)" data-mode="supereco">
+                    <div class="mode-btn" onclick="selectMode('supereco', this)">
                         <span class="tickets-count">45</span>
-                        Mode Super Éco
+                        <span class="mode-label">SUPER ÉCO (5×9)</span>
                     </div>
-                    <div class="mode-btn" onclick="selectMode('normal', this)" data-mode="normal">
+                    <div class="mode-btn" onclick="selectMode('normal', this)">
                         <span class="tickets-count">36</span>
-                        Mode Normal
+                        <span class="mode-label">NORMAL (4×9)</span>
                     </div>
                 </div>
-                <input type="hidden" id="ticketsPerPage" value="40">
-
                 <div class="form-group">
-                    <label>🔢 Quantité</label>
+                    <label>🔢 Nombre de tickets</label>
                     <input type="number" id="quantity" value="40" min="1" max="500">
                 </div>
 
+                <!-- OPTIONS -->
+                <div class="section-title">📱 Options</div>
                 <div class="form-group">
-                    <label>ℹ️ Info supplémentaire (optionnel)</label>
-                    <textarea id="extraInfo" rows="2" placeholder="Ex: Support 24/7, Merci de votre confiance, ..."></textarea>
+                    <label>ℹ️ Info supplémentaire</label>
+                    <textarea id="extraInfo" rows="2" placeholder="Support 24/7, Merci..."></textarea>
                 </div>
-
                 <div class="checkbox-group">
                     <input type="checkbox" id="showQR" checked>
-                    <label>📱 Afficher le QR Code dans le PDF</label>
+                    <label>QR Code dans le PDF</label>
                 </div>
-
                 <div class="form-group">
-                    <label>🖥️ Nom MikroTik (serveur)</label>
+                    <label>🖥️ Serveur</label>
                     <input type="text" id="mikName" readonly style="background:#0a1a2a;color:var(--blue);border-color:#1a3a4a;">
                 </div>
 
+                <!-- GENERATE -->
                 <button class="btn-generate" id="btnGenerate" onclick="generateTickets()" disabled>
                     ⚡ Générer les tickets
                 </button>
 
+                <!-- DANGER ZONE -->
                 <div class="danger-zone">
-                    <h4>⚠️ Zone dangereuse</h4>
-                    <p style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">
-                        Supprimer TOUS les tickets de ce MikroTik (irréversible !)
+                    <h4>⚠️ Suppression</h4>
+                    <p style="font-size:10px;color:var(--text-dim);margin-bottom:6px;">
+                        Supprimer TOUS les tickets de ce MikroTik
                     </p>
                     <button class="btn btn-red" onclick="deleteAllTickets()" style="width:100%;">
-                        🗑️ Supprimer tous les tickets
+                        🗑️ Tout supprimer
                     </button>
                 </div>
             </div>
 
+            <!-- RIGHT PANEL -->
             <div class="panel">
                 <div class="tickets-header">
                     <h3>📊 Tickets <span id="ticketCount">(0)</span></h3>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                        <button class="btn btn-outline" onclick="verifyBatch()">🔍 Vérifier</button>
-                        <button class="btn btn-blue" onclick="downloadPDF()">📥 PDF</button>
-                        <button class="btn btn-green" onclick="copyJSON()">📋 JSON</button>
-                        <button class="btn btn-purple" onclick="loadHistory()">📚 Historique</button>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <button class="btn btn-outline btn-sm" onclick="verifyBatch()">🔍 Vérifier</button>
+                        <button class="btn btn-blue btn-sm" onclick="downloadPDF()">📥 PDF</button>
+                        <button class="btn btn-green btn-sm" onclick="copyJSON()">📋 JSON</button>
+                        <button class="btn btn-purple btn-sm" onclick="showHistory()">📚 Historique</button>
                     </div>
                 </div>
 
+                <!-- STATS -->
                 <div class="stats" id="statsRow" style="display:none;">
                     <div class="stat"><div class="num green" id="statOk">0</div><div class="lbl">Créés</div></div>
                     <div class="stat"><div class="num red" id="statFail">0</div><div class="lbl">Échecs</div></div>
                     <div class="stat"><div class="num blue" id="statTime">0s</div><div class="lbl">Temps</div></div>
                 </div>
 
+                <!-- VIEWS -->
                 <div id="historyView" style="display:none;">
-                    <h4 style="color:var(--gold);margin-bottom:12px;">📚 Historique des batchs</h4>
-                    <div id="historyList" style="max-height:400px;overflow-y:auto;"></div>
-                    <button class="btn btn-outline" onclick="hideHistory()" style="margin-top:10px;">Retour aux tickets</button>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                        <h4 style="color:var(--gold);margin:0;">📚 Historique</h4>
+                        <button class="btn btn-outline btn-sm" onclick="clearHistory()">🗑️ Vider l'historique</button>
+                    </div>
+                    <div id="historyList" style="max-height:500px;overflow-y:auto;"></div>
+                    <button class="btn btn-outline" onclick="hideHistory()" style="margin-top:10px;">← Retour</button>
                 </div>
 
                 <div id="ticketsView">
                     <div class="tickets-grid" id="ticketsGrid">
-                        <div style="text-align:center;padding:40px;color:#888;">
-                            <div style="font-size:60px;">🎟️</div>
+                        <div style="text-align:center;padding:50px;color:#888;">
+                            <div style="font-size:50px;">🎟️</div>
                             <p>Prêt à générer</p>
                         </div>
                     </div>
                 </div>
 
+                <!-- JSON -->
                 <div class="json-box" id="jsonBox">
-                    <h4 style="color:var(--gold);">📄 JSON</h4>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <h4 style="color:var(--gold);margin:0;">📄 Export JSON</h4>
+                        <button class="btn btn-green btn-sm" onclick="copyJSON()">📋 Copier</button>
+                    </div>
                     <pre id="jsonOutput"></pre>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- OVERLAY -->
     <div class="overlay" id="overlay" style="display:none;">
         <div class="overlay-box">
             <div class="spinner"></div>
-            <p id="overlayMsg">Veuillez patienter...</p>
+            <p id="overlayMsg">Patientez...</p>
         </div>
     </div>
 
     <script>
+        // ============ CONFIGURATION ============
         const API = 'https://fasowifizone.pythonanywhere.com';
+        const STORAGE_KEY = 'bf_wifi_history';
+
+        // ============ STATE ============
         let mikId = localStorage.getItem('mikId') || '';
         let accountKey = localStorage.getItem('accountKey') || '';
-        let connected = false,
-            profiles = [],
-            currentProfile = null;
-        let allTickets = [],
-            batchId = '',
-            mikrotikName = 'BF WIFI ZONE';
+        let connected = false;
+        let profiles = [];
+        let currentProfile = null;
+        let allTickets = [];
+        let batchId = '';
+        let mikrotikName = 'BF WIFI ZONE';
         let startTime = 0;
         let currentMode = 'eco';
         let ticketsPerPage = 40;
 
+        // ============ INIT ============
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('mikId').value = mikId;
             document.getElementById('accountKey').value = accountKey;
-            document.getElementById('ticketsPerPage').value = ticketsPerPage;
-            document.getElementById('quantity').value = ticketsPerPage;
-
             updateCodePreview();
 
-            const urlMikId = new URLSearchParams(window.location.search).get('mikid') ||
-                new URLSearchParams(window.location.search).get('mikId') ||
-                new URLSearchParams(window.location.search).get('mik_id');
-            const urlAccountKey = new URLSearchParams(window.location.search).get('accountkey') ||
-                new URLSearchParams(window.location.search).get('accountKey') ||
-                new URLSearchParams(window.location.search).get('account_key');
+            // Auto-connect from URL
+            const params = new URLSearchParams(window.location.search);
+            const urlMikId = params.get('mikid') || params.get('mikId') || params.get('mik_id');
+            const urlKey = params.get('accountkey') || params.get('accountKey') || params.get('account_key');
 
-            if (urlMikId && urlAccountKey) {
+            if (urlMikId && urlKey) {
                 document.getElementById('mikId').value = urlMikId;
-                document.getElementById('accountKey').value = urlAccountKey;
+                document.getElementById('accountKey').value = urlKey;
                 localStorage.setItem('mikId', urlMikId);
-                localStorage.setItem('accountKey', urlAccountKey);
+                localStorage.setItem('accountKey', urlKey);
                 setTimeout(() => connect(), 500);
             }
         });
 
-        function selectMode(mode, element) {
-            currentMode = mode;
-            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-
-            const modeMap = { 'eco': 40, 'supereco': 45, 'normal': 36 };
-            ticketsPerPage = modeMap[mode];
-            document.getElementById('ticketsPerPage').value = ticketsPerPage;
-            document.getElementById('quantity').value = ticketsPerPage;
+        // ============ UTILITIES ============
+        function toast(msg, type = 'info') {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.style.background = type === 'success' ? '#0d3d0d' : type === 'error' ? '#3d0d0d' : '#1e1e3a';
+            t.style.borderColor = type === 'success' ? 'var(--green)' : type === 'error' ? 'var(--red)' : '#444';
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3500);
         }
 
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        function overhead(show, msg = '') {
+            document.getElementById('overlay').style.display = show ? 'flex' : 'none';
+            if (show) document.getElementById('overlayMsg').textContent = msg;
+        }
+
+        function updateStatus(state, text) {
+            const el = document.getElementById('statusBadge');
+            el.className = 'status ' + (state === 'on' ? 'on' : state === 'off' ? 'off' : 'on');
+            const icons = { on: '🟢', off: '⚫', loading: '🔄' };
+            el.innerHTML = (icons[state] || '🔄') + ' ' + text;
+        }
+
+        function esc(s) {
+            if (!s) return '';
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        // ============ CODE GENERATION ============
         function updateCodePreview() {
             const prefix = document.getElementById('prefix').value || '';
             const len = parseInt(document.getElementById('codeLength').value);
@@ -869,6 +963,9 @@
 
             if (includeNum === 'yes') chars += '23456789';
             if (includeSpec === 'yes') chars += '-_@';
+
+            // Remove confusables
+            chars = chars.replace(/[0O1Il|]/g, '');
 
             let sample = '';
             for (let i = 0; i < len; i++) {
@@ -893,40 +990,52 @@
             if (includeNum === 'yes') chars += '23456789';
             if (includeSpec === 'yes') chars += '-_@';
 
-            // Remove ambiguous characters
-            chars = chars.replace(/[0O1Il]/g, '');
+            // Remove confusables
+            chars = chars.replace(/[0O1Il|]/g, '');
 
+            // Ensure at least one of each required type
             let code = '';
-            for (let i = 0; i < len; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            const hasUpper = /[A-Z]/.test(chars);
+            const hasLower = /[a-z]/.test(chars);
+            const hasNum = /[2-9]/.test(chars);
+            const hasSpec = /[-_@]/.test(chars);
+
+            // Force inclusion if needed
+            if (caseType === 'mixed' && hasUpper && hasLower && len >= 2) {
+                code += 'ABCDEFGHJKLMNPQRSTUVWXYZ'.charAt(Math.floor(Math.random() * 24));
+                code += 'abcdefghjklmnpqrstuvwxyz'.charAt(Math.floor(Math.random() * 24));
+                for (let i = 2; i < len; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                // Shuffle
+                code = code.split('').sort(() => Math.random() - 0.5).join('');
+            } else if (includeNum === 'yes' && hasNum && len >= 2) {
+                code += '23456789'.charAt(Math.floor(Math.random() * 8));
+                for (let i = 1; i < len; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                code = code.split('').sort(() => Math.random() - 0.5).join('');
+            } else {
+                for (let i = 0; i < len; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
             }
 
             return prefix + code;
         }
 
-        function toast(msg, type = 'info') {
-            const t = document.createElement('div');
-            t.className = 'toast';
-            t.style.background = type === 'success' ? '#0d3d0d' : type === 'error' ? '#3d0d0d' : '#1e1e3a';
-            t.style.borderColor = type === 'success' ? 'var(--green)' : type === 'error' ? 'var(--red)' : '#444';
-            t.textContent = msg;
-            document.body.appendChild(t);
-            setTimeout(() => t.remove(), 3000);
+        // ============ MODE SELECTION ============
+        function selectMode(mode, element) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+
+            const modeMap = { 'eco': 40, 'supereco': 45, 'normal': 36 };
+            ticketsPerPage = modeMap[mode];
+            document.getElementById('quantity').value = ticketsPerPage;
         }
 
-        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-        function overhead(show, msg = '') {
-            document.getElementById('overlay').style.display = show ? 'flex' : 'none';
-            if (show) document.getElementById('overlayMsg').textContent = msg;
-        }
-
-        function updateStatus(state, text) {
-            const el = document.getElementById('statusBadge');
-            el.className = 'status ' + state;
-            el.innerHTML = (state === 'on' ? '🟢 ' : state === 'off' ? '⚫ ' : '🔄 ') + text;
-        }
-
+        // ============ API COMMUNICATION ============
         async function executeCommand(command) {
             const pushRes = await fetch(API + '/mik/commands/push', {
                 method: 'POST',
@@ -940,7 +1049,7 @@
                 })
             });
             const pushData = await pushRes.json();
-            if (!pushData.success) throw new Error(pushData.message || 'push failed');
+            if (!pushData.success) throw new Error(pushData.message || 'Échec de l\'envoi');
 
             for (let i = 0; i < 90; i++) {
                 await sleep(1000);
@@ -951,10 +1060,10 @@
                         return statusData.response ? statusData.response.text : 'OK';
                     }
                     if (statusData.command.status === 'failed')
-                        throw new Error('Command failed on MikroTik');
+                        throw new Error('Échec sur le MikroTik');
                 }
             }
-            throw new Error('Timeout');
+            throw new Error('Timeout (90s)');
         }
 
         async function fetchMikrotikName() {
@@ -969,11 +1078,11 @@
                 }
                 return mikrotikName;
             } catch (e) {
-                console.warn("Erreur récupération nom via dashboard:", e);
                 return mikrotikName;
             }
         }
 
+        // ============ PROFILE PARSING ============
         function parseUserProfilesFromDetail(raw) {
             const result = [];
             if (!raw || raw === 'OK') return result;
@@ -985,6 +1094,7 @@
                 if (!nameMatch) continue;
                 const name = nameMatch[1];
 
+                // Filtrer les profils système
                 if (name.toLowerCase().includes('user') || name.includes('$')) continue;
 
                 let timeLimit = null;
@@ -1038,11 +1148,12 @@
         function renderProfiles() {
             const container = document.getElementById('profileList');
             if (!profiles.length) {
-                container.innerHTML = '<span style="color:#ff8c00;">Aucun profil compatible (filtrés ou sans durée)</span>';
+                container.innerHTML =
+                    '<span style="color:#ff8c00;">Aucun profil compatible trouvé</span>';
                 return;
             }
             container.innerHTML = profiles.map((p, i) => `
-                <div class="profile-chip ${i===0?'selected':''}" onclick="selectProfile('${p.name}', this)">
+                <div class="profile-chip ${i===0?'selected':''}" onclick="selectProfile('${esc(p.name)}', this)">
                     ${esc(p.name)} <span class="badge">${esc(p.timeLimit)}</span>
                 </div>
             `).join('');
@@ -1057,19 +1168,24 @@
             if (currentProfile) document.getElementById('timeLimit').value = currentProfile.timeLimit;
         }
 
+        // ============ CONNECTION ============
         async function connect() {
             mikId = document.getElementById('mikId').value.trim();
             accountKey = document.getElementById('accountKey').value.trim();
-            if (!mikId || !accountKey) { toast('Veuillez remplir les identifiants', 'error'); return; }
+            if (!mikId || !accountKey) {
+                toast('Veuillez remplir MikroTik ID et Account Key', 'error');
+                return;
+            }
             localStorage.setItem('mikId', mikId);
             localStorage.setItem('accountKey', accountKey);
 
-            updateStatus('on', 'Connexion...');
-            overhead(true, 'Connexion et chargement des profils détaillés...');
+            updateStatus('loading', 'Connexion...');
+            overhead(true, 'Connexion au MikroTik...');
 
             try {
                 await fetch(API + '/health');
-                const rawProfiles = await executeCommand('/ip hotspot user profile print detail without-paging');
+                const rawProfiles = await executeCommand(
+                    '/ip hotspot user profile print detail without-paging');
                 profiles = parseUserProfilesFromDetail(rawProfiles);
                 renderProfiles();
 
@@ -1078,20 +1194,21 @@
 
                 connected = true;
                 document.getElementById('btnGenerate').disabled = false;
-                updateStatus('on', `Connecté · ${profiles.length} profils · ${mikrotikName}`);
+                updateStatus('on', `Connecté · ${profiles.length} profils`);
                 overhead(false);
-                toast('✅ Connecté avec succès', 'success');
+                toast('✅ Connecté à ' + mikrotikName, 'success');
             } catch (e) {
                 connected = false;
                 document.getElementById('btnGenerate').disabled = true;
-                updateStatus('off', 'Échec');
+                updateStatus('off', 'Échec connexion');
                 overhead(false);
                 toast('❌ ' + e.message, 'error');
             }
         }
 
+        // ============ TICKET GENERATION ============
         async function generateTickets() {
-            if (!connected) { toast('Connectez-vous', 'error'); return; }
+            if (!connected) { toast('Connectez-vous d\'abord', 'error'); return; }
             const profile = document.getElementById('selectedProfile').value;
             const timeLimit = document.getElementById('timeLimit').value;
             const price = parseInt(document.getElementById('price').value) || 100;
@@ -1100,6 +1217,7 @@
             const extraInfo = document.getElementById('extraInfo').value.trim();
 
             if (!profile) { toast('Sélectionnez un profil', 'error'); return; }
+            if (quantity > 500) { toast('Maximum 500 tickets', 'error'); return; }
 
             const now = new Date();
             batchId = 'B' +
@@ -1112,8 +1230,8 @@
 
             startTime = Date.now();
             document.getElementById('btnGenerate').disabled = true;
-            updateStatus('on', 'Génération...');
-            overhead(true, 'Génération de ' + quantity + ' tickets...');
+            updateStatus('loading', 'Génération...');
+            overhead(true, `Création de ${quantity} tickets...`);
 
             const tickets = [];
             const usedCodes = new Set();
@@ -1124,8 +1242,8 @@
                 do {
                     code = generateCode();
                     attempts++;
-                    if (attempts > 100) {
-                        toast('Erreur génération code unique', 'error');
+                    if (attempts > 200) {
+                        toast('Erreur: impossible de générer un code unique', 'error');
                         overhead(false);
                         document.getElementById('btnGenerate').disabled = false;
                         return;
@@ -1145,23 +1263,22 @@
                 });
             }
 
+            // Envoyer par lots de 50
             const commands = tickets.map(t =>
-                '/ip hotspot user add name="' + t.name +
-                '" password="' + t.password +
-                '" profile="' + profile +
-                '" limit-uptime="' + timeLimit +
-                '" comment="voucher|' + batchId + '"'
+                `/ip hotspot user add name="${t.name}" password="${t.password}" profile="${profile}" limit-uptime="${timeLimit}" comment="voucher|${batchId}"`
             );
 
             const maxPerBatch = 50;
             for (let i = 0; i < commands.length; i += maxPerBatch) {
                 const batch = commands.slice(i, i + maxPerBatch);
                 await executeCommand(batch.join('; '));
-                if (i + maxPerBatch < commands.length) await sleep(500);
+                if (i + maxPerBatch < commands.length) await sleep(300);
             }
 
-            overhead(true, 'Vérification des tickets...');
-            const rawUsers = await executeCommand('/ip hotspot user print detail where comment~"' + batchId + '"');
+            // Vérification
+            overhead(true, 'Vérification des tickets créés...');
+            const rawUsers = await executeCommand(
+                `/ip hotspot user print detail where comment~"${batchId}"`);
 
             allTickets = [];
             if (rawUsers && rawUsers !== 'OK') {
@@ -1184,7 +1301,7 @@
                 allTickets.sort((a, b) => a.name.localeCompare(b.name));
             }
 
-            // Save to history
+            // Sauvegarder dans l'historique
             saveToHistory({
                 batchId,
                 mikrotikName,
@@ -1197,23 +1314,35 @@
                 created: allTickets.length,
                 failed: quantity - allTickets.length,
                 date: now.toISOString(),
+                mode: currentMode,
+                codeConfig: {
+                    prefix: document.getElementById('prefix').value,
+                    length: document.getElementById('codeLength').value,
+                    case: document.getElementById('codeCase').value,
+                    includeNumbers: document.getElementById('includeNumbers').value,
+                    includeSpecial: document.getElementById('includeSpecial').value
+                },
                 tickets: allTickets
             });
 
             const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
             overhead(false);
             document.getElementById('btnGenerate').disabled = false;
-            updateStatus('on', 'OK · ' + allTickets.length + ' tickets');
+            updateStatus('on', `OK · ${allTickets.length} tickets`);
 
+            // Afficher stats
             document.getElementById('statsRow').style.display = 'flex';
             document.getElementById('statOk').textContent = allTickets.length;
             document.getElementById('statFail').textContent = quantity - allTickets.length;
             document.getElementById('statTime').textContent = elapsed + 's';
             document.getElementById('ticketCount').textContent = '(' + allTickets.length + ')';
 
+            // Afficher tickets
             document.getElementById('historyView').style.display = 'none';
             document.getElementById('ticketsView').style.display = 'block';
             renderTickets();
+
+            // Afficher JSON
             document.getElementById('jsonBox').style.display = 'block';
             document.getElementById('jsonOutput').textContent = JSON.stringify({
                 batch_id: batchId,
@@ -1230,6 +1359,7 @@
                     include_numbers: document.getElementById('includeNumbers').value,
                     include_special: document.getElementById('includeSpecial').value
                 },
+                mode: currentMode,
                 requested: quantity,
                 created: allTickets.length,
                 failed: quantity - allTickets.length,
@@ -1237,29 +1367,27 @@
                 tickets: allTickets
             }, null, 2);
 
-            toast('✅ ' + allTickets.length + ' tickets en ' + elapsed + 's', 'success');
+            toast(`✅ ${allTickets.length}/${quantity} tickets · ${elapsed}s`, 'success');
         }
 
+        // ============ HISTORY MANAGEMENT ============
         function saveToHistory(batchData) {
-            let history = JSON.parse(localStorage.getItem('bf_wifi_history') || '[]');
+            let history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
             history.unshift({
                 ...batchData,
-                mikId: mikId,
-                codeConfig: {
-                    prefix: document.getElementById('prefix').value,
-                    length: document.getElementById('codeLength').value,
-                    case: document.getElementById('codeCase').value,
-                    includeNumbers: document.getElementById('includeNumbers').value,
-                    includeSpecial: document.getElementById('includeSpecial').value
-                }
+                mikId: mikId
             });
-            // Keep last 50 batches
-            history = history.slice(0, 50);
-            localStorage.setItem('bf_wifi_history', JSON.stringify(history));
+            // Garder les 100 derniers
+            history = history.slice(0, 100);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
         }
 
-        function loadHistory() {
-            const history = JSON.parse(localStorage.getItem('bf_wifi_history') || '[]');
+        function getHistory() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        }
+
+        function showHistory() {
+            const history = getHistory();
             const historyView = document.getElementById('historyView');
             const ticketsView = document.getElementById('ticketsView');
             const jsonBox = document.getElementById('jsonBox');
@@ -1271,23 +1399,32 @@
             const historyList = document.getElementById('historyList');
 
             if (!history.length) {
-                historyList.innerHTML = '<p style="color:#888;">Aucun historique</p>';
+                historyList.innerHTML =
+                    '<p style="color:#888;text-align:center;padding:30px;">📭 Aucun historique</p>';
                 return;
             }
 
             historyList.innerHTML = history.map((h, i) => `
-                <div class="history-item" onclick="restoreBatch(${i})">
-                    <div class="batch-id">📦 ${h.batchId}</div>
-                    <div class="details">
-                        ${new Date(h.date).toLocaleString('fr-FR')} · 
-                        ${h.created}/${h.quantity} tickets · 
-                        Profil: ${h.profile} · 
-                        ${h.timeLimit}
-                        ${h.mikrotikName !== 'BF WIFI ZONE' ? ' · ' + h.mikrotikName : ''}
+                <div class="history-item">
+                    <div class="batch-info">
+                        <div class="batch-id">📦 ${h.batchId}</div>
+                        <div class="details">
+                            ${new Date(h.date).toLocaleString('fr-FR')} · 
+                            ${h.created}/${h.quantity} tickets · 
+                            ${h.profile} · 
+                            ${h.timeLimit} · 
+                            ${h.mode || '?'}
+                        </div>
+                        <div class="details" style="margin-top:2px;">
+                            Code: ${h.codeConfig?.case || '?'} · 
+                            ${h.codeConfig?.length || '?'} car. · 
+                            ${h.codeConfig?.includeNumbers === 'yes' ? 'L+C' : 'Lettres'}
+                            ${h.codeConfig?.prefix ? ' · Préfixe: ' + h.codeConfig.prefix : ''}
+                        </div>
                     </div>
-                    <div style="margin-top:4px;font-size:10px;color:#666;">
-                        Config: ${h.codeConfig?.case || '?'}, ${h.codeConfig?.length || '?'} car, 
-                        ${h.codeConfig?.includeNumbers === 'yes' ? 'L+C' : 'L'}
+                    <div class="actions">
+                        <button class="btn btn-gold btn-sm" onclick="restoreBatch(${i})">📋 Restaurer</button>
+                        <button class="btn btn-red btn-sm" onclick="deleteBatch(${i})">🗑️</button>
                     </div>
                 </div>
             `).join('');
@@ -1302,17 +1439,29 @@
         }
 
         function restoreBatch(index) {
-            const history = JSON.parse(localStorage.getItem('bf_wifi_history') || '[]');
+            const history = getHistory();
             const batch = history[index];
             if (!batch) return;
 
             allTickets = batch.tickets || [];
             batchId = batch.batchId;
+            currentMode = batch.mode || 'eco';
+            ticketsPerPage = batch.quantity || 40;
 
-            document.getElementById('historyView').style.display = 'none';
-            document.getElementById('ticketsView').style.display = 'block';
-            document.getElementById('jsonBox').style.display = 'block';
+            // Restaurer les paramètres de code
+            if (batch.codeConfig) {
+                document.getElementById('prefix').value = batch.codeConfig.prefix || '';
+                document.getElementById('codeLength').value = batch.codeConfig.length || '6';
+                document.getElementById('codeCase').value = batch.codeConfig.case || 'upper';
+                document.getElementById('includeNumbers').value = batch.codeConfig.includeNumbers || 'yes';
+                document.getElementById('includeSpecial').value = batch.codeConfig.includeSpecial || 'no';
+            }
+            document.getElementById('price').value = batch.price || 100;
+            document.getElementById('displayValidity').value = batch.displayValidity || '';
+            document.getElementById('extraInfo').value = batch.extraInfo || '';
+            document.getElementById('quantity').value = batch.quantity || 40;
 
+            hideHistory();
             document.getElementById('statsRow').style.display = 'flex';
             document.getElementById('statOk').textContent = batch.created;
             document.getElementById('statFail').textContent = batch.failed;
@@ -1320,17 +1469,38 @@
             document.getElementById('ticketCount').textContent = '(' + allTickets.length + ')';
 
             renderTickets();
+            document.getElementById('jsonBox').style.display = 'block';
             document.getElementById('jsonOutput').textContent = JSON.stringify(batch, null, 2);
+            updateCodePreview();
 
             toast('📦 Batch restauré: ' + batchId, 'success');
         }
 
+        function deleteBatch(index) {
+            if (!confirm('Supprimer ce batch de l\'historique ?')) return;
+            let history = getHistory();
+            const batchName = history[index]?.batchId || 'inconnu';
+            history.splice(index, 1);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+            showHistory();
+            toast('🗑️ Batch ' + batchName + ' supprimé de l\'historique', 'success');
+        }
+
+        function clearHistory() {
+            if (!confirm('Effacer TOUT l\'historique ? Cette action est irréversible.')) return;
+            localStorage.removeItem(STORAGE_KEY);
+            showHistory();
+            toast('🗑️ Historique vidé', 'success');
+        }
+
+        // ============ VERIFICATION ============
         async function verifyBatch() {
-            if (!batchId) { toast('Aucun batch', 'error'); return; }
+            if (!batchId) { toast('Aucun batch à vérifier', 'error'); return; }
             if (!connected) { toast('Connectez-vous', 'error'); return; }
             overhead(true, 'Vérification...');
             try {
-                const raw = await executeCommand('/ip hotspot user print detail where comment~"' + batchId + '"');
+                const raw = await executeCommand(
+                    `/ip hotspot user print detail where comment~"${batchId}"`);
                 const price = parseInt(document.getElementById('price').value) || 100;
                 const timeLimit = document.getElementById('timeLimit').value;
                 const profile = document.getElementById('selectedProfile').value;
@@ -1364,8 +1534,11 @@
                 document.getElementById('ticketCount').textContent = '(' + allTickets.length + ')';
                 renderTickets();
                 document.getElementById('jsonBox').style.display = 'block';
-                document.getElementById('jsonOutput').textContent = JSON.stringify({ batch_id: batchId,
-                    tickets: allTickets }, null, 2);
+                document.getElementById('jsonOutput').textContent = JSON.stringify({
+                    batch_id: batchId,
+                    tickets_found: allTickets.length,
+                    tickets: allTickets
+                }, null, 2);
                 toast('✅ ' + allTickets.length + ' tickets trouvés', 'success');
             } catch (e) {
                 overhead(false);
@@ -1373,22 +1546,26 @@
             }
         }
 
+        // ============ DELETE ALL TICKETS ============
         async function deleteAllTickets() {
             if (!connected) { toast('Connectez-vous', 'error'); return; }
-            const confirmed = confirm(
-                '⚠️ Êtes-vous ABSOLUMENT sûr de vouloir supprimer TOUS les tickets de ce MikroTik ?\n\nCette action est IRRÉVERSIBLE !\n\nTapez "SUPPRIMER" pour confirmer :'
-                );
-            if (!confirmed) return;
 
-            const secondConfirm = prompt('Tapez "SUPPRIMER" pour confirmer la suppression de tous les tickets :');
-            if (secondConfirm !== 'SUPPRIMER') {
-                toast('❌ Suppression annulée', 'error');
+            const step1 = confirm(
+                '⚠️ ATTENTION !\n\nVous allez supprimer TOUS les tickets voucher de ce MikroTik.\n\nCette action est IRRÉVERSIBLE.\n\nCliquez OK pour continuer.'
+            );
+            if (!step1) return;
+
+            const step2 = prompt(
+                'Pour confirmer, tapez exactement : SUPPRIMER\n\n(En majuscules, sans espaces)'
+            );
+            if (step2 !== 'SUPPRIMER') {
+                toast('❌ Confirmation incorrecte. Annulé.', 'error');
                 return;
             }
 
             overhead(true, 'Suppression de tous les tickets...');
             try {
-                const result = await executeCommand(
+                await executeCommand(
                     '/ip hotspot user remove [find where comment~"voucher"]'
                 );
                 allTickets = [];
@@ -1396,23 +1573,25 @@
                 overhead(false);
                 document.getElementById('statsRow').style.display = 'none';
                 document.getElementById('ticketCount').textContent = '(0)';
-                renderTickets();
                 document.getElementById('jsonBox').style.display = 'none';
-                toast('🗑️ Tous les tickets ont été supprimés', 'success');
+                renderTickets();
+                toast('🗑️ Tous les tickets supprimés avec succès', 'success');
             } catch (e) {
                 overhead(false);
-                toast('❌ ' + e.message, 'error');
+                toast('❌ Erreur: ' + e.message, 'error');
             }
         }
 
+        // ============ RENDER TICKETS ============
         function renderTickets() {
             const grid = document.getElementById('ticketsGrid');
             if (!allTickets.length) {
-                grid.innerHTML = '<div style="text-align:center;padding:40px;color:#888;">Aucun ticket</div>';
+                grid.innerHTML =
+                    '<div style="text-align:center;padding:40px;color:#888;"><div style="font-size:50px;">🎟️</div><p>Aucun ticket</p></div>';
                 return;
             }
             grid.innerHTML = allTickets.map((t, i) => `
-                <div class="ticket" id="t-${i}">
+                <div class="ticket">
                     <div class="ticket-head">
                         <div class="ticket-logo">📶</div>
                         <div>
@@ -1421,13 +1600,19 @@
                         </div>
                     </div>
                     <div class="ticket-body">
-                        <div style="font-size:8px;color:#888;">Code Voucher</div>
+                        <div style="font-size:7px;color:#888;margin-bottom:2px;">CODE VOUCHER</div>
                         <div class="ticket-code">${esc(t.name)}</div>
                         <div class="ticket-details">
-                            <div class="ticket-detail"><div class="lbl">Validité</div><div class="val">${esc(t.displayValidity || t.timeLimit)}</div></div>
-                            <div class="ticket-detail"><div class="lbl">Profil</div><div class="val">${esc(t.profile)}</div></div>
+                            <div class="ticket-detail">
+                                <div class="lbl">Validité</div>
+                                <div class="val">${esc(t.displayValidity || t.timeLimit)}</div>
+                            </div>
+                            <div class="ticket-detail">
+                                <div class="lbl">Profil</div>
+                                <div class="val">${esc(t.profile)}</div>
+                            </div>
                         </div>
-                        ${t.extraInfo ? `<div style="margin-top:6px; font-size:9px; color:#555; border-top:1px solid #ddd; padding-top:4px;">${esc(t.extraInfo)}</div>` : ''}
+                        ${t.extraInfo ? `<div style="margin-top:5px;font-size:8px;color:#555;border-top:1px solid #ddd;padding-top:3px;">${esc(t.extraInfo)}</div>` : ''}
                     </div>
                     <div class="ticket-foot">
                         <span class="valid">${esc(t.displayValidity || t.timeLimit)}</span>
@@ -1437,13 +1622,7 @@
             `).join('');
         }
 
-        function esc(s) {
-            if (!s) return '';
-            const d = document.createElement('div');
-            d.textContent = s;
-            return d.innerHTML;
-        }
-
+        // ============ QR CODE ============
         async function getQRMatrix(text) {
             return new Promise((resolve) => {
                 const div = document.createElement('div');
@@ -1473,8 +1652,7 @@
                     for (let r = 0; r < size; r++) {
                         const row = [];
                         for (let c = 0; c < size; c++) {
-                            const i = (r * size + c) * 4;
-                            row.push(data[i] < 128);
+                            row.push(data[(r * size + c) * 4] < 128);
                         }
                         matrix.push(row);
                     }
@@ -1498,19 +1676,25 @@
             }
         }
 
+        // ============ PDF DOWNLOAD ============
         async function downloadPDF() {
             if (!allTickets.length) { toast('Aucun ticket à exporter', 'error'); return; }
 
             const showQR = document.getElementById('showQR').checked;
-            const mode = currentMode;
-            ticketsPerPage = parseInt(document.getElementById('ticketsPerPage').value) || 40;
+            ticketsPerPage = parseInt(document.getElementById('quantity').value) || 40;
 
-            // Définir le layout selon le mode
+            // Layouts optimisés
             const layoutMap = {
-                'eco': { cols: 4, rows: 10, gap: 1.0, margin: 3.5 },
-                'supereco': { cols: 5, rows: 9, gap: 0.8, margin: 3 },
-                'normal': { cols: 4, rows: 9, gap: 1.2, margin: 4 }
+                'eco': { cols: 4, rows: 10, gap: 0.8, margin: 3.5, headH: 4.5 },
+                'supereco': { cols: 5, rows: 9, gap: 0.6, margin: 3, headH: 4 },
+                'normal': { cols: 4, rows: 9, gap: 1.2, margin: 4, headH: 5.5 }
             };
+
+            // Déterminer le mode selon le nombre de tickets
+            let mode = currentMode;
+            if (ticketsPerPage <= 36) mode = 'normal';
+            else if (ticketsPerPage <= 40) mode = 'eco';
+            else mode = 'supereco';
 
             const layout = layoutMap[mode] || layoutMap['eco'];
             const perPage = layout.cols * layout.rows;
@@ -1529,7 +1713,7 @@
                 }
             }
 
-            overhead(true, 'Création du PDF...');
+            overhead(true, 'Création du PDF optimisé...');
 
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -1544,10 +1728,13 @@
             const tw = (pageW - 2 * margin - gap * (cols - 1)) / cols;
             const th = (pageH - 2 * margin - gap * (rows - 1)) / rows;
 
-            const headH = 5;
+            const headH = layout.headH;
             const bodyH = th - headH;
-            const qrPad = 1;
-            const qrSize = bodyH - 2 * qrPad;
+
+            // Ajuster la taille du QR selon l'espace disponible
+            const qrSizeRatio = showQR ? (mode === 'supereco' ? 0.55 : mode === 'eco' ? 0.6 : 0.65) : 0;
+            const qrSize = bodyH * qrSizeRatio;
+            const qrPad = 0.5;
             const qrAreaW = showQR ? (qrSize + 2 * qrPad) : 0;
             const textAreaW = tw - qrAreaW;
 
@@ -1556,7 +1743,7 @@
                 now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
             pdf.setProperties({
-                title: 'Vouchers-' + (mikrotikName || 'BF WIFI ZONE'),
+                title: 'Tickets-' + (mikrotikName || 'BF WIFI ZONE'),
                 subject: 'Tickets WiFi',
                 author: 'BF WIFI ZONE'
             });
@@ -1566,12 +1753,11 @@
             for (let page = 0; page < totalPages; page++) {
                 if (page > 0) pdf.addPage();
 
-                pdf.setFontSize(5);
-                pdf.setTextColor(100, 100, 100);
+                // En-tête de page
+                pdf.setFontSize(4.5);
+                pdf.setTextColor(120, 120, 120);
                 pdf.setFont('helvetica', 'normal');
-                const hdr = dateStr + '   ' + (mikrotikName || 'BF WIFI ZONE') +
-                    '   ' + (batchId || '') + '   page ' + (page + 1) + '/' + totalPages +
-                    '   Mode: ' + mode.toUpperCase();
+                const hdr = `${dateStr} | ${mikrotikName || 'BF WIFI ZONE'} | ${batchId || ''} | ${page+1}/${totalPages}`;
                 pdf.text(hdr, margin, margin - 0.5);
 
                 const pageTickets = allTickets.slice(page * perPage, (page + 1) * perPage);
@@ -1583,126 +1769,141 @@
                     const y = margin + row * (th + gap);
                     const globalIdx = page * perPage + idx + 1;
 
+                    // Bordure
                     pdf.setDrawColor(0, 0, 0);
-                    pdf.setLineWidth(0.2);
+                    pdf.setLineWidth(0.15);
                     pdf.rect(x, y, tw, th);
 
-                    pdf.setLineWidth(0.15);
+                    // Séparateur header
+                    pdf.setLineWidth(0.1);
                     pdf.line(x, y + headH, x + tw, y + headH);
 
-                    pdf.setFontSize(5.5);
+                    // Titre
+                    pdf.setFontSize(mode === 'supereco' ? 5 : 5.5);
                     pdf.setFont('helvetica', 'bold');
                     pdf.setTextColor(0, 0, 0);
                     const mikLabel = (mikrotikName || 'BF WIFI ZONE').toUpperCase();
-                    const mikLW = pdf.getTextWidth(mikLabel);
-                    pdf.text(mikLabel, x + tw / 2 - mikLW / 2, y + headH - 1.2);
+                    pdf.text(mikLabel, x + tw / 2, y + headH - 1.2, { align: 'center' });
 
-                    pdf.setFontSize(4.5);
+                    // Numéro
+                    pdf.setFontSize(4);
                     pdf.setFont('helvetica', 'normal');
-                    pdf.setTextColor(130, 130, 130);
-                    const numStr = '#' + globalIdx;
-                    const numW = pdf.getTextWidth(numStr);
-                    pdf.text(numStr, x + tw - numW - 0.5, y + 1.8);
+                    pdf.setTextColor(150, 150, 150);
+                    pdf.text('#' + globalIdx, x + tw - 3, y + 1.8);
 
-                    const bx = x + 1.2;
+                    const bx = x + 1;
                     const by = y + headH;
 
                     if (!showQR) {
+                        // Mode sans QR - centré
                         const centerX = x + tw / 2;
-                        pdf.setFontSize(4.5);
-                        pdf.setFont('helvetica', 'normal');
-                        pdf.setTextColor(100, 100, 100);
-                        pdf.text('Code Voucher', centerX, by + 2.8, { align: 'center' });
 
-                        pdf.setFontSize(11);
+                        pdf.setFontSize(4);
+                        pdf.setTextColor(100, 100, 100);
+                        pdf.text('Code', centerX, by + 2.5, { align: 'center' });
+
+                        pdf.setFontSize(mode === 'supereco' ? 9 : 12);
                         pdf.setFont('courier', 'bold');
                         pdf.setTextColor(0, 0, 0);
-                        pdf.text(ticket.name || '', centerX, by + 7.5, { align: 'center' });
+                        pdf.text(ticket.name || '', centerX, by + 7, { align: 'center' });
 
                         pdf.setDrawColor(180, 180, 180);
-                        pdf.setLineWidth(0.12);
-                        const lineY = by + 8.8;
-                        pdf.line(centerX - 18, lineY, centerX + 18, lineY);
+                        pdf.setLineWidth(0.1);
+                        pdf.line(centerX - 15, by + 8, centerX + 15, by + 8);
 
-                        pdf.setFontSize(5);
+                        pdf.setFontSize(4.5);
                         pdf.setFont('helvetica', 'bold');
                         pdf.setTextColor(0, 0, 0);
-                        pdf.text(ticket.displayValidity || ticket.timeLimit || '', centerX, by + 11, { align: 'center' });
+                        pdf.text(ticket.displayValidity || ticket.timeLimit || '', centerX, by + 10.5, { align: 'center' });
 
                         pdf.setFont('helvetica', 'normal');
                         pdf.setTextColor(80, 80, 80);
-                        pdf.text(ticket.profile || '', centerX, by + 13.5, { align: 'center' });
+                        pdf.text(ticket.profile || '', centerX, by + 13, { align: 'center' });
 
-                        if (ticket.extraInfo) {
-                            pdf.setFontSize(4);
+                        if (ticket.extraInfo && mode !== 'supereco') {
+                            pdf.setFontSize(3.8);
                             pdf.setFont('helvetica', 'italic');
                             pdf.setTextColor(60, 60, 60);
-                            pdf.text(ticket.extraInfo, centerX, by + bodyH - 3.5, {
+                            pdf.text(ticket.extraInfo, centerX, by + bodyH - 3, {
                                 align: 'center',
                                 maxWidth: tw - 2
                             });
                         }
 
-                        pdf.setFontSize(5.5);
+                        pdf.setFontSize(5);
                         pdf.setFont('helvetica', 'bold');
                         pdf.setTextColor(0, 0, 0);
-                        pdf.text(ticket.price + ' FCFA', centerX, by + bodyH - 1.5, { align: 'center' });
+                        pdf.text(ticket.price + ' FCFA', centerX, by + bodyH - 1.2, { align: 'center' });
                     } else {
-                        pdf.setFontSize(4.5);
+                        // Mode avec QR
+                        const fontSize = mode === 'supereco' ? 4 : mode === 'eco' ? 4.5 : 5;
+
+                        pdf.setFontSize(fontSize);
                         pdf.setFont('helvetica', 'normal');
                         pdf.setTextColor(100, 100, 100);
-                        pdf.text('Code Voucher', bx, by + 2.8);
+                        pdf.text('Code', bx, by + 2.5);
 
-                        pdf.setFontSize(12);
+                        pdf.setFontSize(mode === 'supereco' ? 9 : 11);
                         pdf.setFont('courier', 'bold');
                         pdf.setTextColor(0, 0, 0);
-                        pdf.text(ticket.name || '', bx, by + 6.8);
+                        pdf.text(ticket.name || '', bx, by + 6.5);
 
                         pdf.setDrawColor(180, 180, 180);
-                        pdf.setLineWidth(0.12);
-                        pdf.line(bx, by + 7.8, x + textAreaW - 0.5, by + 7.8);
+                        pdf.setLineWidth(0.1);
+                        pdf.line(bx, by + 7.3, x + textAreaW - 0.5, by + 7.3);
+
+                        pdf.setFontSize(fontSize);
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setTextColor(0, 0, 0);
+                        pdf.text(ticket.displayValidity || ticket.timeLimit || '', bx, by + 9.5);
+
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setTextColor(80, 80, 80);
+                        pdf.text(ticket.profile || '', bx, by + 12);
+
+                        if (ticket.extraInfo && mode !== 'supereco') {
+                            pdf.setFontSize(3.5);
+                            pdf.setFont('helvetica', 'italic');
+                            pdf.setTextColor(60, 60, 60);
+                            pdf.text(ticket.extraInfo, bx, by + bodyH - 2.5, { maxWidth: textAreaW - 2 });
+                        }
 
                         pdf.setFontSize(5);
                         pdf.setFont('helvetica', 'bold');
                         pdf.setTextColor(0, 0, 0);
-                        pdf.text(ticket.displayValidity || ticket.timeLimit || '', bx, by + 10);
+                        pdf.text(ticket.price + ' FCFA', bx, by + bodyH - 1.2);
 
-                        pdf.setFont('helvetica', 'normal');
-                        pdf.setTextColor(80, 80, 80);
-                        pdf.text(ticket.profile || '', bx, by + 12.5);
-
-                        if (ticket.extraInfo) {
-                            pdf.setFontSize(4);
-                            pdf.setFont('helvetica', 'italic');
-                            pdf.setTextColor(60, 60, 60);
-                            pdf.text(ticket.extraInfo, bx, by + bodyH - 3, { maxWidth: textAreaW - 2 });
-                        }
-
-                        pdf.setFontSize(5.5);
-                        pdf.setFont('helvetica', 'bold');
-                        pdf.setTextColor(0, 0, 0);
-                        pdf.text(ticket.price + ' FCFA', bx, by + bodyH - 1.5);
-
+                        // Séparateur vertical
                         pdf.setDrawColor(200, 200, 200);
-                        pdf.setLineWidth(0.12);
-                        pdf.line(x + textAreaW, y + headH + 0.8, x + textAreaW, y + th - 0.8);
+                        pdf.setLineWidth(0.1);
+                        pdf.line(x + textAreaW, y + headH + 0.5, x + textAreaW, y + th - 0.5);
 
+                        // QR Code
                         const qrX = x + textAreaW + qrPad;
-                        const qrY = y + headH + qrPad;
+                        const qrY = y + headH + (bodyH - qrSize) / 2;
                         drawQR(pdf, qrMatrices[page * perPage + idx], qrX, qrY, qrSize);
                     }
                 });
             }
 
-            const filename = 'BF_WIFI_Tickets_' + (batchId || 'export') + '_' + mode + '.pdf';
+            const filename = `BF_WIFI_Tickets_${batchId || 'export'}_${mode}.pdf`;
             pdf.save(filename);
             overhead(false);
-            toast('📥 PDF exporté · ' + allTickets.length + ' tickets (Mode: ' + mode + ')', 'success');
+            toast(`📥 PDF exporté · ${allTickets.length} tickets · Mode ${mode.toUpperCase()}`,
+            'success');
         }
 
+        // ============ COPY JSON ============
         function copyJSON() {
             const json = document.getElementById('jsonOutput').textContent;
-            navigator.clipboard.writeText(json).then(() => toast('📋 JSON copié', 'success'));
+            if (!json || json === '[]') {
+                toast('Aucune donnée à copier', 'error');
+                return;
+            }
+            navigator.clipboard.writeText(json).then(
+                () => toast('📋 JSON copié dans le presse-papier', 'success'),
+                () => toast('Erreur de copie', 'error')
+            );
         }
     </script>
 </body>
