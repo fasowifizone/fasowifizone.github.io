@@ -3,490 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TONER ADMIN - BF WIFI ZONE | Super Contrôle</title>
+    <title>⚡ TONER DIEU SUPRÊME - BF WIFI ZONE</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-deep: #050B14;
-            --bg-panel: #0A1628;
-            --gold: #F59E0B;
-            --gold-bright: #FBBF24;
-            --red: #EF4444;
-            --green: #10B981;
-            --blue: #3B82F6;
-            --purple: #8B5CF6;
-            --cyan: #06B6D4;
-            --text: #E2E8F0;
-            --text-dim: #94A3B8;
-            --border: #1E3A5F;
-            --danger: #DC2626;
-            --warning: #F59E0B;
+            --bg: #020617; --panel: #0F172A; --gold: #F59E0B; --gold2: #FBBF24;
+            --red: #EF4444; --green: #10B981; --blue: #3B82F6; --purple: #8B5CF6;
+            --cyan: #06B6D4; --text: #F1F5F9; --dim: #94A3B8; --border: #1E293B;
         }
-
-        * { margin:0; padding:0; box-sizing:border-box; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-deep);
-            color: var(--text);
-            min-height: 100vh;
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+        
+        .login-container{
+            min-height:100vh;display:flex;align-items:center;justify-content:center;
+            background:radial-gradient(ellipse at top,rgba(245,158,11,.12),transparent 60%),
+                       radial-gradient(ellipse at bottom right,rgba(139,92,246,.06),transparent 50%);
         }
-
-        /* LOGIN SUPER HÉROS */
-        .login-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: radial-gradient(ellipse at top, rgba(245,158,11,0.08), transparent 60%),
-                        radial-gradient(ellipse at bottom right, rgba(139,92,246,0.05), transparent 50%);
+        .login-card{
+            background:var(--panel);border:2px solid rgba(245,158,11,.35);
+            border-radius:28px;padding:44px 36px;max-width:440px;width:92%;
+            box-shadow:0 0 80px rgba(245,158,11,.08);
+            animation:pulseGlow 3s ease-in-out infinite;
         }
-
-        .login-card {
-            background: rgba(10, 22, 40, 0.95);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(245, 158, 11, 0.4);
-            border-radius: 32px;
-            padding: 48px;
-            width: 100%;
-            max-width: 480px;
-            box-shadow: 0 0 60px rgba(245,158,11,0.1), 0 25px 50px rgba(0,0,0,0.6);
-            animation: pulseGlow 3s ease-in-out infinite;
+        @keyframes pulseGlow{0%,100%{box-shadow:0 0 60px rgba(245,158,11,.06)}50%{box-shadow:0 0 100px rgba(245,158,11,.14)}}
+        .login-card h1{text-align:center;font-size:2.2rem;font-weight:900;margin-bottom:6px}
+        .login-card .god-text{background:linear-gradient(135deg,#F59E0B,#EF4444,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .login-card .subtitle{text-align:center;color:var(--dim);margin-bottom:28px;font-size:.9rem}
+        .login-card input{
+            width:100%;padding:14px 16px;margin-bottom:14px;background:#1E293B;
+            border:1px solid var(--border);border-radius:14px;color:#fff;font-size:1rem;transition:all .3s
         }
-
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 60px rgba(245,158,11,0.1); }
-            50% { box-shadow: 0 0 80px rgba(245,158,11,0.2); }
+        .login-card input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 20px rgba(245,158,11,.1)}
+        .btn{
+            padding:14px 24px;border:none;border-radius:14px;font-weight:700;
+            cursor:pointer;font-size:.95rem;transition:all .3s;width:100%;display:inline-flex;
+            align-items:center;justify-content:center;gap:8px
         }
-
-        .login-logo {
-            text-align: center;
-            font-size: 2.2rem;
-            font-weight: 900;
-            margin-bottom: 30px;
-            letter-spacing: -1px;
+        .btn-gold{background:linear-gradient(135deg,#F59E0B,#F97316);color:#000}
+        .btn-red{background:linear-gradient(135deg,#DC2626,#991B1B);color:#fff}
+        .btn-green{background:var(--green);color:#000}
+        .btn-purple{background:var(--purple);color:#fff}
+        .btn-cyan{background:var(--cyan);color:#000}
+        .btn-outline{background:transparent;border:2px solid var(--gold);color:var(--gold)}
+        .btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.5)}
+        .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+        .btn-sm{padding:7px 14px;font-size:.78rem;width:auto}
+        
+        .header{
+            background:rgba(2,6,23,.98);backdrop-filter:blur(20px);
+            border-bottom:2px solid rgba(245,158,11,.3);padding:12px 22px;
+            position:sticky;top:0;z-index:100;
+            display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px
         }
-
-        .login-logo .toner {
-            background: linear-gradient(135deg, #F59E0B, #EF4444, #8B5CF6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .god-badge{
+            background:linear-gradient(135deg,#F59E0B,#EF4444);padding:5px 16px;
+            border-radius:20px;font-size:.7rem;font-weight:800;color:#000;
+            letter-spacing:.5px;animation:badgePulse 1.5s ease-in-out infinite
         }
-
-        .login-subtitle {
-            text-align: center;
-            color: var(--text-dim);
-            margin-bottom: 30px;
-            font-size: 0.9rem;
+        @keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+        
+        .nav{display:flex;gap:5px;flex-wrap:wrap}
+        .nav-btn{
+            background:transparent;border:1px solid transparent;color:var(--dim);
+            padding:8px 15px;border-radius:22px;cursor:pointer;font-size:.8rem;
+            font-weight:600;transition:all .2s;white-space:nowrap
         }
-
-        /* HEADER TONER */
-        .admin-header {
-            background: rgba(5, 11, 20, 0.98);
-            backdrop-filter: blur(20px);
-            border-bottom: 2px solid rgba(245, 158, 11, 0.3);
-            padding: 16px 24px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        .nav-btn:hover,.nav-btn.active{background:rgba(245,158,11,.15);color:var(--gold2);border-color:var(--gold)}
+        .nav-btn.danger{color:var(--red)}.nav-btn.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+        
+        .main{padding:18px;max-width:1500px;margin:0 auto}
+        .section{display:none;animation:fadeIn .35s}
+        .section.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin-bottom:22px}
+        .stat-card{
+            background:var(--panel);border:1px solid var(--border);border-radius:18px;
+            padding:18px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden
         }
-
-        .admin-header-content {
-            max-width: 1600px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
+        .stat-card::before{content:'';position:absolute;top:-40%;left:-40%;width:180%;height:180%;background:radial-gradient(circle,rgba(245,158,11,.04),transparent);opacity:0;transition:opacity .3s}
+        .stat-card:hover::before{opacity:1}
+        .stat-card:hover{transform:translateY(-3px);border-color:var(--gold)}
+        .stat-card .icon{font-size:1.5rem;margin-bottom:8px}
+        .stat-card .value{font-size:1.6rem;font-weight:900;color:var(--gold)}
+        .stat-card .label{font-size:.75rem;color:var(--dim)}
+        .stat-card.danger .value{color:var(--red)}
+        .stat-card.success .value{color:var(--green)}
+        
+        .panel{
+            background:var(--panel);border:1px solid var(--border);
+            border-radius:22px;padding:22px;margin-bottom:18px
         }
-
-        .toner-badge {
-            background: linear-gradient(135deg, #F59E0B, #EF4444);
-            padding: 4px 16px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            color: #000;
-            letter-spacing: 1px;
-            animation: badass 2s ease-in-out infinite;
+        .panel.god{border-color:rgba(245,158,11,.5);box-shadow:0 0 35px rgba(245,158,11,.04)}
+        .panel.danger{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.02)}
+        
+        .section-title{font-size:1.2rem;font-weight:800;color:var(--gold2);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+        
+        .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px}
+        .form-group{margin-bottom:12px}
+        .form-group label{display:block;font-size:.73rem;color:var(--dim);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+        .form-group input,.form-group select,.form-group textarea{
+            width:100%;padding:10px 14px;background:#1E293B;border:1px solid var(--border);
+            border-radius:12px;color:#fff;font-size:.88rem;font-family:inherit;transition:all .3s
         }
-
-        @keyframes badass {
-            0%,100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .form-group textarea{min-height:110px;resize:vertical;font-family:'Courier New',monospace;font-size:.82rem}
+        .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 18px rgba(245,158,11,.08)}
+        
+        .table-wrap{overflow-x:auto;border-radius:14px}
+        table{width:100%;border-collapse:collapse;font-size:.83rem}
+        th{background:rgba(245,158,11,.08);padding:12px 14px;text-align:left;font-weight:700;color:var(--gold);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+        td{padding:10px 14px;border-bottom:1px solid rgba(30,41,59,.5);white-space:nowrap}
+        tr:hover td{background:rgba(245,158,11,.02)}
+        
+        .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700}
+        .badge-success{background:rgba(16,185,129,.2);color:var(--green)}
+        .badge-danger{background:rgba(239,68,68,.2);color:var(--red)}
+        .badge-warning{background:rgba(245,158,11,.2);color:var(--gold)}
+        .badge-purple{background:rgba(139,92,246,.2);color:var(--purple)}
+        .badge-cyan{background:rgba(6,182,212,.2);color:var(--cyan)}
+        
+        .toggle{position:relative;display:inline-block;width:46px;height:25px}
+        .toggle input{opacity:0;width:0;height:0}
+        .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#374151;transition:.3s;border-radius:25px}
+        .toggle-slider::before{content:"";position:absolute;height:19px;width:19px;left:3px;bottom:3px;background:#fff;transition:.3s;border-radius:50%}
+        .toggle input:checked+.toggle-slider{background:var(--gold)}
+        .toggle input:checked+.toggle-slider::before{transform:translateX(21px)}
+        
+        .toast-container{position:fixed;top:18px;right:18px;z-index:2000;display:flex;flex-direction:column;gap:8px}
+        .toast{padding:12px 20px;border-radius:14px;font-weight:600;font-size:.84rem;animation:slideIn .3s;max-width:380px}
+        .toast-success{background:#064E3B;color:#A7F3D0;border:1px solid var(--green)}
+        .toast-error{background:#7F1D1D;color:#FECACA;border:1px solid var(--red)}
+        .toast-info{background:#1E3A5F;color:#93C5FD;border:1px solid var(--blue)}
+        .toast-warning{background:#78350F;color:#FDE68A;border:1px solid var(--gold)}
+        @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+        
+        .modal-overlay{
+            position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(8px);
+            z-index:1000;display:none;align-items:center;justify-content:center
         }
-
-        .nav-btn {
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--text-dim);
-            padding: 8px 16px;
-            border-radius: 24px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 600;
-            font-size: 0.85rem;
+        .modal-overlay.active{display:flex}
+        .modal{
+            background:var(--panel);border:2px solid var(--gold);border-radius:24px;
+            padding:26px;max-width:720px;width:95%;max-height:82vh;overflow-y:auto;
+            box-shadow:0 0 60px rgba(245,158,11,.15)
         }
-
-        .nav-btn:hover { border-color: rgba(245,158,11,0.3); color: var(--gold); }
-        .nav-btn.active { background: rgba(245,158,11,0.15); color: var(--gold-bright); border-color: var(--gold); }
-        .nav-btn.danger { color: var(--red); }
-        .nav-btn.danger:hover { border-color: var(--red); background: rgba(239,68,68,0.1); }
-
-        .admin-main {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* SUPER STATS */
-        .super-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .super-stat {
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .super-stat::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(245,158,11,0.05), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .super-stat:hover::before { opacity: 1; }
-        .super-stat:hover { transform: translateY(-3px); border-color: var(--gold); }
-
-        .super-stat .icon { font-size: 1.8rem; margin-bottom: 10px; }
-        .super-stat .value { font-size: 1.8rem; font-weight: 900; color: var(--gold); }
-        .super-stat .label { font-size: 0.8rem; color: var(--text-dim); }
-        .super-stat.danger .value { color: var(--red); }
-        .super-stat.success .value { color: var(--green); }
-
-        /* SECTIONS */
-        .section { display: none; }
-        .section.active { display: block; }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .section-title {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--gold-bright);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .super-panel {
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-
-        .super-panel.danger {
-            border-color: rgba(239,68,68,0.4);
-            background: rgba(239,68,68,0.03);
-        }
-
-        .super-panel.god {
-            border: 2px solid rgba(245,158,11,0.6);
-            background: linear-gradient(135deg, rgba(245,158,11,0.03), rgba(139,92,246,0.03));
-        }
-
-        /* FORMS */
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .form-group { margin-bottom: 15px; }
-        .form-group label {
-            display: block;
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            margin-bottom: 6px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(5, 11, 20, 0.8);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            color: white;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--gold);
-            box-shadow: 0 0 20px rgba(245,158,11,0.1);
-        }
-
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-        }
-
-        /* BUTTONS */
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-gold {
-            background: linear-gradient(135deg, #F59E0B, #F97316);
-            color: #000;
-        }
-        .btn-red {
-            background: linear-gradient(135deg, #DC2626, #991B1B);
-            color: white;
-        }
-        .btn-purple {
-            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
-            color: white;
-        }
-        .btn-green {
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: white;
-        }
-        .btn-cyan {
-            background: linear-gradient(135deg, #06B6D4, #0891B2);
-            color: white;
-        }
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--gold);
-            color: var(--gold);
-        }
-
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        .btn-sm { padding: 8px 16px; font-size: 0.8rem; }
-        .btn-lg { padding: 16px 32px; font-size: 1.1rem; }
-
-        .btn-block { width: 100%; justify-content: center; }
-
-        /* TABLES */
-        .table-wrapper { overflow-x: auto; border-radius: 16px; }
-        table { width: 100%; border-collapse: collapse; }
-        th {
-            background: rgba(245,158,11,0.1);
-            padding: 14px;
-            text-align: left;
-            font-weight: 700;
-            color: var(--gold);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        td {
-            padding: 12px 14px;
-            border-bottom: 1px solid rgba(30,58,95,0.5);
-            font-size: 0.85rem;
-        }
-        tr:hover td { background: rgba(245,158,11,0.03); }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-        .badge-active { background: rgba(16,185,129,0.2); color: #10B981; }
-        .badge-blocked { background: rgba(239,68,68,0.2); color: #EF4444; }
-        .badge-expired { background: rgba(245,158,11,0.2); color: #F59E0B; }
-        .badge-premium { background: rgba(139,92,246,0.2); color: #A78BFA; }
-        .badge-god { background: linear-gradient(135deg, rgba(245,158,11,0.3), rgba(239,68,68,0.3)); color: #FBBF24; }
-
-        /* MODALS */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-overlay.active { display: flex; }
-
-        .modal {
-            background: var(--bg-panel);
-            border: 2px solid var(--gold);
-            border-radius: 28px;
-            padding: 30px;
-            max-width: 700px;
-            width: 95%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 0 80px rgba(245,158,11,0.2);
-        }
-
-        .modal-xl { max-width: 900px; }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .modal-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* LIVE LOG */
-        .live-log {
-            background: #000;
-            border: 1px solid var(--gold);
-            border-radius: 16px;
-            padding: 16px;
-            max-height: 400px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 0.8rem;
-            color: var(--green);
-        }
-
-        .live-log .log-entry {
-            padding: 4px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .live-log .log-warning { color: var(--warning); }
-        .live-log .log-error { color: var(--red); }
-        .live-log .log-success { color: var(--green); }
-
-        /* TOGGLE SWITCH */
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 26px;
-        }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: #374151;
-            transition: 0.3s;
-            border-radius: 26px;
-        }
-        .toggle-slider::before {
-            content: "";
-            position: absolute;
-            height: 20px;
-            width: 20px;
-            left: 3px;
-            bottom: 3px;
-            background: white;
-            transition: 0.3s;
-            border-radius: 50%;
-        }
-        .toggle-switch input:checked + .toggle-slider { background: var(--gold); }
-        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(24px); }
-
-        /* ANIMATIONS */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-in { animation: fadeIn 0.4s ease; }
-
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .super-stats { grid-template-columns: repeat(2, 1fr); }
-            .form-row { grid-template-columns: 1fr; }
-            .admin-header-content { flex-direction: column; }
-            .nav-btn { font-size: 0.75rem; padding: 6px 12px; }
-        }
-
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .toast {
-            padding: 14px 22px;
-            border-radius: 16px;
-            font-weight: 600;
-            animation: slideInRight 0.3s ease;
-            max-width: 400px;
-        }
-        .toast-success { background: #064E3B; color: #A7F3D0; border: 1px solid #10B981; }
-        .toast-error { background: #7F1D1D; color: #FECACA; border: 1px solid #EF4444; }
-        .toast-info { background: #1E3A5F; color: #93C5FD; border: 1px solid #3B82F6; }
-        .toast-warning { background: #78350F; color: #FDE68A; border: 1px solid #F59E0B; }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .pulse { animation: pulse 1.5s infinite; }
-        @keyframes pulse {
-            0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
-            50% { box-shadow: 0 0 20px 10px rgba(245,158,11,0); }
+        .modal-close{background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;float:right}
+        
+        .live-console{background:#000;border:1px solid var(--gold);border-radius:14px;padding:14px;max-height:350px;overflow-y:auto;font-family:'Courier New',monospace;font-size:.78rem;color:var(--green)}
+        .live-console .entry{padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+        .live-console .warn{color:var(--gold)}.live-console .err{color:var(--red)}
+        
+        @media(max-width:768px){
+            .stats-grid{grid-template-columns:repeat(2,1fr)}
+            .form-row{grid-template-columns:1fr}
+            .header{flex-direction:column}
+            .nav{justify-content:center}
         }
     </style>
 </head>
@@ -494,81 +165,56 @@
     <!-- LOGIN -->
     <div id="loginPage" class="login-container">
         <div class="login-card">
-            <div class="login-logo">
-                <span class="toner">⚡ TONER</span><br>
-                <span style="color:white; font-size:1rem;">ADMIN BF WIFI ZONE</span>
-            </div>
-            <div class="login-subtitle">🔐 Panneau de Contrôle Divin</div>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label>👑 Identifiant Dieu</label>
-                    <input type="text" id="adminUsername" required placeholder="admin">
-                </div>
-                <div class="form-group">
-                    <label>🔑 Clé Sacrée</label>
-                    <input type="password" id="adminPassword" required placeholder="••••••••">
-                </div>
-                <button type="submit" class="btn btn-gold btn-block btn-lg">
-                    ⚡ ACCÉDER AU POUVOIR SUPRÊME
-                </button>
-            </form>
+            <h1><span class="god-text">⚡ TONER</span></h1>
+            <p class="subtitle">👑 Panneau de Contrôle Divin · BF WIFI ZONE</p>
+            <input type="text" id="adminUser" placeholder="Identifiant Dieu" value="admin">
+            <input type="password" id="adminPass" placeholder="Clé Sacrée">
+            <button class="btn btn-gold" onclick="godLogin()">🔱 ACCÉDER AU POUVOIR SUPRÊME</button>
         </div>
     </div>
 
-    <!-- PANEL TONER -->
-    <div id="adminPanel" style="display:none;">
-        <div class="admin-header">
-            <div class="admin-header-content">
-                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-                    <span style="font-size:1.3rem;font-weight:900;">⚡ TONER ADMIN</span>
-                    <span class="toner-badge">DIEU MODE</span>
-                </div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap;" id="navButtons">
-                    <button class="nav-btn active" data-section="dashboard">📊 Vue Divine</button>
-                    <button class="nav-btn" data-section="live">📡 Live Monitor</button>
-                    <button class="nav-btn" data-section="users">👥 Mortels</button>
-                    <button class="nav-btn" data-section="mikrotiks">🖥️ Mikrotiks</button>
-                    <button class="nav-btn" data-section="commander">💻 Command Center</button>
-                    <button class="nav-btn" data-section="blocker">🚫 Blocage</button>
-                    <button class="nav-btn danger" data-section="destroy">💀 Zone Destruction</button>
-                </div>
-                <button class="btn btn-red btn-sm" onclick="adminLogout()">🚪 Quitter</button>
+    <!-- TONER PANEL -->
+    <div id="godPanel" style="display:none">
+        <div class="header">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <span style="font-size:1.25rem;font-weight:900">⚡ TONER ADMIN</span>
+                <span class="god-badge">DIEU SUPRÊME</span>
             </div>
+            <div class="nav" id="navButtons">
+                <button class="nav-btn active" data-section="dashboard">📊 Vue Divine</button>
+                <button class="nav-btn" data-section="live">📡 Live</button>
+                <button class="nav-btn" data-section="users">👥 Mortels</button>
+                <button class="nav-btn" data-section="mikrotiks">🖥️ Mikrotiks</button>
+                <button class="nav-btn" data-section="commander">💻 Commander</button>
+                <button class="nav-btn" data-section="blocker">🚫 Blocage</button>
+                <button class="nav-btn danger" data-section="destroy">💀 Destruction</button>
+            </div>
+            <button class="btn btn-red btn-sm" onclick="godLogout()" style="width:auto">🚪 Quitter</button>
         </div>
 
-        <div class="admin-main">
+        <div class="main">
             <!-- DASHBOARD -->
-            <div id="dashboardSection" class="section active animate-in">
-                <div class="super-stats" id="superStats"></div>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:20px;">
-                    <div class="super-panel">
-                        <h3 style="color:var(--gold);margin-bottom:15px;">📈 Ventes (30 jours)</h3>
-                        <canvas id="salesChart"></canvas>
-                    </div>
-                    <div class="super-panel">
-                        <h3 style="color:var(--gold);margin-bottom:15px;">📊 Répartition Licences</h3>
-                        <canvas id="licencePie"></canvas>
-                    </div>
+            <div id="dashboardSection" class="section active">
+                <div class="stats-grid" id="godStats"></div>
+                <div class="panel god">
+                    <div class="section-title">📈 Ventes Mensuelles</div>
+                    <canvas id="salesChart" height="70"></canvas>
                 </div>
             </div>
 
             <!-- LIVE MONITOR -->
-            <div id="liveSection" class="section animate-in">
-                <div class="section-header">
-                    <div class="section-title">📡 Moniteur en Direct</div>
-                    <button class="btn btn-cyan btn-sm" onclick="refreshLiveMonitor()">🔄 Rafraîchir</button>
-                </div>
-                <div class="super-panel god">
-                    <h4 style="color:var(--gold);margin-bottom:10px;">🟢 Événements en temps réel</h4>
-                    <div class="live-log" id="liveLog">
-                        <div class="log-entry">[SYSTÈME] En attente des événements...</div>
+            <div id="liveSection" class="section">
+                <div class="section-title">📡 Moniteur en Direct</div>
+                <div class="panel god">
+                    <div class="live-console" id="liveConsole">
+                        <div class="entry">[SYSTÈME] En attente des événements...</div>
                     </div>
                 </div>
-                <div class="super-panel" style="margin-top:15px;">
-                    <h4 style="color:var(--gold);margin-bottom:10px;">📊 État des Mikrotiks</h4>
-                    <div class="table-wrapper">
+                <div class="panel">
+                    <div class="section-title">🖥️ État des Mikrotiks</div>
+                    <div class="table-wrap">
                         <table>
-                            <thead><tr><th>Mikrotik</th><th>IP</th><th>Propriétaire</th><th>Statut</th><th>Ping</th><th>Utilisateurs</th><th>Actions</th></tr></thead>
+                            <thead><tr><th>Nom</th><th>IP</th><th>Propriétaire</th><th>Statut</th><th>Tickets</th><th>CA</th><th>Actions</th></tr></thead>
                             <tbody id="liveMikTable"></tbody>
                         </table>
                     </div>
@@ -576,909 +222,533 @@
             </div>
 
             <!-- USERS -->
-            <div id="usersSection" class="section animate-in">
-                <div class="section-header">
-                    <div class="section-title">👥 Gestion des Mortels</div>
-                    <div style="display:flex;gap:8px;">
-                        <input type="text" id="userSearch" placeholder="🔍 Rechercher..." style="padding:10px 16px;border-radius:20px;background:var(--bg-deep);border:1px solid var(--border);color:white;">
-                        <button class="btn btn-gold btn-sm" onclick="loadUsers()">🔍</button>
-                    </div>
+            <div id="usersSection" class="section">
+                <div class="section-title" style="justify-content:space-between">
+                    <span>👥 Gestion des Mortels</span>
+                    <input type="text" id="userSearch" placeholder="🔍 Rechercher..." oninput="loadUsers()" style="padding:8px 14px;background:#1E293B;border:1px solid var(--border);border-radius:20px;color:#fff;width:240px">
                 </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th>ID</th><th>Nom</th><th>Email</th><th>WhatsApp</th><th>Licence</th><th>Accès</th><th>Mikrotiks</th><th>CA</th><th>Actions</th></tr></thead>
-                        <tbody id="usersTable"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- MIKROTIKS -->
-            <div id="mikrotiksSection" class="section animate-in">
-                <div class="section-header">
-                    <div class="section-title">🖥️ Tous les Mikrotiks</div>
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th>ID</th><th>Nom</th><th>IP</th><th>Modèle</th><th>Propriétaire</th><th>Statut</th><th>Accès Client</th><th>CA</th><th>Actions</th></tr></thead>
-                        <tbody id="mikrotiksTable"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- COMMAND CENTER -->
-            <div id="commanderSection" class="section animate-in">
-                <div class="section-header">
-                    <div class="section-title">💻 Centre de Commandement</div>
-                </div>
-                
-                <!-- Envoyer commande -->
-                <div class="super-panel god">
-                    <h4 style="color:var(--gold);margin-bottom:15px;">📟 Envoyer une Commande Divine</h4>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>🖥️ Mikrotik Cible</label>
-                            <select id="cmdMikrotik">
-                                <option value="">Choisir un Mikrotik...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>📋 Type de commande</label>
-                            <select id="cmdType">
-                                <option value="script">Script RouterOS</option>
-                                <option value="scheduler">Planifier (Scheduler)</option>
-                                <option value="bridge_disable">Désactiver tous les Bridges</option>
-                                <option value="bridge_enable">Activer tous les Bridges</option>
-                                <option value="hotspot_disable">Désactiver Hotspot</option>
-                                <option value="hotspot_enable">Activer Hotspot</option>
-                                <option value="reboot">Redémarrer le Mikrotik</option>
-                                <option value="custom">Commande personnalisée</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group" id="schedulerFields" style="display:none;">
-                        <label>⏰ Planification</label>
-                        <div class="form-row">
-                            <input type="text" id="schedulerName" placeholder="Nom du scheduler">
-                            <input type="text" id="schedulerInterval" placeholder="Intervalle (ex: 1h, 30m, 1d)">
-                            <input type="text" id="schedulerStartTime" placeholder="Début (HH:MM:SS)">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>💻 Commande(s) à exécuter</label>
-                        <textarea id="cmdText" placeholder="/ip hotspot user print&#10;/system resource print&#10;# Utilisez la syntaxe RouterOS"></textarea>
-                    </div>
-                    
-                    <button class="btn btn-gold btn-block btn-lg pulse" onclick="sendGodCommand()">
-                        ⚡ EXÉCUTER LE POUVOIR
-                    </button>
-                    
-                    <div class="live-log" id="cmdResponse" style="margin-top:15px;display:none;">
-                        <div class="log-entry log-success">[RÉPONSE] En attente...</div>
-                    </div>
-                </div>
-                
-                <!-- Commandes rapides -->
-                <div class="super-panel" style="margin-top:15px;">
-                    <h4 style="color:var(--gold);margin-bottom:10px;">⚡ Actions Rapides</h4>
-                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">
-                        <button class="btn btn-red btn-sm" onclick="quickAction('bridge_disable')">🔌 Couper TOUS les Bridges</button>
-                        <button class="btn btn-green btn-sm" onclick="quickAction('bridge_enable')">🔌 Activer TOUS les Bridges</button>
-                        <button class="btn btn-purple btn-sm" onclick="quickAction('hotspot_disable')">📵 Désactiver Hotspots</button>
-                        <button class="btn btn-cyan btn-sm" onclick="quickAction('hotspot_enable')">📶 Activer Hotspots</button>
-                        <button class="btn btn-outline btn-sm" onclick="quickAction('reboot')">🔄 Redémarrer</button>
-                        <button class="btn btn-outline btn-sm" onclick="quickAction('check_users')">👥 Compter Utilisateurs</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- BLOCKER -->
-            <div id="blockerSection" class="section animate-in">
-                <div class="section-header">
-                    <div class="section-title">🚫 Centre de Blocage</div>
-                </div>
-                
-                <div class="super-panel danger">
-                    <h4 style="color:var(--red);margin-bottom:15px;">🔒 Bloquer/Débloquer l'Accès</h4>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>👤 Utilisateur Cible</label>
-                            <select id="blockUserId">
-                                <option value="">Choisir un utilisateur...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>🖥️ Ou Mikrotik spécifique</label>
-                            <select id="blockMikId">
-                                <option value="">Tous les Mikrotiks du compte</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>📋 Type de Blocage</label>
-                        <select id="blockType">
-                            <option value="dashboard">Bloquer Accès Dashboard</option>
-                            <option value="mikrotik_management">Bloquer Gestion Mikrotik</option>
-                            <option value="all">Bloquer TOUT (Compte entier)</option>
-                            <option value="ping_only">Restreindre au Ping uniquement</option>
-                            <option value="unblock">Débloquer complètement</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>📝 Raison du blocage</label>
-                        <textarea id="blockReason" rows="2" placeholder="Ex: Non-paiement, Abus, Maintenance..."></textarea>
-                    </div>
-                    
-                    <button class="btn btn-red btn-block btn-lg" onclick="applyBlock()">
-                        🚫 APPLIQUER LE BLOCAGE
-                    </button>
-                </div>
-                
-                <div class="super-panel">
-                    <h4 style="color:var(--gold);margin-bottom:10px;">📋 Utilisateurs Bloqués</h4>
-                    <div class="table-wrapper">
+                <div class="panel">
+                    <div class="table-wrap">
                         <table>
-                            <thead><tr><th>Utilisateur</th><th>Email</th><th>Type Blocage</th><th>Raison</th><th>Date</th><th>Actions</th></tr></thead>
-                            <tbody id="blockedUsersTable"></tbody>
+                            <thead><tr><th>ID</th><th>Nom</th><th>Email</th><th>WhatsApp</th><th>Licence</th><th>Bloqué</th><th>Mikrotiks</th><th>CA</th><th>Actions</th></tr></thead>
+                            <tbody id="usersTable"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- ZONE DESTRUCTION -->
-            <div id="destroySection" class="section animate-in">
-                <div class="super-panel danger" style="border:3px solid var(--red);">
-                    <h2 style="color:var(--red);text-align:center;margin-bottom:20px;">💀 ZONE DE DESTRUCTION</h2>
-                    <p style="text-align:center;color:var(--text-dim);margin-bottom:20px;">
-                        ⚠️ Les actions ici sont IRRÉVERSIBLES. Utilisez avec une extrême prudence.
-                    </p>
-                    
+            <!-- MIKROTIKS -->
+            <div id="mikrotiksSection" class="section">
+                <div class="section-title">🖥️ Tous les Mikrotiks</div>
+                <div class="panel">
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>ID</th><th>Nom</th><th>IP</th><th>Modèle</th><th>Propriétaire</th><th>Statut</th><th>Tickets</th><th>CA</th><th>Actions</th></tr></thead>
+                            <tbody id="mikrotiksTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COMMANDER -->
+            <div id="commanderSection" class="section">
+                <div class="panel god">
+                    <div class="section-title">💻 Centre de Commandement</div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>🖥️ Mikrotik Cible</label>
-                            <select id="destroyMikId">
-                                <option value="">Choisir...</option>
+                            <select id="cmdMikId"><option value="">Choisir...</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>📋 Type</label>
+                            <select id="cmdType" onchange="updateCmdType()">
+                                <option value="script">Script RouterOS</option>
+                                <option value="bridge_disable">Désactiver Bridges</option>
+                                <option value="bridge_enable">Activer Bridges</option>
+                                <option value="hotspot_disable">Désactiver Hotspot</option>
+                                <option value="hotspot_enable">Activer Hotspot</option>
+                                <option value="reboot">Redémarrer</option>
+                                <option value="custom">Personnalisé</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>💻 Commande</label>
+                        <textarea id="cmdText" placeholder="/ip hotspot user print..."></textarea>
+                    </div>
+                    <button class="btn btn-gold" onclick="sendGodCommand()">⚡ EXÉCUTER LE POUVOIR</button>
+                    <div id="cmdResult" style="margin-top:14px;padding:12px;background:#000;border-radius:10px;font-family:monospace;font-size:.8rem;display:none"></div>
+                </div>
+                <div class="panel">
+                    <div class="section-title">⚡ Actions Rapides</div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                        <button class="btn btn-red btn-sm" onclick="quickCmd('bridge_disable')">🔌 Couper Bridges</button>
+                        <button class="btn btn-green btn-sm" onclick="quickCmd('bridge_enable')">🔌 Activer Bridges</button>
+                        <button class="btn btn-purple btn-sm" onclick="quickCmd('hotspot_disable')">📵 Désactiver Hotspot</button>
+                        <button class="btn btn-cyan btn-sm" onclick="quickCmd('hotspot_enable')">📶 Activer Hotspot</button>
+                        <button class="btn btn-outline btn-sm" onclick="quickCmd('reboot')">🔄 Redémarrer</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCKER -->
+            <div id="blockerSection" class="section">
+                <div class="panel danger">
+                    <div class="section-title" style="color:var(--red)">🚫 Centre de Blocage</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>👤 Utilisateur</label>
+                            <select id="blockUserId"><option value="">Choisir...</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>📋 Type de Blocage</label>
+                            <select id="blockType">
+                                <option value="all">Tout bloquer (Dashboard + Mikrotik)</option>
+                                <option value="dashboard">Dashboard seulement</option>
+                                <option value="mikrotik">Gestion Mikrotik seulement</option>
+                                <option value="ping_only">Ping uniquement</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>📝 Raison</label>
+                        <textarea id="blockReason" placeholder="Non-paiement, Abus, Maintenance..."></textarea>
+                    </div>
+                    <div style="display:flex;gap:10px">
+                        <button class="btn btn-red" onclick="blockUser()">🚫 BLOQUER</button>
+                        <button class="btn btn-green" onclick="unblockUser()">✅ DÉBLOQUER</button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="section-title">📋 Utilisateurs Bloqués</div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Utilisateur</th><th>Email</th><th>Type</th><th>Raison</th><th>Date</th><th>Action</th></tr></thead>
+                            <tbody id="blockedTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DESTROY -->
+            <div id="destroySection" class="section">
+                <div class="panel danger" style="border:3px solid var(--red)">
+                    <h2 style="color:var(--red);text-align:center;margin-bottom:18px">💀 ZONE DE DESTRUCTION</h2>
+                    <p style="text-align:center;color:var(--dim);margin-bottom:16px">⚠️ Actions IRRÉVERSIBLES</p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>🖥️ Mikrotik</label>
+                            <select id="destroyMikId"><option value="">Choisir...</option></select>
                         </div>
                         <div class="form-group">
                             <label>💣 Action</label>
                             <select id="destroyAction">
-                                <option value="delete_all_users">Supprimer TOUS les utilisateurs</option>
-                                <option value="delete_all_schedulers">Supprimer TOUS les schedulers</option>
+                                <option value="delete_users">Supprimer tous les utilisateurs</option>
+                                <option value="delete_schedulers">Supprimer tous les schedulers</option>
                                 <option value="factory_reset">RESET CONFIG (⚠️⚠️⚠️)</option>
-                                <option value="delete_account">Supprimer le compte utilisateur</option>
                             </select>
                         </div>
                     </div>
-                    
                     <div class="form-group">
                         <label>✍️ Confirmation (tapez "DETRUIRE")</label>
                         <input type="text" id="destroyConfirm" placeholder="DETRUIRE">
                     </div>
-                    
-                    <button class="btn btn-red btn-block btn-lg" onclick="executeDestruction()">
-                        💀 EXÉCUTER LA DESTRUCTION
-                    </button>
+                    <button class="btn btn-red" onclick="destroy()">💀 EXÉCUTER LA DESTRUCTION</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODALS -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal modal-xl" id="modalContent"></div>
-    </div>
-
-    <!-- TOASTS -->
+    <!-- TOASTS & MODAL -->
     <div class="toast-container" id="toastContainer"></div>
+    <div class="modal-overlay" id="modalOverlay"><div class="modal" id="modalContent"></div></div>
 
     <script>
         const API = 'https://fasowifizone.pythonanywhere.com';
-        let adminToken = localStorage.getItem('tonerAdminToken') || '';
-        let allUsers = [];
-        let allMikrotiks = [];
-        let allTickets = [];
+        let godToken = localStorage.getItem('tonerGodToken') || '';
+        let allUsers = [], allMikrotiks = [], allTickets = [];
         let liveInterval = null;
 
-        // ============ INIT ============
-        if (adminToken) {
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-            initAdmin();
-        }
+        // INIT
+        if (godToken) { document.getElementById('loginPage').style.display = 'none'; document.getElementById('godPanel').style.display = 'block'; initGod(); }
 
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
-            
-            showToast('🔐 Authentification divine en cours...', 'info');
-            
+        // LOGIN
+        async function godLogin() {
+            const u = document.getElementById('adminUser').value;
+            const p = document.getElementById('adminPass').value;
+            toast('🔐 Vérification divine...', 'info');
             try {
-                const resp = await fetch(`${API}/admin/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
+                const r = await fetch(`${API}/admin/login`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username: u, password: p})
                 });
-                const data = await resp.json();
-                
-                if (data.success) {
-                    adminToken = data.admin_token;
-                    localStorage.setItem('tonerAdminToken', adminToken);
+                const d = await r.json();
+                if (d.success) {
+                    godToken = d.admin_token;
+                    localStorage.setItem('tonerGodToken', godToken);
                     document.getElementById('loginPage').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    initAdmin();
-                    showToast('⚡ Pouvoir Suprême Accordé ! Bienvenue Dieu.', 'success');
+                    document.getElementById('godPanel').style.display = 'block';
+                    initGod();
+                    toast('⚡ Pouvoir Suprême Accordé !', 'success');
                 } else {
-                    showToast('❌ Accès refusé. Vous n\'êtes pas digne.', 'error');
+                    toast('❌ Accès refusé.', 'error');
                 }
-            } catch(e) {
-                showToast('❌ Erreur de connexion au royaume.', 'error');
-            }
-        });
-
-        async function initAdmin() {
-            setupNavigation();
-            await loadAllData();
-            startLiveMonitor();
-            populateSelects();
+            } catch(e) { toast('❌ Erreur connexion', 'error'); }
         }
 
-        // ============ NAVIGATION ============
-        function setupNavigation() {
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
+        function godLogout() { localStorage.removeItem('tonerGodToken'); location.reload(); }
+
+        async function initGod() {
+            setupNav();
+            await loadAll();
+            startLiveMonitor();
+            populateAllSelects();
+        }
+
+        function setupNav() {
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                b.onclick = () => {
+                    document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+                    b.classList.add('active');
                     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                    document.getElementById(`${btn.dataset.section}Section`).classList.add('active');
-                    
-                    if (btn.dataset.section === 'live') startLiveMonitor();
-                    if (btn.dataset.section === 'commander') populateCommandCenter();
-                    if (btn.dataset.section === 'blocker') populateBlocker();
-                    if (btn.dataset.section === 'destroy') populateDestroy();
-                });
+                    document.getElementById(b.dataset.section + 'Section').classList.add('active');
+                    if (b.dataset.section === 'commander') populateCmdMik();
+                    if (b.dataset.section === 'blocker') populateBlockSelects();
+                    if (b.dataset.section === 'destroy') populateDestroyMik();
+                };
             });
         }
 
-        // ============ DATA LOADING ============
-        async function loadAllData() {
-            await Promise.all([
-                loadDashboard(),
-                loadUsers(),
-                loadMikrotiks(),
-                loadTickets()
-            ]);
+        async function api(url, options = {}) {
+            const headers = { ...options.headers, 'Authorization': `Bearer ${godToken}` };
+            const r = await fetch(`${API}${url}`, { ...options, headers });
+            if (r.status === 401) { godLogout(); throw new Error('Token expiré'); }
+            return r;
+        }
+
+        async function loadAll() {
+            await Promise.all([loadDashboard(), loadUsers(), loadMikrotiks(), loadBlocked()]);
         }
 
         async function loadDashboard() {
             try {
-                const resp = await fetch(`${API}/admin/stats`);
-                const data = await resp.json();
-                if (data.success) {
-                    const s = data.stats;
-                    document.getElementById('superStats').innerHTML = `
-                        <div class="super-stat" onclick="switchSection('users')">
-                            <div class="icon">👥</div><div class="value">${s.total_users}</div>
-                            <div class="label">Utilisateurs</div>
-                        </div>
-                        <div class="super-stat" onclick="switchSection('mikrotiks')">
-                            <div class="icon">🖥️</div><div class="value">${s.total_mikrotiks}</div>
-                            <div class="label">Mikrotiks</div>
-                        </div>
-                        <div class="super-stat">
-                            <div class="icon">🎫</div><div class="value">${s.total_tickets}</div>
-                            <div class="label">Tickets</div>
-                        </div>
-                        <div class="super-stat success">
-                            <div class="icon">💰</div><div class="value">${(s.total_revenue||0).toLocaleString('fr-FR')}</div>
-                            <div class="label">CA Total (FCFA)</div>
-                        </div>
-                        <div class="super-stat">
-                            <div class="icon">📅</div><div class="value">${s.today_tickets}</div>
-                            <div class="label">Aujourd'hui</div>
-                        </div>
-                        <div class="super-stat danger">
-                            <div class="icon">⚠️</div><div class="value">${s.total_mikrotiks - s.active_mikrotiks || 0}</div>
-                            <div class="label">Inactifs</div>
-                        </div>
+                const r = await api('/admin/stats');
+                const d = await r.json();
+                if (d.success) {
+                    const s = d.stats;
+                    document.getElementById('godStats').innerHTML = `
+                        <div class="stat-card" onclick="switchSection('users')"><div class="icon">👥</div><div class="value">${s.total_users}</div><div class="label">Utilisateurs</div></div>
+                        <div class="stat-card" onclick="switchSection('mikrotiks')"><div class="icon">🖥️</div><div class="value">${s.total_mikrotiks}</div><div class="label">Mikrotiks</div></div>
+                        <div class="stat-card"><div class="icon">🎫</div><div class="value">${s.total_tickets}</div><div class="label">Tickets</div></div>
+                        <div class="stat-card success"><div class="icon">💰</div><div class="value">${(s.total_revenue||0).toLocaleString('fr-FR')}</div><div class="label">CA Total FCFA</div></div>
+                        <div class="stat-card"><div class="icon">📅</div><div class="value">${s.today_tickets}</div><div class="label">Aujourd'hui</div></div>
+                        <div class="stat-card danger"><div class="icon">🚫</div><div class="value">${s.blocked_users}</div><div class="label">Bloqués</div></div>
                     `;
-                    
-                    // Charts
+                    const existing = Chart.getChart('salesChart');
+                    if (existing) existing.destroy();
                     const months = s.monthly_sales?.map(m => m.month) || [];
                     const revenues = s.monthly_sales?.map(m => m.revenue) || [];
-                    
-                    const existingChart = Chart.getChart('salesChart');
-                    if (existingChart) existingChart.destroy();
-                    
                     new Chart(document.getElementById('salesChart'), {
                         type: 'bar',
-                        data: {
-                            labels: months,
-                            datasets: [{
-                                label: 'CA (FCFA)',
-                                data: revenues,
-                                backgroundColor: '#F59E0B',
-                                borderRadius: 10
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: { legend: { labels: { color: '#E2E8F0' } } },
-                            scales: { y: { ticks: { color: '#94A3B8' } }, x: { ticks: { color: '#94A3B8' } } }
-                        }
-                    });
-                    
-                    const licences = s.licence_stats?.map(l => l.licence_statut) || [];
-                    const licenceCounts = s.licence_stats?.map(l => l.count) || [];
-                    
-                    const existingPie = Chart.getChart('licencePie');
-                    if (existingPie) existingPie.destroy();
-                    
-                    new Chart(document.getElementById('licencePie'), {
-                        type: 'doughnut',
-                        data: {
-                            labels: licences,
-                            datasets: [{
-                                data: licenceCounts,
-                                backgroundColor: ['#F59E0B', '#10B981', '#EF4444', '#8B5CF6', '#3B82F6']
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: { legend: { labels: { color: '#E2E8F0' } } }
-                        }
+                        data: {labels: months, datasets: [{label: 'CA (FCFA)', data: revenues, backgroundColor: '#F59E0B', borderRadius: 10}]},
+                        options: {responsive: true, plugins: {legend: {labels: {color: '#F1F5F9'}}}, scales: {y: {ticks: {color: '#94A3B8'}}, x: {ticks: {color: '#94A3B8'}}}}
                     });
                 }
-            } catch(e) { console.error('Dashboard error:', e); }
+            } catch(e) { console.error(e); }
         }
 
         async function loadUsers() {
             try {
-                const resp = await fetch(`${API}/admin/users`);
-                const data = await resp.json();
-                if (data.success) {
-                    allUsers = data.users;
-                    const searchTerm = document.getElementById('userSearch')?.value?.toLowerCase() || '';
-                    const filtered = searchTerm ? allUsers.filter(u => 
-                        u.name?.toLowerCase().includes(searchTerm) ||
-                        u.email?.toLowerCase().includes(searchTerm) ||
-                        u.whatsapp_number?.includes(searchTerm)
-                    ) : allUsers;
-                    
+                const r = await api('/admin/users');
+                const d = await r.json();
+                if (d.success) {
+                    allUsers = d.users;
+                    const search = (document.getElementById('userSearch')?.value || '').toLowerCase();
+                    const filtered = search ? allUsers.filter(u => u.name?.toLowerCase().includes(search) || u.email?.toLowerCase().includes(search)) : allUsers;
                     document.getElementById('usersTable').innerHTML = filtered.map(u => `
                         <tr>
-                            <td>#${u.id}</td>
-                            <td><strong>${esc(u.name)}</strong></td>
-                            <td>${u.email}</td>
-                            <td>${u.whatsapp_number}</td>
-                            <td><span class="badge badge-${u.licence_statut}">${u.licence_statut}</span></td>
+                            <td>#${u.id}</td><td><strong>${esc(u.name)}</strong></td><td>${u.email}</td><td>${u.whatsapp_number}</td>
+                            <td><span class="badge badge-${u.licence_statut==='actif'?'success':u.licence_statut==='expire'?'danger':'warning'}">${u.licence_statut}</span></td>
+                            <td><span class="badge ${u.access_blocked?'badge-danger':'badge-success'}">${u.access_blocked?'BLOQUÉ':'OK'}</span></td>
+                            <td>${u.mikrotiks_count||0}</td>
+                            <td style="color:var(--gold)">${(u.total_revenue||0).toLocaleString('fr-FR')} FCFA</td>
                             <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" ${u.access_blocked ? '' : 'checked'} 
-                                           onchange="toggleUserAccess(${u.id}, this.checked)">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                            <td>${u.mikrotiks_count || 0}</td>
-                            <td style="color:var(--gold);">${(u.total_revenue || 0).toLocaleString('fr-FR')} FCFA</td>
-                            <td>
-                                <button class="btn btn-purple btn-sm" onclick="viewUserDetail(${u.id})">🔍</button>
+                                <button class="btn btn-purple btn-sm" onclick="viewUser(${u.id})">🔍</button>
                                 <button class="btn btn-red btn-sm" onclick="deleteUser(${u.id})">🗑️</button>
                             </td>
                         </tr>
                     `).join('');
                 }
-            } catch(e) { console.error('Users error:', e); }
+            } catch(e) { console.error(e); }
         }
 
         async function loadMikrotiks() {
             try {
-                const resp = await fetch(`${API}/admin/mikrotiks`);
-                const data = await resp.json();
-                if (data.success) {
-                    allMikrotiks = data.mikrotiks;
+                const r = await api('/admin/mikrotiks');
+                const d = await r.json();
+                if (d.success) {
+                    allMikrotiks = d.mikrotiks;
                     document.getElementById('mikrotiksTable').innerHTML = allMikrotiks.map(m => `
                         <tr>
-                            <td>#${m.id}</td>
-                            <td><strong>${esc(m.hostname || 'Sans nom')}</strong></td>
-                            <td>${m.ip_adress || '-'}</td>
-                            <td>${m.mik_model || '-'}</td>
-                            <td>${esc(m.owner_name || '-')}</td>
-                            <td><span class="badge badge-${m.mik_statut === 'actif' ? 'active' : 'blocked'}">${m.mik_statut}</span></td>
+                            <td>#${m.id}</td><td><strong>${esc(m.hostname||'Sans nom')}</strong></td><td>${m.ip_adress||'-'}</td>
+                            <td>${m.mik_model||'-'}</td><td>${esc(m.owner_name||'-')}</td>
+                            <td><span class="badge ${m.mik_statut==='actif'?'badge-success':'badge-danger'}">${m.mik_statut}</span></td>
+                            <td>${m.users_count||0}</td>
+                            <td style="color:var(--gold)">${(m.total_revenue||0).toLocaleString('fr-FR')} FCFA</td>
                             <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" ${m.client_access_blocked ? '' : 'checked'}
-                                           onchange="toggleMikAccess('${m.mik_id}', this.checked)">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                            <td style="color:var(--gold);">${(m.total_revenue || 0).toLocaleString('fr-FR')} FCFA</td>
-                            <td>
-                                <button class="btn btn-cyan btn-sm" onclick="sendCommandToMik('${m.mik_id}')">💻</button>
-                                <button class="btn btn-red btn-sm" onclick="deleteMikrotik('${m.mik_id}')">🗑️</button>
+                                <button class="btn btn-cyan btn-sm" onclick="cmdToMik('${m.mik_id}')">💻</button>
+                                <button class="btn btn-red btn-sm" onclick="deleteMik('${m.mik_id}')">🗑️</button>
                             </td>
                         </tr>
                     `).join('');
-                    
-                    document.getElementById('liveMikTable').innerHTML = allMikrotiks.slice(0, 10).map(m => `
+                    document.getElementById('liveMikTable').innerHTML = allMikrotiks.slice(0,8).map(m => `
                         <tr>
-                            <td>${esc(m.hostname || 'Sans nom')}</td>
-                            <td>${m.ip_adress || '-'}</td>
-                            <td>${esc(m.owner_name || '-')}</td>
-                            <td><span class="badge badge-${m.mik_statut === 'actif' ? 'active' : 'blocked'}">${m.mik_statut}</span></td>
-                            <td>${m.ping || 'OFF'}</td>
-                            <td>${m.users_count || 0}</td>
-                            <td>
-                                <button class="btn btn-cyan btn-sm" onclick="pingMik('${m.mik_id}')">🏓</button>
-                                <button class="btn btn-purple btn-sm" onclick="sendCommandToMik('${m.mik_id}')">💻</button>
-                            </td>
+                            <td>${esc(m.hostname||'?')}</td><td>${m.ip_adress||'-'}</td><td>${esc(m.owner_name||'-')}</td>
+                            <td><span class="badge ${m.mik_statut==='actif'?'badge-success':'badge-danger'}">${m.mik_statut}</span></td>
+                            <td>${m.users_count||0}</td><td style="color:var(--gold)">${(m.total_revenue||0).toLocaleString('fr-FR')}</td>
+                            <td><button class="btn btn-cyan btn-sm" onclick="cmdToMik('${m.mik_id}')">💻</button></td>
                         </tr>
                     `).join('');
                 }
-            } catch(e) { console.error('Mikrotiks error:', e); }
+            } catch(e) { console.error(e); }
         }
 
-        async function loadTickets() {
+        async function loadBlocked() {
             try {
-                const resp = await fetch(`${API}/admin/tickets`);
-                const data = await resp.json();
-                if (data.success) allTickets = data.tickets;
-            } catch(e) { console.error('Tickets error:', e); }
+                const r = await api('/admin/blocked_users');
+                const d = await r.json();
+                if (d.success) {
+                    document.getElementById('blockedTable').innerHTML = d.blocked_users.length ? d.blocked_users.map(b => `
+                        <tr>
+                            <td>${esc(b.name)}</td><td>${b.email}</td>
+                            <td><span class="badge badge-danger">${b.block_type}</span></td>
+                            <td>${b.block_reason||'-'}</td>
+                            <td>${new Date(b.blocked_at).toLocaleString('fr-FR')}</td>
+                            <td><button class="btn btn-green btn-sm" onclick="unblockUserDirect(${b.user_id})">✅</button></td>
+                        </tr>
+                    `).join('') : '<tr><td colspan="6" style="text-align:center">Aucun bloqué</td></tr>';
+                }
+            } catch(e) { console.error(e); }
         }
 
-        // ============ LIVE MONITOR ============
         function startLiveMonitor() {
             if (liveInterval) clearInterval(liveInterval);
             refreshLiveMonitor();
-            liveInterval = setInterval(refreshLiveMonitor, 15000); // Every 15s
+            liveInterval = setInterval(refreshLiveMonitor, 12000);
         }
 
         async function refreshLiveMonitor() {
             try {
-                const resp = await fetch(`${API}/admin/stats`);
-                const data = await resp.json();
-                if (data.success) {
-                    const log = document.getElementById('liveLog');
-                    const timestamp = new Date().toLocaleTimeString('fr-FR');
-                    log.innerHTML += `<div class="log-entry log-success">[${timestamp}] ✅ ${data.stats.total_tickets} tickets | ${data.stats.total_users} utilisateurs | ${data.stats.today_revenue?.toLocaleString('fr-FR') || 0} FCFA aujourd'hui</div>`;
+                const r = await api('/admin/stats');
+                const d = await r.json();
+                if (d.success) {
+                    const log = document.getElementById('liveConsole');
+                    const ts = new Date().toLocaleTimeString('fr-FR');
+                    log.innerHTML += `<div class="entry">[${ts}] ✅ ${d.stats.total_tickets} tickets | ${d.stats.total_users} users | ${(d.stats.today_revenue||0).toLocaleString('fr-FR')} FCFA</div>`;
                     log.scrollTop = log.scrollHeight;
-                    
-                    if (log.children.length > 50) {
-                        log.removeChild(log.firstChild);
-                    }
+                    if (log.children.length > 40) log.removeChild(log.firstChild);
                 }
-            } catch(e) {
-                const log = document.getElementById('liveLog');
-                const timestamp = new Date().toLocaleTimeString('fr-FR');
-                log.innerHTML += `<div class="log-entry log-error">[${timestamp}] ❌ Erreur connexion</div>`;
-                log.scrollTop = log.scrollHeight;
-            }
+            } catch(e) {}
         }
 
-        // ============ COMMAND CENTER ============
-        function populateCommandCenter() {
-            const select = document.getElementById('cmdMikrotik');
-            select.innerHTML = '<option value="">Choisir un Mikrotik...</option>' +
-                allMikrotiks.map(m => `<option value="${m.mik_id}">${esc(m.hostname || 'Sans nom')} - ${esc(m.owner_name || 'Inconnu')}</option>`).join('');
+        async function blockUser() {
+            const userId = document.getElementById('blockUserId').value;
+            const type = document.getElementById('blockType').value;
+            const reason = document.getElementById('blockReason').value;
+            if (!userId) return toast('❌ Choisissez un utilisateur', 'error');
+            try {
+                const r = await api('/admin/block_user', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id: parseInt(userId), block_type: type, reason})
+                });
+                const d = await r.json();
+                toast(d.success ? '🚫 Bloqué !' : '❌ '+d.message, d.success ? 'error' : 'info');
+                if (d.success) { loadUsers(); loadBlocked(); loadDashboard(); }
+            } catch(e) { toast('❌ Erreur', 'error'); }
         }
 
-        document.getElementById('cmdType').addEventListener('change', function() {
-            document.getElementById('schedulerFields').style.display = 
-                this.value === 'scheduler' ? 'block' : 'none';
-            
-            const cmdText = document.getElementById('cmdText');
-            switch(this.value) {
-                case 'bridge_disable':
-                    cmdText.value = '/interface bridge disable [find]';
-                    break;
-                case 'bridge_enable':
-                    cmdText.value = '/interface bridge enable [find]';
-                    break;
-                case 'hotspot_disable':
-                    cmdText.value = '/ip hotspot disable [find]';
-                    break;
-                case 'hotspot_enable':
-                    cmdText.value = '/ip hotspot enable [find]';
-                    break;
-                case 'reboot':
-                    cmdText.value = '/system reboot';
-                    break;
-                default:
-                    cmdText.value = '';
-            }
-        });
+        async function unblockUser() {
+            const userId = document.getElementById('blockUserId').value;
+            if (!userId) return toast('❌ Choisissez un utilisateur', 'error');
+            await unblockUserDirect(parseInt(userId));
+        }
+
+        async function unblockUserDirect(userId) {
+            try {
+                const r = await api('/admin/unblock_user', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id: userId})
+                });
+                const d = await r.json();
+                toast(d.success ? '✅ Débloqué !' : '❌ Erreur', d.success ? 'success' : 'error');
+                if (d.success) { loadUsers(); loadBlocked(); loadDashboard(); }
+            } catch(e) { toast('❌ Erreur', 'error'); }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('⚠️ Supprimer cet utilisateur et TOUTES ses données ?')) return;
+            try {
+                const r = await api(`/admin/user/${id}`, {method: 'DELETE'});
+                const d = await r.json();
+                toast(d.success ? '🗑️ Supprimé' : '❌ Erreur', d.success ? 'success' : 'error');
+                if (d.success) loadAll();
+            } catch(e) { toast('❌ Erreur', 'error'); }
+        }
 
         async function sendGodCommand() {
-            const mikId = document.getElementById('cmdMikrotik').value;
-            const cmdType = document.getElementById('cmdType').value;
+            const mikId = document.getElementById('cmdMikId').value;
             const cmdText = document.getElementById('cmdText').value;
-
-            if (!mikId) { showToast('❌ Choisissez un Mikrotik cible', 'error'); return; }
-            if (!cmdText) { showToast('❌ Entrez une commande', 'error'); return; }
-
-            showToast('⚡ Envoi de la commande divine...', 'info');
-
+            if (!mikId || !cmdText) return toast('❌ Remplissez tous les champs', 'error');
+            toast('⚡ Envoi de la commande...', 'info');
             try {
-                let finalCommand = cmdText;
-                
-                if (cmdType === 'scheduler') {
-                    const sName = document.getElementById('schedulerName').value || 'TONER_CMD';
-                    const sInterval = document.getElementById('schedulerInterval').value || '1h';
-                    const sStart = document.getElementById('schedulerStartTime').value || '00:00:00';
-                    finalCommand = `/system scheduler add name="${sName}" interval="${sInterval}" start-time="${sStart}" on-event="${cmdText.replace(/"/g, '\\"')}"`;
-                }
-
-                const resp = await fetch(`${API}/mik/commands/push`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        mik_id: mikId,
-                        account_key: 'admin_toner',
-                        command: finalCommand,
-                        type: cmdType,
-                        priority: 1
-                    })
+                const r = await fetch(`${API}/mik/commands/push`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({mik_id: mikId, account_key: 'admin_toner', command: cmdText, type: 'script', priority: 10})
                 });
-                const data = await resp.json();
-
-                if (data.success) {
-                    showToast('✅ Commande envoyée avec succès', 'success');
-                    document.getElementById('cmdResponse').style.display = 'block';
-                    document.getElementById('cmdResponse').innerHTML = 
-                        `<div class="log-entry log-success">[ENVOYÉ] Commande ID: ${data.command_id}</div>
-                         <div class="log-entry">[ATTENTE] Exécution en cours...</div>`;
-                    
-                    // Poll for response
-                    pollCommandStatus(data.command_id);
+                const d = await r.json();
+                if (d.success) {
+                    toast('✅ Commande envoyée !', 'success');
+                    document.getElementById('cmdResult').style.display = 'block';
+                    document.getElementById('cmdResult').innerHTML = `<span style="color:var(--green)">✅ ID: ${d.command_id} - En attente d'exécution...</span>`;
+                    pollCommand(d.command_id);
                 } else {
-                    showToast('❌ Échec: ' + data.message, 'error');
+                    toast('❌ '+d.message, 'error');
                 }
-            } catch(e) {
-                showToast('❌ Erreur: ' + e.message, 'error');
-            }
+            } catch(e) { toast('❌ Erreur', 'error'); }
         }
 
-        async function pollCommandStatus(commandId) {
-            for (let i = 0; i < 30; i++) {
+        async function pollCommand(cmdId) {
+            for (let i = 0; i < 20; i++) {
                 await new Promise(r => setTimeout(r, 2000));
                 try {
-                    const resp = await fetch(`${API}/mik/commands/status/${commandId}`);
-                    const data = await resp.json();
-                    if (data.success && data.command.status === 'completed') {
-                        document.getElementById('cmdResponse').innerHTML += 
-                            `<div class="log-entry log-success">[COMPLÉTÉ] ✅ ${data.response?.text || 'OK'}</div>`;
+                    const resp = await fetch(`${API}/mik/commands/status/${cmdId}`);
+                    const d = await resp.json();
+                    if (d.success && d.command.status === 'completed') {
+                        document.getElementById('cmdResult').innerHTML = `<span style="color:var(--green)">✅ Terminé: ${d.response?.text || 'OK'}</span>`;
                         return;
                     }
-                    if (data.success && data.command.status === 'failed') {
-                        document.getElementById('cmdResponse').innerHTML += 
-                            `<div class="log-entry log-error">[ÉCHEC] ❌ ${data.command.error_message || 'Erreur'}</div>`;
+                    if (d.success && d.command.status === 'failed') {
+                        document.getElementById('cmdResult').innerHTML = `<span style="color:var(--red)">❌ Échec</span>`;
                         return;
                     }
                 } catch(e) {}
             }
-            document.getElementById('cmdResponse').innerHTML += 
-                '<div class="log-entry log-warning">[TIMEOUT] ⏰ Pas de réponse</div>';
+            document.getElementById('cmdResult').innerHTML = '<span style="color:var(--gold)">⏰ Timeout</span>';
         }
 
-        async function quickAction(action) {
-            const mikId = document.getElementById('cmdMikrotik').value;
-            if (!mikId) { showToast('❌ Choisissez un Mikrotik', 'error'); return; }
-            
-            const commands = {
+        function quickCmd(action) {
+            const cmds = {
                 'bridge_disable': '/interface bridge disable [find]',
                 'bridge_enable': '/interface bridge enable [find]',
                 'hotspot_disable': '/ip hotspot disable [find]',
                 'hotspot_enable': '/ip hotspot enable [find]',
-                'reboot': '/system reboot',
-                'check_users': '/ip hotspot user print count-only'
+                'reboot': '/system reboot'
             };
-            
-            document.getElementById('cmdText').value = commands[action] || '';
+            document.getElementById('cmdText').value = cmds[action] || '';
             document.getElementById('cmdType').value = 'script';
-            sendGodCommand();
+            switchSection('commander');
         }
 
-        // ============ BLOCKER ============
-        function populateBlocker() {
-            document.getElementById('blockUserId').innerHTML = 
-                '<option value="">Choisir un utilisateur...</option>' +
-                allUsers.map(u => `<option value="${u.id}">${esc(u.name)} (${u.email})</option>`).join('');
-            
-            document.getElementById('blockMikId').innerHTML = 
-                '<option value="">Tous les Mikrotiks du compte</option>' +
-                allMikrotiks.map(m => `<option value="${m.mik_id}">${esc(m.hostname || 'Sans nom')} - ${esc(m.owner_name || 'Inconnu')}</option>`).join('');
+        function updateCmdType() {
+            const type = document.getElementById('cmdType').value;
+            const cmds = {
+                'bridge_disable': '/interface bridge disable [find]',
+                'bridge_enable': '/interface bridge enable [find]',
+                'hotspot_disable': '/ip hotspot disable [find]',
+                'hotspot_enable': '/ip hotspot enable [find]',
+                'reboot': '/system reboot'
+            };
+            if (cmds[type]) document.getElementById('cmdText').value = cmds[type];
+            else if (type === 'custom') document.getElementById('cmdText').value = '';
         }
 
-        async function applyBlock() {
-            const userId = document.getElementById('blockUserId').value;
-            const mikId = document.getElementById('blockMikId').value;
-            const blockType = document.getElementById('blockType').value;
-            const reason = document.getElementById('blockReason').value;
-
-            if (!userId) { showToast('❌ Choisissez un utilisateur', 'error'); return; }
-            if (!reason) { showToast('❌ Indiquez une raison', 'error'); return; }
-
-            showToast('🚫 Application du blocage...', 'warning');
-
-            try {
-                const resp = await fetch(`${API}/admin/user/${userId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        block_type: blockType,
-                        block_reason: reason,
-                        mik_id: mikId || null,
-                        blocked: blockType !== 'unblock'
-                    })
-                });
-                const data = await resp.json();
-                
-                if (data.success) {
-                    showToast('✅ Blocage appliqué avec succès', 'success');
-                    loadUsers();
-                    loadBlockedList();
-                } else {
-                    showToast('❌ ' + data.message, 'error');
-                }
-            } catch(e) {
-                showToast('❌ Erreur: ' + e.message, 'error');
-            }
-        }
-
-        async function toggleUserAccess(userId, enabled) {
-            try {
-                await fetch(`${API}/admin/user/${userId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        access_blocked: !enabled,
-                        block_type: enabled ? 'unblock' : 'all',
-                        block_reason: enabled ? 'Réactivé par TONER' : 'Bloqué manuellement'
-                    })
-                });
-                showToast(enabled ? '✅ Accès réactivé' : '🚫 Accès bloqué', enabled ? 'success' : 'warning');
-            } catch(e) {
-                showToast('❌ Erreur', 'error');
-                loadUsers();
-            }
-        }
-
-        async function toggleMikAccess(mikId, enabled) {
-            try {
-                await fetch(`${API}/admin/mikrotik/${mikId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        client_access_blocked: !enabled
-                    })
-                });
-                showToast(enabled ? '✅ Accès Mikrotik réactivé' : '🚫 Accès Mikrotik bloqué', enabled ? 'success' : 'warning');
-            } catch(e) {
-                showToast('❌ Erreur', 'error');
-                loadMikrotiks();
-            }
-        }
-
-        async function loadBlockedList() {
-            try {
-                const blocked = allUsers.filter(u => u.access_blocked);
-                document.getElementById('blockedUsersTable').innerHTML = blocked.length ? blocked.map(u => `
-                    <tr>
-                        <td>${esc(u.name)}</td>
-                        <td>${u.email}</td>
-                        <td><span class="badge badge-blocked">${u.block_type || 'all'}</span></td>
-                        <td>${u.block_reason || '-'}</td>
-                        <td>${u.blocked_date || '-'}</td>
-                        <td><button class="btn btn-green btn-sm" onclick="toggleUserAccess(${u.id}, true)">✅ Débloquer</button></td>
-                    </tr>
-                `).join('') : '<tr><td colspan="6" style="text-align:center;">Aucun utilisateur bloqué</td></tr>';
-            } catch(e) {}
-        }
-
-        // ============ DESTROY ============
-        function populateDestroy() {
-            document.getElementById('destroyMikId').innerHTML = 
-                '<option value="">Choisir...</option>' +
-                allMikrotiks.map(m => `<option value="${m.mik_id}">${esc(m.hostname || 'Sans nom')} - ${esc(m.owner_name || 'Inconnu')}</option>`).join('');
-        }
-
-        async function executeDestruction() {
+        async function destroy() {
             const mikId = document.getElementById('destroyMikId').value;
             const action = document.getElementById('destroyAction').value;
             const confirm = document.getElementById('destroyConfirm').value;
-
-            if (confirm !== 'DETRUIRE') {
-                showToast('❌ Vous devez taper "DETRUIRE" pour confirmer', 'error');
-                return;
-            }
-
-            if (!mikId && action !== 'delete_account') {
-                showToast('❌ Choisissez une cible', 'error');
-                return;
-            }
-
-            const finalConfirm = confirm(`⚠️⚠️⚠️ DERNIER AVERTISSEMENT ⚠️⚠️⚠️\n\nVous allez exécuter : ${action}\nSur : ${mikId || 'COMPTE ENTIER'}\n\nCette action est IRRÉVERSIBLE.\n\nContinuer ?`);
-            if (!finalConfirm) return;
-
-            showToast('💀 Exécution de la destruction...', 'error');
-
+            if (confirm !== 'DETRUIRE') return toast('❌ Tapez DETRUIRE', 'error');
+            if (!mikId) return toast('❌ Choisissez un Mikrotik', 'error');
+            if (!confirm('⚠️⚠️⚠️ DERNIER AVERTISSEMENT !')) return;
+            const cmds = {
+                'delete_users': '/ip hotspot user remove [find]',
+                'delete_schedulers': '/system scheduler remove [find]',
+                'factory_reset': '/system reset-configuration no-defaults=yes skip-backup=yes'
+            };
             try {
-                let command = '';
-                switch(action) {
-                    case 'delete_all_users':
-                        command = '/ip hotspot user remove [find]';
-                        break;
-                    case 'delete_all_schedulers':
-                        command = '/system scheduler remove [find]';
-                        break;
-                    case 'factory_reset':
-                        command = '/system reset-configuration no-defaults=yes skip-backup=yes';
-                        break;
-                    case 'delete_account':
-                        const resp = await fetch(`${API}/admin/user/${mikId}`, { method: 'DELETE' });
-                        const data = await resp.json();
-                        showToast(data.success ? '💀 Compte supprimé' : '❌ Échec', data.success ? 'error' : 'warning');
-                        return;
-                }
-
-                if (command) {
-                    const resp = await fetch(`${API}/mik/commands/push`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            mik_id: mikId,
-                            account_key: 'admin_toner',
-                            command: command,
-                            type: 'destroy',
-                            priority: 10
-                        })
-                    });
-                    const data = await resp.json();
-                    showToast(data.success ? '💀 Destruction envoyée' : '❌ Échec', data.success ? 'error' : 'warning');
-                }
-            } catch(e) {
-                showToast('❌ Erreur: ' + e.message, 'error');
-            }
-
-            document.getElementById('destroyConfirm').value = '';
+                const r = await fetch(`${API}/mik/commands/push`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({mik_id: mikId, account_key: 'admin_toner', command: cmds[action], type: 'destroy', priority: 100})
+                });
+                const d = await r.json();
+                toast(d.success ? '💀 DESTRUCTION ENVOYÉE' : '❌ Échec', d.success ? 'error' : 'info');
+                document.getElementById('destroyConfirm').value = '';
+            } catch(e) { toast('❌ Erreur', 'error'); }
         }
 
-        // ============ UTILITIES ============
+        function populateAllSelects() { populateCmdMik(); populateBlockSelects(); populateDestroyMik(); }
+        function populateCmdMik() {
+            document.getElementById('cmdMikId').innerHTML = '<option value="">Choisir...</option>' + allMikrotiks.map(m => `<option value="${m.mik_id}">${esc(m.hostname||'?')} - ${esc(m.owner_name||'?')}</option>`).join('');
+        }
+        function populateBlockSelects() {
+            document.getElementById('blockUserId').innerHTML = '<option value="">Choisir...</option>' + allUsers.map(u => `<option value="${u.id}">${esc(u.name)} (${u.email})</option>`).join('');
+        }
+        function populateDestroyMik() {
+            document.getElementById('destroyMikId').innerHTML = '<option value="">Choisir...</option>' + allMikrotiks.map(m => `<option value="${m.mik_id}">${esc(m.hostname||'?')} - ${esc(m.owner_name||'?')}</option>`).join('');
+        }
+
+        function cmdToMik(mikId) { switchSection('commander'); document.getElementById('cmdMikId').value = mikId; }
+        async function deleteMik(mikId) {
+            if (!confirm('Supprimer ce Mikrotik ?')) return;
+            try {
+                const r = await fetch(`${API}/admin/mikrotik/${mikId}`, {method: 'DELETE'});
+                const d = await r.json();
+                toast(d.success ? '🗑️ Supprimé' : '❌ Erreur', d.success ? 'success' : 'error');
+                if (d.success) loadAll();
+            } catch(e) { toast('❌ Erreur', 'error'); }
+        }
+
+        async function viewUser(id) {
+            try {
+                const r = await api(`/admin/user/${id}`);
+                const d = await r.json();
+                if (d.success) {
+                    const u = d.user;
+                    document.getElementById('modalContent').innerHTML = `
+                        <button class="modal-close" onclick="closeModal()">✕</button>
+                        <h3 style="color:var(--gold);margin-bottom:12px">👤 ${esc(u.name)}</h3>
+                        <p>📧 ${u.email} | 📱 ${u.whatsapp_number}</p>
+                        <p>🔑 ${u.account_key} | 📅 ${u.date_for_account_created}</p>
+                        <p>Licence: <span class="badge badge-${u.licence_statut==='actif'?'success':'warning'}">${u.licence_statut}</span></p>
+                        <p>Bloqué: ${u.access_blocked ? '🚫 OUI - '+u.block_type : '✅ NON'}</p>
+                        <p>💰 CA: ${(u.total_revenue||0).toLocaleString('fr-FR')} FCFA | 🎫 ${u.tickets_count||0} tickets | 🖥️ ${u.mikrotiks_count||0} Mikrotiks</p>
+                        <hr style="border-color:var(--border);margin:12px 0">
+                        <h4 style="color:var(--gold)">🖥️ Mikrotiks</h4>
+                        ${(d.mikrotiks||[]).map(m => `<p>• ${esc(m.hostname||'?')} - ${m.ip_adress} - ${m.users_count||0} tickets - ${(m.revenue||0).toLocaleString('fr-FR')} FCFA</p>`).join('')}
+                        <h4 style="color:var(--gold);margin-top:10px">🎫 Derniers tickets</h4>
+                        ${(d.tickets||[]).slice(0,10).map(t => `<p>• ${esc(t.name)} - ${t.profile} - ${t.prix} FCFA - ${t.date}</p>`).join('')}
+                    `;
+                    document.getElementById('modalOverlay').classList.add('active');
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+        document.getElementById('modalOverlay').onclick = function(e) { if (e.target === this) closeModal(); };
+
         function switchSection(section) {
             document.querySelector(`.nav-btn[data-section="${section}"]`)?.click();
         }
 
-        function showToast(msg, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.innerHTML = msg;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
+        function toast(msg, type) {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = `toast toast-${type}`;
+            t.textContent = msg;
+            c.appendChild(t);
+            setTimeout(() => t.remove(), 4000);
         }
 
-        function esc(s) {
-            if (!s) return '';
-            const d = document.createElement('div');
-            d.textContent = s;
-            return d.innerHTML;
-        }
-
-        function adminLogout() {
-            localStorage.removeItem('tonerAdminToken');
-            location.reload();
-        }
-
-        function populateSelects() {
-            populateCommandCenter();
-            populateBlocker();
-            populateDestroy();
-        }
-
-        // ============ MODALS ============
-        async function viewUserDetail(userId) {
-            const user = allUsers.find(u => u.id === userId);
-            if (!user) return;
-            
-            const userTickets = allTickets.filter(t => t.user_name === user.name);
-            const totalRevenue = userTickets.reduce((s, t) => s + (parseFloat(t.prix) || 0), 0);
-            
-            document.getElementById('modalContent').innerHTML = `
-                <div class="modal-header">
-                    <h2 style="color:var(--gold);">👤 ${esc(user.name)}</h2>
-                    <button class="modal-close" onclick="closeModal()">✕</button>
-                </div>
-                <div class="form-row">
-                    <div><strong>Email:</strong> ${user.email}</div>
-                    <div><strong>WhatsApp:</strong> ${user.whatsapp_number}</div>
-                    <div><strong>Licence:</strong> <span class="badge badge-${user.licence_statut}">${user.licence_statut}</span></div>
-                    <div><strong>CA Total:</strong> <span style="color:var(--gold);">${totalRevenue.toLocaleString('fr-FR')} FCFA</span></div>
-                    <div><strong>Tickets:</strong> ${userTickets.length}</div>
-                    <div><strong>Mikrotiks:</strong> ${user.mikrotiks_count || 0}</div>
-                </div>
-                <hr style="border-color:var(--border);margin:15px 0;">
-                <h4 style="color:var(--gold);">📋 Derniers Tickets</h4>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th>Ticket</th><th>Profil</th><th>Prix</th><th>Date</th><th>Mikrotik</th></tr></thead>
-                        <tbody>
-                            ${userTickets.slice(0, 20).map(t => `
-                                <tr>
-                                    <td>${esc(t.name)}</td>
-                                    <td>${t.profile}</td>
-                                    <td style="color:var(--gold);">${parseFloat(t.prix).toLocaleString('fr-FR')} FCFA</td>
-                                    <td>${new Date(t.date).toLocaleDateString('fr-FR')}</td>
-                                    <td>${esc(t.mikrotik_name || '-')}</td>
-                                </tr>
-                            `).join('')}
-                            ${userTickets.length === 0 ? '<tr><td colspan="5">Aucun ticket</td></tr>' : ''}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            document.getElementById('modalOverlay').classList.add('active');
-        }
-
-        function sendCommandToMik(mikId) {
-            document.getElementById('cmdMikrotik').value = mikId;
-            switchSection('commander');
-            showToast('💻 Prêt à commander ' + mikId, 'info');
-        }
-
-        function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('active');
-        }
-
-        document.getElementById('modalOverlay').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-
-        async function deleteUser(id) {
-            if (!confirm('⚠️ Supprimer définitivement cet utilisateur ?')) return;
-            try {
-                const resp = await fetch(`${API}/admin/user/${id}`, { method: 'DELETE' });
-                const data = await resp.json();
-                if (data.success) {
-                    showToast('🗑️ Utilisateur supprimé', 'success');
-                    loadAllData();
-                }
-            } catch(e) { showToast('❌ Erreur', 'error'); }
-        }
-
-        async function deleteMikrotik(mikId) {
-            if (!confirm('⚠️ Supprimer ce Mikrotik ?')) return;
-            try {
-                const resp = await fetch(`${API}/admin/mikrotik/${mikId}`, { method: 'DELETE' });
-                const data = await resp.json();
-                if (data.success) {
-                    showToast('🗑️ Mikrotik supprimé', 'success');
-                    loadAllData();
-                }
-            } catch(e) { showToast('❌ Erreur', 'error'); }
-        }
-
-        async function pingMik(mikId) {
-            try {
-                const resp = await fetch(`${API}/mik/commands/push`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        mik_id: mikId,
-                        account_key: 'admin_toner',
-                        command: '/ping 8.8.8.8 count=3',
-                        type: 'ping',
-                        priority: 0
-                    })
-                });
-                const data = await resp.json();
-                showToast(data.success ? '🏓 Ping envoyé' : '❌ Échec', data.success ? 'success' : 'error');
-            } catch(e) { showToast('❌ Erreur', 'error'); }
-        }
+        function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
     </script>
 </body>
 </html>
