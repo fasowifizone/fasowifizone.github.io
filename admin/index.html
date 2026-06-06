@@ -14,31 +14,16 @@
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
         
-        .login-container{
-            min-height:100vh;display:flex;align-items:center;justify-content:center;
-            background:radial-gradient(ellipse at top,rgba(245,158,11,.12),transparent 60%),
-                       radial-gradient(ellipse at bottom right,rgba(139,92,246,.06),transparent 50%);
-        }
-        .login-card{
-            background:var(--panel);border:2px solid rgba(245,158,11,.35);
-            border-radius:28px;padding:44px 36px;max-width:440px;width:92%;
-            box-shadow:0 0 80px rgba(245,158,11,.08);
-            animation:pulseGlow 3s ease-in-out infinite;
-        }
+        .login-container{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at top,rgba(245,158,11,.12),transparent 60%),radial-gradient(ellipse at bottom right,rgba(139,92,246,.06),transparent 50%)}
+        .login-card{background:var(--panel);border:2px solid rgba(245,158,11,.35);border-radius:28px;padding:44px 36px;max-width:440px;width:92%;box-shadow:0 0 80px rgba(245,158,11,.08);animation:pulseGlow 3s ease-in-out infinite}
         @keyframes pulseGlow{0%,100%{box-shadow:0 0 60px rgba(245,158,11,.06)}50%{box-shadow:0 0 100px rgba(245,158,11,.14)}}
         .login-card h1{text-align:center;font-size:2.2rem;font-weight:900;margin-bottom:6px}
         .login-card .god-text{background:linear-gradient(135deg,#F59E0B,#EF4444,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
         .login-card .subtitle{text-align:center;color:var(--dim);margin-bottom:28px;font-size:.9rem}
-        .login-card input{
-            width:100%;padding:14px 16px;margin-bottom:14px;background:#1E293B;
-            border:1px solid var(--border);border-radius:14px;color:#fff;font-size:1rem;transition:all .3s
-        }
+        .login-card input{width:100%;padding:14px 16px;margin-bottom:14px;background:#1E293B;border:1px solid var(--border);border-radius:14px;color:#fff;font-size:1rem;transition:all .3s}
         .login-card input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 20px rgba(245,158,11,.1)}
-        .btn{
-            padding:14px 24px;border:none;border-radius:14px;font-weight:700;
-            cursor:pointer;font-size:.95rem;transition:all .3s;width:100%;display:inline-flex;
-            align-items:center;justify-content:center;gap:8px
-        }
+        
+        .btn{padding:14px 24px;border:none;border-radius:14px;font-weight:700;cursor:pointer;font-size:.95rem;transition:all .3s;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px}
         .btn-gold{background:linear-gradient(135deg,#F59E0B,#F97316);color:#000}
         .btn-red{background:linear-gradient(135deg,#DC2626,#991B1B);color:#fff}
         .btn-green{background:var(--green);color:#000}
@@ -49,28 +34,20 @@
         .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
         .btn-sm{padding:7px 14px;font-size:.78rem;width:auto}
         
-        .header{
-            background:rgba(2,6,23,.98);backdrop-filter:blur(20px);
-            border-bottom:2px solid rgba(245,158,11,.3);padding:12px 22px;
-            position:sticky;top:0;z-index:100;
-            display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px
-        }
-        .god-badge{
-            background:linear-gradient(135deg,#F59E0B,#EF4444);padding:5px 16px;
-            border-radius:20px;font-size:.7rem;font-weight:800;color:#000;
-            letter-spacing:.5px;animation:badgePulse 1.5s ease-in-out infinite
-        }
+        .header{background:rgba(2,6,23,.98);backdrop-filter:blur(20px);border-bottom:2px solid rgba(245,158,11,.3);padding:12px 22px;position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+        .god-badge{background:linear-gradient(135deg,#F59E0B,#EF4444);padding:5px 16px;border-radius:20px;font-size:.7rem;font-weight:800;color:#000;letter-spacing:.5px;animation:badgePulse 1.5s ease-in-out infinite}
         @keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
         
         .nav{display:flex;gap:5px;flex-wrap:wrap}
-        .nav-btn{
-            background:transparent;border:1px solid transparent;color:var(--dim);
-            padding:8px 15px;border-radius:22px;cursor:pointer;font-size:.8rem;
-            font-weight:600;transition:all .2s;white-space:nowrap
-        }
+        .nav-btn{background:transparent;border:1px solid transparent;color:var(--dim);padding:8px 15px;border-radius:22px;cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;white-space:nowrap}
         .nav-btn:hover,.nav-btn.active{background:rgba(245,158,11,.15);color:var(--gold2);border-color:var(--gold)}
         .nav-btn.danger{color:var(--red)}.nav-btn.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
         .nav-btn.transfer{color:var(--cyan)}.nav-btn.transfer:hover{background:rgba(6,182,212,.1);border-color:var(--cyan)}
+        
+        .sync-status{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:12px;font-size:.65rem;font-weight:600;margin-left:8px}
+        .sync-on{background:rgba(16,185,129,.15);color:var(--green);border:1px solid var(--green)}
+        .sync-pulse{animation:syncPulse 1.5s ease-in-out infinite}
+        @keyframes syncPulse{0%,100%{opacity:1}50%{opacity:.4}}
         
         .main{padding:18px;max-width:1500px;margin:0 auto}
         .section{display:none;animation:fadeIn .35s}
@@ -78,12 +55,7 @@
         @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         
         .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin-bottom:22px}
-        .stat-card{
-            background:var(--panel);border:1px solid var(--border);border-radius:18px;
-            padding:18px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden
-        }
-        .stat-card::before{content:'';position:absolute;top:-40%;left:-40%;width:180%;height:180%;background:radial-gradient(circle,rgba(245,158,11,.04),transparent);opacity:0;transition:opacity .3s}
-        .stat-card:hover::before{opacity:1}
+        .stat-card{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:18px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
         .stat-card:hover{transform:translateY(-3px);border-color:var(--gold)}
         .stat-card .icon{font-size:1.5rem;margin-bottom:8px}
         .stat-card .value{font-size:1.6rem;font-weight:900;color:var(--gold)}
@@ -91,23 +63,18 @@
         .stat-card.danger .value{color:var(--red)}
         .stat-card.success .value{color:var(--green)}
         
-        .panel{
-            background:var(--panel);border:1px solid var(--border);
-            border-radius:22px;padding:22px;margin-bottom:18px
-        }
+        .panel{background:var(--panel);border:1px solid var(--border);border-radius:22px;padding:22px;margin-bottom:18px}
         .panel.god{border-color:rgba(245,158,11,.5);box-shadow:0 0 35px rgba(245,158,11,.04)}
         .panel.danger{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.02)}
         .panel.transfer{border-color:rgba(6,182,212,.4);background:rgba(6,182,212,.02)}
         
         .section-title{font-size:1.2rem;font-weight:800;color:var(--gold2);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+        .section-title.cyan{color:var(--cyan)}
         
         .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px}
         .form-group{margin-bottom:12px}
         .form-group label{display:block;font-size:.73rem;color:var(--dim);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-        .form-group input,.form-group select,.form-group textarea{
-            width:100%;padding:10px 14px;background:#1E293B;border:1px solid var(--border);
-            border-radius:12px;color:#fff;font-size:.88rem;font-family:inherit;transition:all .3s
-        }
+        .form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;background:#1E293B;border:1px solid var(--border);border-radius:12px;color:#fff;font-size:.88rem;font-family:inherit;transition:all .3s}
         .form-group textarea{min-height:110px;resize:vertical;font-family:'Courier New',monospace;font-size:.82rem}
         .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 18px rgba(245,158,11,.08)}
         
@@ -132,41 +99,19 @@
         .toast-warning{background:#78350F;color:#FDE68A;border:1px solid var(--gold)}
         @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
         
-        .modal-overlay{
-            position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(8px);
-            z-index:1000;display:none;align-items:center;justify-content:center
-        }
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center}
         .modal-overlay.active{display:flex}
-        .modal{
-            background:var(--panel);border:2px solid var(--gold);border-radius:24px;
-            padding:26px;max-width:720px;width:95%;max-height:82vh;overflow-y:auto;
-            box-shadow:0 0 60px rgba(245,158,11,.15)
-        }
+        .modal{background:var(--panel);border:2px solid var(--gold);border-radius:24px;padding:26px;max-width:720px;width:95%;max-height:82vh;overflow-y:auto;box-shadow:0 0 60px rgba(245,158,11,.15)}
         .modal-close{background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;float:right}
         
         .live-console{background:#000;border:1px solid var(--gold);border-radius:14px;padding:14px;max-height:350px;overflow-y:auto;font-family:'Courier New',monospace;font-size:.78rem;color:var(--green)}
         .live-console .entry{padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)}
         
-        .transfert-code-box{
-            background:linear-gradient(135deg,#064E3B,#065F46);
-            border:3px solid var(--green);
-            border-radius:18px;padding:24px;text-align:center;margin:16px 0;
-            animation:glowGreen 2s ease-in-out infinite;
-        }
+        .transfert-code-box{background:linear-gradient(135deg,#064E3B,#065F46);border:3px solid var(--green);border-radius:18px;padding:24px;text-align:center;margin:16px 0;animation:glowGreen 2s ease-in-out infinite}
         @keyframes glowGreen{0%,100%{box-shadow:0 0 20px rgba(16,185,129,.2)}50%{box-shadow:0 0 40px rgba(16,185,129,.4)}}
-        .transfert-code{
-            font-size:3rem;font-weight:900;letter-spacing:12px;
-            color:var(--gold);font-family:'Courier New',monospace;
-            text-shadow:0 0 20px rgba(245,158,11,.5);user-select:all;
-        }
+        .transfert-code{font-size:3rem;font-weight:900;letter-spacing:12px;color:var(--gold);font-family:'Courier New',monospace;text-shadow:0 0 20px rgba(245,158,11,.5);user-select:all}
         
-        @media(max-width:768px){
-            .stats-grid{grid-template-columns:repeat(2,1fr)}
-            .form-row{grid-template-columns:1fr}
-            .header{flex-direction:column}
-            .nav{justify-content:center}
-            .transfert-code{font-size:2rem;letter-spacing:8px}
-        }
+        @media(max-width:768px){.stats-grid{grid-template-columns:repeat(2,1fr)}.form-row{grid-template-columns:1fr}.header{flex-direction:column}.nav{justify-content:center}.transfert-code{font-size:2rem;letter-spacing:8px}}
     </style>
 </head>
 <body>
@@ -187,7 +132,9 @@
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
                 <span style="font-size:1.25rem;font-weight:900">⚡ TONER ADMIN</span>
                 <span class="god-badge">DIEU SUPRÊME</span>
-                <span style="font-size:.65rem;color:var(--dim)">v4.0 TRANSFERT</span>
+                <span id="syncStatus" class="sync-status sync-on sync-pulse">
+                    <i style="font-size:.6rem;">●</i> Synchro
+                </span>
             </div>
             <div class="nav" id="navButtons">
                 <button class="nav-btn active" data-section="dashboard">📊 Vue Divine</button>
@@ -216,25 +163,16 @@
                 </div>
             </div>
 
-            <!-- LIVE MONITOR -->
+            <!-- LIVE -->
             <div id="liveSection" class="section">
-                <div class="section-title" style="justify-content:space-between">
-                    <span>📡 Moniteur en Direct</span>
-                    <button class="btn btn-cyan btn-sm" onclick="refreshLiveMonitor()">🔄 Rafraîchir</button>
-                </div>
-                <div class="panel god"><div class="live-console" id="liveConsole"><div class="entry">[SYSTÈME] En attente des événements...</div></div></div>
-                <div class="panel">
-                    <div class="section-title">🖥️ État des Mikrotiks</div>
-                    <div class="table-wrap"><table><thead><tr><th>Nom</th><th>IP</th><th>Propriétaire</th><th>Statut</th><th>Tickets</th><th>CA</th><th>Actions</th></tr></thead><tbody id="liveMikTable"></tbody></table></div>
-                </div>
+                <div class="section-title" style="justify-content:space-between"><span>📡 Moniteur en Direct</span><button class="btn btn-cyan btn-sm" onclick="refreshLiveMonitor()">🔄 Rafraîchir</button></div>
+                <div class="panel god"><div class="live-console" id="liveConsole"><div class="entry">[SYSTÈME] En attente...</div></div></div>
+                <div class="panel"><div class="section-title">🖥️ État des Mikrotiks</div><div class="table-wrap"><table><thead><tr><th>Nom</th><th>IP</th><th>Propriétaire</th><th>Statut</th><th>Tickets</th><th>CA</th><th>Actions</th></tr></thead><tbody id="liveMikTable"></tbody></table></div></div>
             </div>
 
             <!-- USERS -->
             <div id="usersSection" class="section">
-                <div class="section-title" style="justify-content:space-between">
-                    <span>👥 Gestion des Mortels</span>
-                    <input type="text" id="userSearch" placeholder="🔍 Rechercher..." oninput="loadUsers()" style="padding:8px 14px;background:#1E293B;border:1px solid var(--border);border-radius:20px;color:#fff;width:240px">
-                </div>
+                <div class="section-title" style="justify-content:space-between"><span>👥 Gestion des Mortels</span><input type="text" id="userSearch" placeholder="🔍 Rechercher..." oninput="loadUsers()" style="padding:8px 14px;background:#1E293B;border:1px solid var(--border);border-radius:20px;color:#fff;width:240px"></div>
                 <div class="panel"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Nom</th><th>Email</th><th>WhatsApp</th><th>Licence</th><th>Bloqué</th><th>Mikrotiks</th><th>Tickets</th><th>CA</th><th>Actions</th></tr></thead><tbody id="usersTable"></tbody></table></div></div>
             </div>
 
@@ -246,119 +184,40 @@
 
             <!-- TICKETS -->
             <div id="ticketsSection" class="section">
-                <div class="section-title" style="justify-content:space-between">
-                    <span>🎫 Tous les Tickets</span>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap">
-                        <input type="date" id="ticketFilterStart" style="padding:6px 10px;background:#1E293B;border:1px solid var(--border);border-radius:10px;color:#fff">
-                        <input type="date" id="ticketFilterEnd" style="padding:6px 10px;background:#1E293B;border:1px solid var(--border);border-radius:10px;color:#fff">
-                        <select id="ticketFilterProfile" style="padding:6px 10px;background:#1E293B;border:1px solid var(--border);border-radius:10px;color:#fff"><option value="">Tous profils</option></select>
-                        <button class="btn btn-gold btn-sm" onclick="loadTickets()">🔍 Filtrer</button>
-                    </div>
-                </div>
+                <div class="section-title" style="justify-content:space-between"><span>🎫 Tous les Tickets</span><div style="display:flex;gap:8px;flex-wrap:wrap"><input type="date" id="ticketFilterStart" style="padding:6px 10px;background:#1E293B;border:1px solid var(--border);border-radius:10px;color:#fff"><input type="date" id="ticketFilterEnd" style="padding:6px 10px;background:#1E293B;border:1px solid var(--border);border-radius:10px;color:#fff"><select id="ticketFilterProfile" style="padding:6px 10px;background:#1E293B;border:1px solid var(--border);border-radius:10px;color:#fff"><option value="">Tous profils</option></select><button class="btn btn-gold btn-sm" onclick="loadTickets()">🔍 Filtrer</button></div></div>
                 <div class="panel"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Client</th><th>Profil</th><th>Prix</th><th>Date</th><th>Heure</th><th>Mikrotik</th><th>Propriétaire</th><th>Actions</th></tr></thead><tbody id="ticketsTable"></tbody></table></div></div>
             </div>
 
-            <!-- 🔄 TRANSFERT -->
+            <!-- TRANSFERT -->
             <div id="transfertSection" class="section">
                 <div class="panel transfer">
-                    <div class="section-title" style="color:var(--cyan)">🔄 Centre de Transfert de Mikrotik</div>
-                    <p style="color:var(--dim);margin-bottom:16px;font-size:.85rem">
-                        Transférez l'accès à un Mikrotik. Un code à 8 chiffres sera généré. 
-                        Le bénéficiaire utilisera ce code dans son dashboard. 
-                        <strong style="color:var(--cyan)">Le propriétaire légal ne change pas.</strong>
-                    </p>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>🖥️ Mikrotik à Partager</label>
-                            <select id="transfertMikId" onchange="onTransfertMikChange()"><option value="">Choisir un Mikrotik...</option></select>
-                        </div>
-                    </div>
-                    <div id="transfertMikDetails" style="display:none;margin-bottom:16px;padding:16px;background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.2);border-radius:14px;">
-                        <h4 style="color:var(--cyan);margin-bottom:8px;">📋 Détails du Mikrotik</h4>
-                        <div id="transfertMikInfo"></div>
-                    </div>
+                    <div class="section-title cyan">🔄 Centre de Transfert de Mikrotik</div>
+                    <p style="color:var(--dim);margin-bottom:16px;font-size:.85rem">Transférez l'accès à un Mikrotik. Un code à 8 chiffres sera généré. <strong style="color:var(--cyan)">Le propriétaire légal ne change pas.</strong></p>
+                    <div class="form-row"><div class="form-group"><label>🖥️ Mikrotik à Partager</label><select id="transfertMikId" onchange="onTransfertMikChange()"><option value="">Choisir un Mikrotik...</option></select></div></div>
+                    <div id="transfertMikDetails" style="display:none;margin-bottom:16px;padding:16px;background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.2);border-radius:14px;"><h4 style="color:var(--cyan);margin-bottom:8px;">📋 Détails</h4><div id="transfertMikInfo"></div></div>
                     <button class="btn btn-cyan" onclick="createTransfert()" id="transfertBtn" disabled>🔄 GÉNÉRER LE CODE DE TRANSFERT</button>
-                    <div id="transfertResult" style="display:none;">
-                        <div class="transfert-code-box">
-                            <h3 style="color:var(--green);margin-bottom:12px;">✅ Code de Transfert Généré !</h3>
-                            <div class="transfert-code" id="transfertCodeDisplay">--------</div>
-                            <p style="color:var(--dim);margin-top:12px;font-size:.8rem;">⏰ Valable <strong>7 jours</strong> · Le bénéficiaire utilisera ce code</p>
-                            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
-                                <button class="btn btn-green btn-sm" onclick="copyTransfertCode()">📋 Copier le Code</button>
-                                <button class="btn btn-red btn-sm" onclick="cancelTransfert()">❌ Annuler le Transfert</button>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="transfertResult" style="display:none;"><div class="transfert-code-box"><h3 style="color:var(--green);margin-bottom:12px;">✅ Code de Transfert Généré !</h3><div class="transfert-code" id="transfertCodeDisplay">--------</div><p style="color:var(--dim);margin-top:12px;font-size:.8rem;">⏰ Valable <strong>7 jours</strong></p><div style="display:flex;gap:8px;justify-content:center;margin-top:12px;"><button class="btn btn-green btn-sm" onclick="copyTransfertCode()">📋 Copier</button><button class="btn btn-red btn-sm" onclick="cancelTransfert()">❌ Annuler</button></div></div></div>
                 </div>
-                <div class="panel">
-                    <div class="section-title" style="justify-content:space-between">
-                        <span>📋 Transferts en Cours & Historique</span>
-                        <button class="btn btn-red btn-sm" onclick="cleanExpiredTransferts()" style="width:auto;">🧹 Nettoyer Expirés</button>
-                    </div>
-                    <div class="table-wrap"><table><thead><tr><th>Code</th><th>Mikrotik</th><th>IP</th><th>Propriétaire</th><th>Créé le</th><th>Expire le</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="transfertsTable"><tr><td colspan="8" style="text-align:center;">Chargement...</td></tr></tbody></table></div>
-                </div>
+                <div class="panel"><div class="section-title" style="justify-content:space-between"><span>📋 Transferts en Cours</span><button class="btn btn-red btn-sm" onclick="cleanExpiredTransferts()" style="width:auto;">🧹 Nettoyer Expirés</button></div><div class="table-wrap"><table><thead><tr><th>Code</th><th>Mikrotik</th><th>IP</th><th>Propriétaire</th><th>Créé</th><th>Expire</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="transfertsTable"><tr><td colspan="8" style="text-align:center;">Chargement...</td></tr></tbody></table></div></div>
             </div>
 
             <!-- COMMANDER -->
             <div id="commanderSection" class="section">
-                <div class="panel god">
-                    <div class="section-title">💻 Centre de Commandement</div>
-                    <div class="form-row">
-                        <div class="form-group"><label>🖥️ Mikrotik Cible</label><select id="cmdMikId"><option value="">Choisir...</option></select></div>
-                        <div class="form-group"><label>📋 Type</label><select id="cmdType" onchange="updateCmdType()"><option value="script">Script RouterOS</option><option value="scheduler">Planifier (Scheduler)</option><option value="bridge_disable">Désactiver Bridges</option><option value="bridge_enable">Activer Bridges</option><option value="hotspot_disable">Désactiver Hotspot</option><option value="hotspot_enable">Activer Hotspot</option><option value="reboot">Redémarrer</option><option value="custom">Personnalisé</option></select></div>
-                    </div>
-                    <div class="form-group" id="schedulerFields" style="display:none"><label>⏰ Planification</label><div class="form-row"><input type="text" id="schedulerName" placeholder="Nom du scheduler"><input type="text" id="schedulerInterval" placeholder="Intervalle (ex: 1h, 30m, 1d)"></div></div>
-                    <div class="form-group"><label>💻 Commande</label><textarea id="cmdText" placeholder="/ip hotspot user print..."></textarea></div>
-                    <button class="btn btn-gold" onclick="sendGodCommand()">⚡ EXÉCUTER LE POUVOIR</button>
-                    <div id="cmdResult" style="margin-top:14px;padding:12px;background:#000;border-radius:10px;font-family:monospace;font-size:.8rem;display:none"></div>
-                </div>
-                <div class="panel">
-                    <div class="section-title">⚡ Actions Rapides</div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap">
-                        <button class="btn btn-red btn-sm" onclick="quickCmd('bridge_disable')">🔌 Couper Bridges</button>
-                        <button class="btn btn-green btn-sm" onclick="quickCmd('bridge_enable')">🔌 Activer Bridges</button>
-                        <button class="btn btn-purple btn-sm" onclick="quickCmd('hotspot_disable')">📵 Désactiver Hotspot</button>
-                        <button class="btn btn-cyan btn-sm" onclick="quickCmd('hotspot_enable')">📶 Activer Hotspot</button>
-                        <button class="btn btn-outline btn-sm" onclick="quickCmd('reboot')">🔄 Redémarrer</button>
-                        <button class="btn btn-outline btn-sm" onclick="quickCmd('check_users')">👥 Compter Utilisateurs</button>
-                        <button class="btn btn-outline btn-sm" onclick="quickCmd('check_resources')">📊 Ressources</button>
-                    </div>
-                </div>
+                <div class="panel god"><div class="section-title">💻 Centre de Commandement</div><div class="form-row"><div class="form-group"><label>🖥️ Mikrotik Cible</label><select id="cmdMikId"><option value="">Choisir...</option></select></div><div class="form-group"><label>📋 Type</label><select id="cmdType" onchange="updateCmdType()"><option value="script">Script RouterOS</option><option value="scheduler">Planifier (Scheduler)</option><option value="bridge_disable">Désactiver Bridges</option><option value="bridge_enable">Activer Bridges</option><option value="hotspot_disable">Désactiver Hotspot</option><option value="hotspot_enable">Activer Hotspot</option><option value="reboot">Redémarrer</option><option value="custom">Personnalisé</option></select></div></div><div class="form-group" id="schedulerFields" style="display:none"><label>⏰ Planification</label><div class="form-row"><input type="text" id="schedulerName" placeholder="Nom du scheduler"><input type="text" id="schedulerInterval" placeholder="Intervalle (ex: 1h)"></div></div><div class="form-group"><label>💻 Commande</label><textarea id="cmdText" placeholder="/ip hotspot user print..."></textarea></div><button class="btn btn-gold" onclick="sendGodCommand()">⚡ EXÉCUTER LE POUVOIR</button><div id="cmdResult" style="margin-top:14px;padding:12px;background:#000;border-radius:10px;font-family:monospace;font-size:.8rem;display:none"></div></div>
+                <div class="panel"><div class="section-title">⚡ Actions Rapides</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-red btn-sm" onclick="quickCmd('bridge_disable')">🔌 Couper Bridges</button><button class="btn btn-green btn-sm" onclick="quickCmd('bridge_enable')">🔌 Activer Bridges</button><button class="btn btn-purple btn-sm" onclick="quickCmd('hotspot_disable')">📵 Désactiver Hotspot</button><button class="btn btn-cyan btn-sm" onclick="quickCmd('hotspot_enable')">📶 Activer Hotspot</button><button class="btn btn-outline btn-sm" onclick="quickCmd('reboot')">🔄 Redémarrer</button></div></div>
             </div>
 
             <!-- BLOCKER -->
             <div id="blockerSection" class="section">
-                <div class="panel danger">
-                    <div class="section-title" style="color:var(--red)">🚫 Centre de Blocage</div>
-                    <div class="form-row">
-                        <div class="form-group"><label>👤 Utilisateur</label><select id="blockUserId"><option value="">Choisir...</option></select></div>
-                        <div class="form-group"><label>📋 Type de Blocage</label><select id="blockType"><option value="all">Tout bloquer</option><option value="dashboard">Dashboard seulement</option><option value="mikrotik">Gestion Mikrotik</option><option value="ping_only">Ping uniquement</option></select></div>
-                    </div>
-                    <div class="form-group"><label>📝 Raison</label><textarea id="blockReason" placeholder="Non-paiement, Abus..."></textarea></div>
-                    <div style="display:flex;gap:10px"><button class="btn btn-red" onclick="blockUser()">🚫 BLOQUER</button><button class="btn btn-green" onclick="unblockUser()">✅ DÉBLOQUER</button></div>
-                </div>
+                <div class="panel danger"><div class="section-title" style="color:var(--red)">🚫 Centre de Blocage</div><div class="form-row"><div class="form-group"><label>👤 Utilisateur</label><select id="blockUserId"><option value="">Choisir...</option></select></div><div class="form-group"><label>📋 Type de Blocage</label><select id="blockType"><option value="all">Tout bloquer</option><option value="dashboard">Dashboard</option><option value="mikrotik">Gestion Mikrotik</option><option value="ping_only">Ping uniquement</option></select></div></div><div class="form-group"><label>📝 Raison</label><textarea id="blockReason" placeholder="Non-paiement, Abus..."></textarea></div><div style="display:flex;gap:10px"><button class="btn btn-red" onclick="blockUser()">🚫 BLOQUER</button><button class="btn btn-green" onclick="unblockUser()">✅ DÉBLOQUER</button></div></div>
                 <div class="panel"><div class="section-title">📋 Utilisateurs Bloqués</div><div class="table-wrap"><table><thead><tr><th>Utilisateur</th><th>Email</th><th>Type</th><th>Raison</th><th>Date</th><th>Action</th></tr></thead><tbody id="blockedTable"></tbody></table></div></div>
             </div>
 
             <!-- LOGS -->
-            <div id="logsSection" class="section">
-                <div class="section-title" style="justify-content:space-between"><span>📋 Logs d'Activité Admin</span><button class="btn btn-cyan btn-sm" onclick="loadLogs()">🔄 Rafraîchir</button></div>
-                <div class="panel"><div class="table-wrap"><table><thead><tr><th>Date</th><th>Admin</th><th>Action</th><th>Cible</th><th>ID Cible</th><th>Détails</th><th>IP</th></tr></thead><tbody id="logsTable"></tbody></table></div></div>
-            </div>
+            <div id="logsSection" class="section"><div class="section-title" style="justify-content:space-between"><span>📋 Logs d'Activité Admin</span><button class="btn btn-cyan btn-sm" onclick="loadLogs()">🔄 Rafraîchir</button></div><div class="panel"><div class="table-wrap"><table><thead><tr><th>Date</th><th>Admin</th><th>Action</th><th>Cible</th><th>ID Cible</th><th>Détails</th><th>IP</th></tr></thead><tbody id="logsTable"></tbody></table></div></div></div>
 
             <!-- DESTROY -->
-            <div id="destroySection" class="section">
-                <div class="panel danger" style="border:3px solid var(--red)">
-                    <h2 style="color:var(--red);text-align:center;margin-bottom:18px">💀 ZONE DE DESTRUCTION</h2>
-                    <p style="text-align:center;color:var(--dim);margin-bottom:16px">⚠️ Actions IRRÉVERSIBLES</p>
-                    <div class="form-row">
-                        <div class="form-group"><label>🖥️ Mikrotik</label><select id="destroyMikId"><option value="">Choisir...</option></select></div>
-                        <div class="form-group"><label>💣 Action</label><select id="destroyAction"><option value="delete_users">Supprimer tous les utilisateurs</option><option value="delete_schedulers">Supprimer tous les schedulers</option><option value="factory_reset">RESET CONFIG (⚠️⚠️⚠️)</option></select></div>
-                    </div>
-                    <div class="form-group"><label>✍️ Confirmation (tapez "DETRUIRE")</label><input type="text" id="destroyConfirm" placeholder="DETRUIRE"></div>
-                    <button class="btn btn-red" onclick="destroy()">💀 EXÉCUTER LA DESTRUCTION</button>
-                </div>
-            </div>
+            <div id="destroySection" class="section"><div class="panel danger" style="border:3px solid var(--red)"><h2 style="color:var(--red);text-align:center;margin-bottom:18px">💀 ZONE DE DESTRUCTION</h2><p style="text-align:center;color:var(--dim);margin-bottom:16px">⚠️ Actions IRRÉVERSIBLES</p><div class="form-row"><div class="form-group"><label>🖥️ Mikrotik</label><select id="destroyMikId"><option value="">Choisir...</option></select></div><div class="form-group"><label>💣 Action</label><select id="destroyAction"><option value="delete_users">Supprimer tous les utilisateurs</option><option value="delete_schedulers">Supprimer tous les schedulers</option><option value="factory_reset">RESET CONFIG (⚠️⚠️⚠️)</option></select></div></div><div class="form-group"><label>✍️ Confirmation (tapez "DETRUIRE")</label><input type="text" id="destroyConfirm" placeholder="DETRUIRE"></div><button class="btn btn-red" onclick="destroy()">💀 EXÉCUTER LA DESTRUCTION</button></div></div>
         </div>
     </div>
 
@@ -369,143 +228,335 @@
         const API = 'https://fasowifizone.pythonanywhere.com';
         let godToken = localStorage.getItem('tonerGodToken') || '';
         let allUsers = [], allMikrotiks = [], allTickets = [];
-        let liveInterval = null;
+        let liveInterval = null, syncInterval = null;
         let currentTransfertCode = null, selectedTransfertMikId = null;
 
         if (godToken) { document.getElementById('loginPage').style.display = 'none'; document.getElementById('godPanel').style.display = 'block'; initGod(); }
 
         async function godLogin() {
-            const u = document.getElementById('adminUser').value;
-            const p = document.getElementById('adminPass').value;
+            const u = document.getElementById('adminUser').value, p = document.getElementById('adminPass').value;
             toast('🔐 Vérification divine...', 'info');
             try {
-                const r = await fetch(`${API}/admin/login`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+                const r = await fetch(`${API}/admin/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
                 const d = await r.json();
-                if(d.success){godToken=d.admin_token;localStorage.setItem('tonerGodToken',godToken);document.getElementById('loginPage').style.display='none';document.getElementById('godPanel').style.display='block';initGod();toast('⚡ Pouvoir Suprême Accordé !','success');}
-                else toast('❌ Accès refusé.','error');
-            }catch(e){toast('❌ Erreur connexion','error');}
+                if (d.success) { godToken = d.admin_token; localStorage.setItem('tonerGodToken', godToken); document.getElementById('loginPage').style.display = 'none'; document.getElementById('godPanel').style.display = 'block'; initGod(); toast('⚡ Pouvoir Suprême Accordé !', 'success'); }
+                else toast('❌ Accès refusé.', 'error');
+            } catch (e) { toast('❌ Erreur connexion', 'error'); }
         }
 
-        function godLogout(){localStorage.removeItem('tonerGodToken');location.reload();}
+        function godLogout() { stopAllIntervals(); localStorage.removeItem('tonerGodToken'); location.reload(); }
 
-        async function initGod(){setupNav();await loadAll();startLiveMonitor();populateAllSelects();}
+        async function initGod() { setupNav(); await loadAll(); startAllIntervals(); populateAllSelects(); }
 
-        function setupNav(){
-            document.querySelectorAll('.nav-btn').forEach(b=>{b.onclick=()=>{
-                document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+        function setupNav() {
+            document.querySelectorAll('.nav-btn').forEach(b => { b.onclick = () => {
+                document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
                 b.classList.add('active');
-                document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-                document.getElementById(b.dataset.section+'Section').classList.add('active');
-                if(b.dataset.section==='commander')populateCmdMik();
-                if(b.dataset.section==='blocker')populateBlockSelects();
-                if(b.dataset.section==='destroy')populateDestroyMik();
-                if(b.dataset.section==='logs')loadLogs();
-                if(b.dataset.section==='tickets'){loadTickets();populateTicketFilters();}
-                if(b.dataset.section==='transfert')initTransfertSection();
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById(b.dataset.section + 'Section').classList.add('active');
+                if (b.dataset.section === 'commander') populateCmdMik();
+                if (b.dataset.section === 'blocker') populateBlockSelects();
+                if (b.dataset.section === 'destroy') populateDestroyMik();
+                if (b.dataset.section === 'logs') loadLogs();
+                if (b.dataset.section === 'tickets') { loadTickets(); populateTicketFilters(); }
+                if (b.dataset.section === 'transfert') initTransfertSection();
             };});
         }
 
-        async function api(url,options={}){
-            const headers={...options.headers,'Authorization':`Bearer ${godToken}`};
-            const r=await fetch(`${API}${url}`,{...options,headers});
-            if(r.status===401){godLogout();throw new Error('Token expiré');}
+        function startAllIntervals() {
+            stopAllIntervals();
+            refreshLiveMonitor();
+            liveInterval = setInterval(refreshLiveMonitor, 10000);
+            syncInterval = setInterval(syncAllData, 30000);
+            updateSyncStatus('on');
+        }
+
+        function stopAllIntervals() {
+            if (liveInterval) clearInterval(liveInterval);
+            if (syncInterval) clearInterval(syncInterval);
+        }
+
+        function updateSyncStatus(status) {
+            const el = document.getElementById('syncStatus');
+            el.className = 'sync-status';
+            if (status === 'syncing') { el.className += ' sync-on sync-pulse'; el.innerHTML = '<i style="font-size:.6rem;">●</i> Synchro...'; }
+            else if (status === 'on') { el.className += ' sync-on'; el.innerHTML = '<i style="font-size:.6rem;color:var(--green);">●</i> Live'; }
+            else { el.className += ' sync-off'; el.innerHTML = '<i style="font-size:.6rem;color:var(--red);">●</i> Off'; }
+        }
+
+        async function api(url, options = {}) {
+            const headers = { ...options.headers, 'Authorization': `Bearer ${godToken}` };
+            const r = await fetch(`${API}${url}`, { ...options, headers });
+            if (r.status === 401) { godLogout(); throw new Error('Token expiré'); }
             return r;
         }
 
-        async function loadAll(){await Promise.all([loadDashboard(),loadUsers(),loadMikrotiks(),loadBlocked(),loadTickets()]);}
+        async function loadAll() { await Promise.all([loadDashboard(), loadUsers(), loadMikrotiks(), loadBlocked(), loadTickets()]); }
+        async function syncAllData() { updateSyncStatus('syncing'); await Promise.all([loadDashboard(), loadUsers(), loadMikrotiks(), loadBlocked()]); updateSyncStatus('on'); }
 
-        // ... (loadDashboard, loadUsers, loadMikrotiks, loadTickets, loadBlocked, loadLogs - IDENTIQUES au code précédent) ...
+        // ============ DASHBOARD ============
+        async function loadDashboard() {
+            try {
+                const r = await api('/admin/stats'); const d = await r.json();
+                if (d.success) {
+                    const s = d.stats;
+                    document.getElementById('godStats').innerHTML = `
+                        <div class="stat-card" onclick="switchSection('users')"><div class="icon">👥</div><div class="value">${s.total_users}</div><div class="label">Utilisateurs</div></div>
+                        <div class="stat-card" onclick="switchSection('mikrotiks')"><div class="icon">🖥️</div><div class="value">${s.total_mikrotiks}</div><div class="label">Mikrotiks</div></div>
+                        <div class="stat-card" onclick="switchSection('tickets')"><div class="icon">🎫</div><div class="value">${s.total_tickets}</div><div class="label">Tickets</div></div>
+                        <div class="stat-card success"><div class="icon">💰</div><div class="value">${(s.total_revenue||0).toLocaleString('fr-FR')}</div><div class="label">CA Total FCFA</div></div>
+                        <div class="stat-card"><div class="icon">📅</div><div class="value">${s.today_tickets}</div><div class="label">Aujourd'hui</div></div>
+                        <div class="stat-card"><div class="icon">📅</div><div class="value">${s.week_tickets}</div><div class="label">Cette semaine</div></div>
+                        <div class="stat-card danger"><div class="icon">🚫</div><div class="value">${s.blocked_users}</div><div class="label">Bloqués</div></div>
+                        <div class="stat-card"><div class="icon">📟</div><div class="value">${s.pending_commands}</div><div class="label">Cmd en attente</div></div>`;
+                    
+                    const months = s.monthly_sales?.map(m => m.month) || [], revenues = s.monthly_sales?.map(m => m.revenue) || [];
+                    const ex1 = Chart.getChart('salesChart'); if (ex1) ex1.destroy();
+                    new Chart(document.getElementById('salesChart'), { type: 'bar', data: { labels: months, datasets: [{ label: 'CA (FCFA)', data: revenues, backgroundColor: '#F59E0B', borderRadius: 10 }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#F1F5F9' } } } } });
+                    
+                    const profiles = s.top_profiles?.map(p => p.profile) || [], profileRevs = s.top_profiles?.map(p => p.revenue) || [];
+                    const ex2 = Chart.getChart('profilesChart'); if (ex2) ex2.destroy();
+                    new Chart(document.getElementById('profilesChart'), { type: 'doughnut', data: { labels: profiles, datasets: [{ data: profileRevs, backgroundColor: ['#F59E0B','#F97316','#10B981','#8B5CF6','#EC4899','#06B6D4','#EF4444','#84CC16','#F59E0B','#6366F1'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#F1F5F9' } } } } });
+                    
+                    const topUsers = s.top_users?.map(u => u.name?.split(' ')[0] || '?') || [], topUserRevs = s.top_users?.map(u => u.total_revenue) || [];
+                    const ex3 = Chart.getChart('topUsersChart'); if (ex3) ex3.destroy();
+                    new Chart(document.getElementById('topUsersChart'), { type: 'bar', data: { labels: topUsers, datasets: [{ label: 'CA (FCFA)', data: topUserRevs, backgroundColor: '#8B5CF6', borderRadius: 8 }] }, options: { responsive: true, indexAxis: 'y', plugins: { legend: { labels: { color: '#F1F5F9' } } } } });
+                    
+                    const licences = s.licence_stats?.map(l => l.licence_statut) || [], licenceCounts = s.licence_stats?.map(l => l.count) || [];
+                    const ex4 = Chart.getChart('licenceChart'); if (ex4) ex4.destroy();
+                    new Chart(document.getElementById('licenceChart'), { type: 'pie', data: { labels: licences, datasets: [{ data: licenceCounts, backgroundColor: ['#F59E0B','#10B981','#EF4444','#8B5CF6'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#F1F5F9' } } } } });
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // ============ USERS ============
+        async function loadUsers() {
+            try {
+                const r = await api('/admin/users'); const d = await r.json();
+                if (d.success) {
+                    allUsers = d.users;
+                    const search = (document.getElementById('userSearch')?.value || '').toLowerCase();
+                    const filtered = search ? allUsers.filter(u => u.name?.toLowerCase().includes(search) || u.email?.toLowerCase().includes(search) || u.whatsapp_number?.includes(search)) : allUsers;
+                    document.getElementById('usersTable').innerHTML = filtered.map(u => `<tr><td>#${u.id}</td><td><strong>${esc(u.name)}</strong></td><td>${u.email}</td><td>${u.whatsapp_number}</td><td><span class="badge badge-${u.licence_statut==='actif'?'success':u.licence_statut==='expire'?'danger':u.licence_statut==='premium'?'purple':'warning'}">${u.licence_statut}</span></td><td><span class="badge ${u.access_blocked?'badge-danger':'badge-success'}">${u.access_blocked?'BLOQUÉ':'OK'}</span></td><td>${u.mikrotiks_count||0}</td><td>${u.tickets_count||0}</td><td style="color:var(--gold)">${(u.total_revenue||0).toLocaleString('fr-FR')} FCFA</td><td><button class="btn btn-purple btn-sm" onclick="viewUser(${u.id})">🔍</button><button class="btn btn-red btn-sm" onclick="deleteUser(${u.id})">🗑️</button></td></tr>`).join('');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // ============ MIKROTIKS ============
+        async function loadMikrotiks() {
+            try {
+                const r = await api('/admin/mikrotiks'); const d = await r.json();
+                if (d.success) {
+                    allMikrotiks = d.mikrotiks;
+                    const renderMik = (m) => `<tr><td>#${m.id}</td><td><strong>${esc(m.hostname||'Sans nom')}</strong></td><td>${m.ip_adress||'-'}</td><td>${m.mik_model||'-'}</td><td>${esc(m.owner_name||'-')}</td><td><span class="badge ${m.mik_statut==='actif'?'badge-success':'badge-danger'}">${m.mik_statut}</span></td><td>${m.users_count||0}</td><td style="color:var(--gold)">${(m.total_revenue||0).toLocaleString('fr-FR')} FCFA</td><td><button class="btn btn-purple btn-sm" onclick="viewMikDetail('${m.mik_id}')">🔍</button><button class="btn btn-cyan btn-sm" onclick="transfertMik('${m.mik_id}')">🔄</button><button class="btn btn-red btn-sm" onclick="deleteMik('${m.mik_id}')">🗑️</button></td></tr>`;
+                    document.getElementById('mikrotiksTable').innerHTML = allMikrotiks.map(renderMik).join('');
+                    document.getElementById('liveMikTable').innerHTML = allMikrotiks.slice(0, 10).map(renderMik).join('');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // ============ TICKETS ============
+        async function loadTickets() {
+            try {
+                const startDate = document.getElementById('ticketFilterStart')?.value || '', endDate = document.getElementById('ticketFilterEnd')?.value || '', profile = document.getElementById('ticketFilterProfile')?.value || '';
+                let url = '/admin/tickets?';
+                if (startDate) url += `start_date=${startDate}&`;
+                if (endDate) url += `end_date=${endDate}&`;
+                if (profile) url += `profile=${profile}&`;
+                const r = await api(url); const d = await r.json();
+                if (d.success) {
+                    allTickets = d.tickets;
+                    document.getElementById('ticketsTable').innerHTML = allTickets.map(t => `<tr><td>#${t.id}</td><td><strong>${esc(t.name)}</strong></td><td>${t.profile}</td><td style="color:var(--gold);font-weight:600">${parseFloat(t.prix).toLocaleString('fr-FR')} FCFA</td><td>${new Date(t.date).toLocaleDateString('fr-FR')}</td><td>${t.heure||'--:--'}</td><td>${esc(t.mikrotik_name||'-')}</td><td>${esc(t.user_name||'-')}</td><td><button class="btn btn-red btn-sm" onclick="deleteTicket(${t.id})">🗑️</button></td></tr>`).join('');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function populateTicketFilters() {
+            const profiles = [...new Set(allTickets.map(t => t.profile).filter(p => p))];
+            const sel = document.getElementById('ticketFilterProfile');
+            if (sel) sel.innerHTML = '<option value="">Tous profils</option>' + profiles.map(p => `<option value="${p}">${p}</option>`).join('');
+        }
 
         // ============ TRANSFERT ============
-        
-        function initTransfertSection(){populateTransfertMikSelect();loadTransferts();}
-        
-        function populateTransfertMikSelect(){
-            const sel=document.getElementById('transfertMikId');
-            if(!sel)return;
-            sel.innerHTML='<option value="">Choisir un Mikrotik...</option>'+allMikrotiks.map(m=>`<option value="${m.mik_id}">${esc(m.hostname||'Sans nom')} - ${esc(m.owner_name||'?')} - ${m.ip_adress||'?'}</option>`).join('');
+        function initTransfertSection() { populateTransfertMikSelect(); loadTransferts(); }
+        function populateTransfertMikSelect() {
+            const sel = document.getElementById('transfertMikId');
+            if (!sel) return;
+            sel.innerHTML = '<option value="">Choisir un Mikrotik...</option>' + allMikrotiks.map(m => `<option value="${m.mik_id}">${esc(m.hostname||'Sans nom')} - ${esc(m.owner_name||'?')}</option>`).join('');
         }
 
-        async function onTransfertMikChange(){
-            const mikId=document.getElementById('transfertMikId').value;
-            selectedTransfertMikId=mikId;
-            const detailsDiv=document.getElementById('transfertMikDetails');
-            const infoDiv=document.getElementById('transfertMikInfo');
-            const btn=document.getElementById('transfertBtn');
-            const resultDiv=document.getElementById('transfertResult');
-            resultDiv.style.display='none';currentTransfertCode=null;
-            if(!mikId){detailsDiv.style.display='none';btn.disabled=true;return;}
-            btn.disabled=false;btn.textContent='🔄 GÉNÉRER LE CODE DE TRANSFERT';btn.className='btn btn-cyan';
-            try{
-                const r=await api(`/admin/mikrotik/${mikId}/details`);const d=await r.json();
-                if(d.success){
-                    const m=d.mikrotik;
-                    infoDiv.innerHTML=`<p><strong>🖥️ Nom:</strong> ${esc(m.hostname||'Sans nom')}</p><p><strong>🌐 IP:</strong> ${m.ip_adress||'-'}</p><p><strong>📦 Modèle:</strong> ${m.mik_model||'-'}</p><p><strong>👤 Propriétaire:</strong> ${esc(m.owner?.name||'Inconnu')} (${m.owner?.email||'?'})</p><p><strong>📊 Tickets:</strong> ${m.stats?.users_count||0} | <strong>💰 CA:</strong> ${(m.stats?.total_revenue||0).toLocaleString('fr-FR')} FCFA</p>${m.active_transfert?`<p style="color:var(--gold);margin-top:8px;">⚠️ Transfert en cours: <strong style="font-family:monospace;font-size:1.1rem;">${m.active_transfert.transfert_code}</strong></p>`:''}`;
-                    detailsDiv.style.display='block';
-                    if(m.active_transfert){currentTransfertCode=m.active_transfert.transfert_code;document.getElementById('transfertCodeDisplay').textContent=m.active_transfert.transfert_code;resultDiv.style.display='block';btn.textContent='🔄 RÉGÉNÉRER LE CODE';}
+        async function onTransfertMikChange() {
+            const mikId = document.getElementById('transfertMikId').value;
+            selectedTransfertMikId = mikId;
+            const detailsDiv = document.getElementById('transfertMikDetails'), infoDiv = document.getElementById('transfertMikInfo'), btn = document.getElementById('transfertBtn'), resultDiv = document.getElementById('transfertResult');
+            resultDiv.style.display = 'none'; currentTransfertCode = null;
+            if (!mikId) { detailsDiv.style.display = 'none'; btn.disabled = true; return; }
+            btn.disabled = false; btn.textContent = '🔄 GÉNÉRER LE CODE DE TRANSFERT'; btn.className = 'btn btn-cyan';
+            try {
+                const r = await api(`/admin/mikrotik/${mikId}/details`); const d = await r.json();
+                if (d.success) {
+                    const m = d.mikrotik;
+                    infoDiv.innerHTML = `<p><strong>🖥️ Nom:</strong> ${esc(m.hostname||'Sans nom')}</p><p><strong>🌐 IP:</strong> ${m.ip_adress||'-'}</p><p><strong>👤 Propriétaire:</strong> ${esc(m.owner?.name||'Inconnu')}</p><p><strong>📊 Tickets:</strong> ${m.stats?.users_count||0} | <strong>💰 CA:</strong> ${(m.stats?.total_revenue||0).toLocaleString('fr-FR')} FCFA</p>${m.active_transfert ? `<p style="color:var(--gold);">⚠️ Transfert en cours: <strong>${m.active_transfert.transfert_code}</strong></p>` : ''}`;
+                    detailsDiv.style.display = 'block';
+                    if (m.active_transfert) { currentTransfertCode = m.active_transfert.transfert_code; document.getElementById('transfertCodeDisplay').textContent = currentTransfertCode; resultDiv.style.display = 'block'; btn.textContent = '🔄 RÉGÉNÉRER'; }
                 }
-            }catch(e){console.error(e);infoDiv.innerHTML='<p style="color:var(--red)">Erreur de chargement</p>';detailsDiv.style.display='block';}
+            } catch (e) { infoDiv.innerHTML = '<p style="color:var(--red)">Erreur</p>'; detailsDiv.style.display = 'block'; }
         }
 
-        async function createTransfert(){
-            if(!selectedTransfertMikId){toast('❌ Sélectionnez un Mikrotik','error');return;}
-            const btn=document.getElementById('transfertBtn');btn.disabled=true;btn.textContent='⏳ Génération...';
-            try{
-                const r=await api('/admin/transfert/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mik_id:selectedTransfertMikId})});
-                const d=await r.json();
-                if(d.success){
-                    currentTransfertCode=d.transfert.transfert_code;
-                    document.getElementById('transfertCodeDisplay').textContent=currentTransfertCode;
-                    document.getElementById('transfertResult').style.display='block';
-                    btn.textContent='✅ Code Généré !';btn.className='btn btn-green';
-                    toast('✅ Code de transfert généré !','success');loadTransferts();
-                }else{toast('❌ '+(d.message||'Erreur'),'error');btn.disabled=false;btn.textContent='🔄 GÉNÉRER LE CODE DE TRANSFERT';btn.className='btn btn-cyan';if(d.existing_code){currentTransfertCode=d.existing_code;document.getElementById('transfertCodeDisplay').textContent=currentTransfertCode;document.getElementById('transfertResult').style.display='block';}}
-            }catch(e){toast('❌ Erreur serveur','error');btn.disabled=false;btn.textContent='🔄 GÉNÉRER LE CODE DE TRANSFERT';btn.className='btn btn-cyan';}
-            setTimeout(()=>{if(btn.textContent==='✅ Code Généré !'){btn.className='btn btn-cyan';btn.textContent='🔄 GÉNÉRER LE CODE DE TRANSFERT';btn.disabled=false;}},3000);
+        async function createTransfert() {
+            if (!selectedTransfertMikId) { toast('❌ Sélectionnez un Mikrotik', 'error'); return; }
+            const btn = document.getElementById('transfertBtn'); btn.disabled = true; btn.textContent = '⏳ Génération...';
+            try {
+                const r = await api('/admin/transfert/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mik_id: selectedTransfertMikId }) });
+                const d = await r.json();
+                if (d.success) { currentTransfertCode = d.transfert.transfert_code; document.getElementById('transfertCodeDisplay').textContent = currentTransfertCode; document.getElementById('transfertResult').style.display = 'block'; btn.textContent = '✅ Code Généré !'; btn.className = 'btn btn-green'; toast('✅ Code généré !', 'success'); loadTransferts(); }
+                else { toast('❌ ' + (d.message || 'Erreur'), 'error'); btn.disabled = false; btn.textContent = '🔄 GÉNÉRER'; btn.className = 'btn btn-cyan'; if (d.existing_code) { currentTransfertCode = d.existing_code; document.getElementById('transfertCodeDisplay').textContent = currentTransfertCode; document.getElementById('transfertResult').style.display = 'block'; } }
+            } catch (e) { toast('❌ Erreur', 'error'); btn.disabled = false; btn.textContent = '🔄 GÉNÉRER'; btn.className = 'btn btn-cyan'; }
+            setTimeout(() => { if (btn.textContent === '✅ Code Généré !') { btn.className = 'btn btn-cyan'; btn.textContent = '🔄 GÉNÉRER'; btn.disabled = false; } }, 3000);
         }
 
-        function copyTransfertCode(){
-            if(!currentTransfertCode)return;
-            navigator.clipboard.writeText(currentTransfertCode).then(()=>toast('📋 Code copié !','success')).catch(()=>{const i=document.createElement('input');i.value=currentTransfertCode;document.body.appendChild(i);i.select();document.execCommand('copy');document.body.removeChild(i);toast('📋 Code copié !','success');});
+        function copyTransfertCode() { if (currentTransfertCode) navigator.clipboard.writeText(currentTransfertCode).then(() => toast('📋 Copié !', 'success')); }
+
+        async function cancelTransfert() {
+            if (!currentTransfertCode || !confirm('⚠️ Annuler ?')) return;
+            try { await api(`/admin/transfert/cancel/${currentTransfertCode}`, { method: 'DELETE' }); currentTransfertCode = null; document.getElementById('transfertResult').style.display = 'none'; toast('❌ Annulé', 'info'); loadTransferts(); onTransfertMikChange(); }
+            catch (e) { toast('❌ Erreur', 'error'); }
         }
 
-        async function cancelTransfert(){
-            if(!currentTransfertCode)return;
-            if(!confirm('⚠️ Annuler ce transfert ?'))return;
-            try{const r=await api(`/admin/transfert/cancel/${currentTransfertCode}`,{method:'DELETE'});const d=await r.json();
-                if(d.success){currentTransfertCode=null;document.getElementById('transfertResult').style.display='none';toast('❌ Transfert annulé','info');loadTransferts();onTransfertMikChange();}
-                else toast('❌ '+(d.message||'Erreur'),'error');
-            }catch(e){toast('❌ Erreur serveur','error');}
+        async function loadTransferts() {
+            try {
+                const r = await api('/admin/transferts'); const d = await r.json();
+                const t = document.getElementById('transfertsTable');
+                if (d.success && d.transferts.length > 0) {
+                    t.innerHTML = d.transferts.map(tr => `<tr><td><strong style="font-family:monospace;color:var(--cyan);">${tr.transfert_code}</strong></td><td>${esc(tr.hostname||'?')}</td><td>${tr.ip_adress||'-'}</td><td>${esc(tr.owner_name||'?')}</td><td>${new Date(tr.created_at).toLocaleString('fr-FR')}</td><td>${new Date(tr.expires_at).toLocaleString('fr-FR')}</td><td>${tr.is_claimed ? '<span class="badge badge-success">Réclamé</span>' : (new Date(tr.expires_at) < new Date() ? '<span class="badge badge-danger">Expiré</span>' : '<span class="badge badge-cyan">En attente</span>')}</td><td>${!tr.is_claimed ? `<button class="btn btn-red btn-sm" onclick="cancelTransfertByCode('${tr.transfert_code}')">❌</button>` : '-'}</td></tr>`).join('');
+                } else { t.innerHTML = '<tr><td colspan="8" style="text-align:center;">Aucun transfert</td></tr>'; }
+            } catch (e) { document.getElementById('transfertsTable').innerHTML = '<tr><td colspan="8">Erreur</td></tr>'; }
         }
 
-        async function loadTransferts(){
-            try{const r=await api('/admin/transferts');const d=await r.json();
-                if(d.success){const t=document.getElementById('transfertsTable');
-                    if(d.transferts.length===0){t.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--dim);">Aucun transfert</td></tr>';return;}
-                    t.innerHTML=d.transferts.map(tr=>`<tr><td><strong style="font-family:monospace;font-size:1.1rem;color:var(--cyan);">${tr.transfert_code}</strong></td><td>${esc(tr.hostname||'Sans nom')}</td><td>${tr.ip_adress||'-'}</td><td>${esc(tr.owner_name||'Inconnu')}</td><td>${new Date(tr.created_at).toLocaleString('fr-FR')}</td><td>${new Date(tr.expires_at).toLocaleString('fr-FR')}</td><td>${tr.is_claimed?'<span class="badge badge-success">Réclamé</span>':(new Date(tr.expires_at)<new Date()?'<span class="badge badge-danger">Expiré</span>':'<span class="badge badge-cyan">En attente</span>')}</td><td>${!tr.is_claimed?`<button class="btn btn-red btn-sm" onclick="cancelTransfertByCode('${tr.transfert_code}')">❌</button>`:'-'}</td></tr>`).join('');}
-            }catch(e){console.error(e);document.getElementById('transfertsTable').innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--red);">Erreur</td></tr>';}
+        async function cancelTransfertByCode(code) { if (confirm(`Annuler ${code} ?`)) { try { await api(`/admin/transfert/cancel/${code}`, { method: 'DELETE' }); toast('❌ Annulé', 'info'); loadTransferts(); } catch (e) { toast('❌ Erreur', 'error'); } } }
+        async function cleanExpiredTransferts() { if (confirm('🧹 Nettoyer ?')) { try { await api('/admin/transferts/expired', { method: 'DELETE' }); toast('🧹 Nettoyé', 'success'); loadTransferts(); } catch (e) { toast('❌ Erreur', 'error'); } } }
+        function transfertMik(mikId) { switchSection('transfert'); document.getElementById('transfertMikId').value = mikId; onTransfertMikChange(); }
+
+        // ============ BLOCKING ============
+        async function loadBlocked() {
+            try {
+                const r = await api('/admin/blocked_users'); const d = await r.json();
+                if (d.success) document.getElementById('blockedTable').innerHTML = d.blocked_users.length ? d.blocked_users.map(b => `<tr><td>${esc(b.name)}</td><td>${b.email}</td><td><span class="badge badge-danger">${b.block_type}</span></td><td>${b.block_reason||'-'}</td><td>${new Date(b.blocked_at).toLocaleString('fr-FR')}</td><td><button class="btn btn-green btn-sm" onclick="unblockUserDirect(${b.user_id})">✅</button></td></tr>`).join('') : '<tr><td colspan="6">Aucun bloqué</td></tr>';
+            } catch (e) { console.error(e); }
         }
 
-        async function cancelTransfertByCode(code){
-            if(!confirm(`⚠️ Annuler le transfert ${code} ?`))return;
-            try{const r=await api(`/admin/transfert/cancel/${code}`,{method:'DELETE'});const d=await r.json();
-                if(d.success){toast('❌ Transfert annulé','info');loadTransferts();if(currentTransfertCode===code){currentTransfertCode=null;document.getElementById('transfertResult').style.display='none';}}
-                else toast('❌ '+(d.message||'Erreur'),'error');
-            }catch(e){toast('❌ Erreur','error');}
+        async function blockUser() {
+            const userId = document.getElementById('blockUserId').value, type = document.getElementById('blockType').value, reason = document.getElementById('blockReason').value;
+            if (!userId) return toast('❌ Choisissez un utilisateur', 'error');
+            try {
+                const r = await api('/admin/block_user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: parseInt(userId), block_type: type, reason }) });
+                const d = await r.json();
+                toast(d.success ? '🚫 Bloqué !' : '❌ ' + d.message, d.success ? 'error' : 'info');
+                if (d.success) { loadUsers(); loadBlocked(); loadDashboard(); }
+            } catch (e) { toast('❌ Erreur', 'error'); }
         }
 
-        async function cleanExpiredTransferts(){
-            if(!confirm('🧹 Supprimer tous les transferts expirés ?'))return;
-            try{const r=await api('/admin/transferts/expired',{method:'DELETE'});const d=await r.json();
-                if(d.success){toast(`🧹 ${d.deleted_count} transfert(s) expiré(s) supprimé(s)`,'success');loadTransferts();}
-            }catch(e){toast('❌ Erreur','error');}
+        async function unblockUser() { const userId = document.getElementById('blockUserId').value; if (userId) await unblockUserDirect(parseInt(userId)); }
+        async function unblockUserDirect(userId) {
+            try {
+                const r = await api('/admin/unblock_user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: userId }) });
+                const d = await r.json();
+                toast(d.success ? '✅ Débloqué !' : '❌ Erreur', d.success ? 'success' : 'error');
+                if (d.success) { loadUsers(); loadBlocked(); loadDashboard(); }
+            } catch (e) { toast('❌ Erreur', 'error'); }
         }
 
-        function transfertMik(mikId){switchSection('transfert');document.getElementById('transfertMikId').value=mikId;onTransfertMikChange();}
+        // ============ DELETE ============
+        async function deleteUser(id) { if (confirm('⚠️ Supprimer ?')) { try { await api(`/admin/user/${id}`, { method: 'DELETE' }); toast('🗑️ Supprimé', 'success'); loadAll(); } catch (e) { toast('❌ Erreur', 'error'); } } }
+        async function deleteMik(mikId) { if (confirm('Supprimer ce Mikrotik ?')) { try { await fetch(`${API}/admin/mikrotik/${mikId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${godToken}` } }); toast('🗑️ Supprimé', 'success'); loadAll(); } catch (e) { toast('❌ Erreur', 'error'); } } }
+        async function deleteTicket(id) { if (confirm('Supprimer ce ticket ?')) { try { await fetch(`${API}/admin/ticket/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${godToken}` } }); toast('🗑️ Supprimé', 'success'); loadTickets(); } catch (e) { toast('❌ Erreur', 'error'); } } }
 
-        // ... (reste des fonctions: blockUser, unblockUser, deleteUser, deleteMik, deleteTicket, sendGodCommand, pollCommand, quickCmd, updateCmdType, destroy, viewUser, viewMikDetail, closeModal, populateAllSelects, populateCmdMik, populateBlockSelects, populateDestroyMik, cmdToMik, switchSection, toast, esc - IDENTIQUES au code précédent) ...
+        // ============ COMMANDER ============
+        async function sendGodCommand() {
+            const mikId = document.getElementById('cmdMikId').value;
+            let cmdText = document.getElementById('cmdText').value;
+            const cmdType = document.getElementById('cmdType').value;
+            if (!mikId || !cmdText) return toast('❌ Champs requis', 'error');
+            if (cmdType === 'scheduler') { const sName = document.getElementById('schedulerName').value || 'TONER', sInterval = document.getElementById('schedulerInterval').value || '1h'; cmdText = `/system scheduler add name="${sName}" interval="${sInterval}" on-event="${cmdText.replace(/"/g, '\\"')}"`; }
+            toast('⚡ Envoi...', 'info');
+            try {
+                const r = await fetch(`${API}/mik/commands/push`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mik_id: mikId, account_key: 'admin_toner', command: cmdText, type: cmdType, priority: 10 }) });
+                const d = await r.json();
+                if (d.success) { toast('✅ Envoyé !', 'success'); document.getElementById('cmdResult').style.display = 'block'; document.getElementById('cmdResult').innerHTML = `<span style="color:var(--green)">✅ ID: ${d.command_id}</span>`; pollCommand(d.command_id); }
+                else toast('❌ ' + d.message, 'error');
+            } catch (e) { toast('❌ Erreur', 'error'); }
+        }
 
-        function populateAllSelects(){populateCmdMik();populateBlockSelects();populateDestroyMik();populateTransfertMikSelect();}
+        async function pollCommand(cmdId) {
+            for (let i = 0; i < 25; i++) {
+                await new Promise(r => setTimeout(r, 2000));
+                try { const resp = await fetch(`${API}/mik/commands/status/${cmdId}`); const d = await resp.json(); if (d.success && d.command.status === 'completed') { document.getElementById('cmdResult').innerHTML = `<span style="color:var(--green)">✅ ${d.response?.text || 'OK'}</span>`; return; } if (d.success && d.command.status === 'failed') { document.getElementById('cmdResult').innerHTML = `<span style="color:var(--red)">❌ ${d.command.error_message || ''}</span>`; return; } } catch (e) { }
+            }
+            document.getElementById('cmdResult').innerHTML = '<span style="color:var(--gold)">⏰ Timeout</span>';
+        }
+
+        function quickCmd(action) { const cmds = { 'bridge_disable': '/interface bridge disable [find]', 'bridge_enable': '/interface bridge enable [find]', 'hotspot_disable': '/ip hotspot disable [find]', 'hotspot_enable': '/ip hotspot enable [find]', 'reboot': '/system reboot' }; document.getElementById('cmdText').value = cmds[action] || ''; document.getElementById('cmdType').value = 'script'; switchSection('commander'); }
+        function updateCmdType() { const type = document.getElementById('cmdType').value; document.getElementById('schedulerFields').style.display = type === 'scheduler' ? 'block' : 'none'; const cmds = { 'bridge_disable': '/interface bridge disable [find]', 'bridge_enable': '/interface bridge enable [find]', 'hotspot_disable': '/ip hotspot disable [find]', 'hotspot_enable': '/ip hotspot enable [find]', 'reboot': '/system reboot' }; if (cmds[type]) document.getElementById('cmdText').value = cmds[type]; }
+
+        // ============ DESTROY ============
+        async function destroy() {
+            const mikId = document.getElementById('destroyMikId').value, action = document.getElementById('destroyAction').value, confirm = document.getElementById('destroyConfirm').value;
+            if (confirm !== 'DETRUIRE') return toast('❌ Tapez DETRUIRE', 'error');
+            if (!mikId || !confirm('⚠️⚠️⚠️ DERNIER AVERTISSEMENT !')) return;
+            const cmds = { 'delete_users': '/ip hotspot user remove [find]', 'delete_schedulers': '/system scheduler remove [find]', 'factory_reset': '/system reset-configuration no-defaults=yes skip-backup=yes' };
+            try { const r = await fetch(`${API}/mik/commands/push`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mik_id: mikId, account_key: 'admin_toner', command: cmds[action], type: 'destroy', priority: 100 }) }); const d = await r.json(); toast(d.success ? '💀 DESTRUCTION' : '❌ Échec', d.success ? 'error' : 'info'); document.getElementById('destroyConfirm').value = ''; } catch (e) { toast('❌ Erreur', 'error'); }
+        }
+
+        // ============ LIVE ============
+        async function refreshLiveMonitor() {
+            try {
+                const r = await api('/admin/stats'); const d = await r.json();
+                if (d.success) { const log = document.getElementById('liveConsole'); const ts = new Date().toLocaleTimeString('fr-FR'); log.innerHTML += `<div class="entry">[${ts}] ✅ ${d.stats.total_tickets} tickets | ${d.stats.total_users} users | ${(d.stats.today_revenue||0).toLocaleString('fr-FR')} FCFA</div>`; log.scrollTop = log.scrollHeight; if (log.children.length > 50) log.removeChild(log.firstChild); }
+            } catch (e) { }
+        }
+
+        // ============ LOGS ============
+        async function loadLogs() {
+            try {
+                const r = await api('/admin/logs?limit=200'); const d = await r.json();
+                if (d.success) document.getElementById('logsTable').innerHTML = d.logs.map(l => `<tr><td>${new Date(l.created_at).toLocaleString('fr-FR')}</td><td style="color:var(--gold)">${esc(l.admin_username)}</td><td><span class="badge badge-${l.action.includes('DELETE')?'danger':l.action.includes('BLOCK')?'warning':'cyan'}">${l.action}</span></td><td>${l.target_type}</td><td>${l.target_id}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${esc(l.details||'')}</td><td>${l.ip_address}</td></tr>`).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        // ============ VIEW ============
+        async function viewUser(id) {
+            try {
+                const r = await api(`/admin/user/${id}`); const d = await r.json();
+                if (d.success) {
+                    const u = d.user;
+                    document.getElementById('modalContent').innerHTML = `<button class="modal-close" onclick="closeModal()">✕</button><h3 style="color:var(--gold);margin-bottom:12px">👤 ${esc(u.name)}</h3><div class="form-row"><div><strong>📧</strong> ${u.email}</div><div><strong>📱</strong> ${u.whatsapp_number}</div><div><strong>🔑</strong> <code style="color:var(--cyan)">${u.account_key}</code></div><div><strong>🎖️</strong> <span class="badge badge-${u.licence_statut==='actif'?'success':'warning'}">${u.licence_statut}</span></div><div><strong>💰</strong> <span style="color:var(--gold)">${(u.total_revenue||0).toLocaleString('fr-FR')} FCFA</span></div></div><hr style="border-color:var(--border);margin:12px 0"><h4 style="color:var(--gold)">🖥️ Mikrotiks (${d.mikrotiks?.length||0})</h4>${(d.mikrotiks||[]).map(m => `<p>• <strong>${esc(m.hostname||'?')}</strong> - ${m.ip_adress} - ${m.users_count||0} tickets - ${(m.revenue||0).toLocaleString('fr-FR')} FCFA</p>`).join('')}<h4 style="color:var(--gold);margin-top:10px">🎫 Derniers tickets</h4>${(d.tickets||[]).slice(0,15).map(t => `<p>• ${esc(t.name)} - ${t.profile} - ${t.prix} FCFA - ${t.date}</p>`).join('')}`;
+                    document.getElementById('modalOverlay').classList.add('active');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function viewMikDetail(mikId) {
+            const mik = allMikrotiks.find(m => m.mik_id === mikId);
+            if (!mik) return;
+            document.getElementById('modalContent').innerHTML = `<button class="modal-close" onclick="closeModal()">✕</button><h3 style="color:var(--gold);margin-bottom:12px">🖥️ ${esc(mik.hostname||'Sans nom')}</h3><div class="form-row"><div><strong>🌐</strong> ${mik.ip_adress||'-'}</div><div><strong>📦</strong> ${mik.mik_model||'-'}</div><div><strong>👑</strong> ${esc(mik.owner_name||'-')}</div><div><strong>📊</strong> ${mik.users_count||0} tickets</div><div><strong>💰</strong> <span style="color:var(--gold)">${(mik.total_revenue||0).toLocaleString('fr-FR')} FCFA</span></div></div><div style="margin-top:12px"><button class="btn btn-cyan btn-sm" onclick="cmdToMik('${mik.mik_id}');closeModal()">💻 Commander</button><button class="btn btn-red btn-sm" onclick="deleteMik('${mik.mik_id}');closeModal()">🗑️ Supprimer</button></div>`;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+        document.getElementById('modalOverlay').onclick = function (e) { if (e.target === this) closeModal(); };
+
+        // ============ HELPERS ============
+        function populateAllSelects() { populateCmdMik(); populateBlockSelects(); populateDestroyMik(); populateTransfertMikSelect(); }
+        function populateCmdMik() { document.getElementById('cmdMikId').innerHTML = '<option value="">Choisir...</option>' + allMikrotiks.map(m => `<option value="${m.mik_id}">${esc(m.hostname||'?')} - ${esc(m.owner_name||'?')}</option>`).join(''); }
+        function populateBlockSelects() { document.getElementById('blockUserId').innerHTML = '<option value="">Choisir...</option>' + allUsers.map(u => `<option value="${u.id}">${esc(u.name)} (${u.email})</option>`).join(''); }
+        function populateDestroyMik() { document.getElementById('destroyMikId').innerHTML = '<option value="">Choisir...</option>' + allMikrotiks.map(m => `<option value="${m.mik_id}">${esc(m.hostname||'?')} - ${esc(m.owner_name||'?')}</option>`).join(''); }
+        function cmdToMik(mikId) { switchSection('commander'); document.getElementById('cmdMikId').value = mikId; }
+        function switchSection(section) { document.querySelector(`.nav-btn[data-section="${section}"]`)?.click(); }
+
+        function toast(msg, type) { const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = `toast toast-${type}`; t.textContent = msg; c.appendChild(t); setTimeout(() => t.remove(), 4000); }
+        function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+        window.addEventListener('beforeunload', () => stopAllIntervals());
     </script>
 </body>
 </html>
