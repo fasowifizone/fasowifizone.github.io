@@ -1,6 +1,5 @@
 ||mobileconfiguration-pa.googleapis.com^
 ||api-ai-ireland.aibotplatform.com^
-||www.google.com^
 ||firebaseinstallations.googleapis.com^
 ||device.transsion-os.com^
 ||dl.apps.orange.com^
@@ -8,8 +7,6 @@
 ||supl.google.com^
 ||af.shalltry.com^
 ||ire-dsc.shalltry.com^
-||time1.google.com^
-||tms2.palmplaystore.com^
 ||app.transacme.com^
 ||update.googleapis.com^
 ||clientservices.googleapis.com^
@@ -20,7 +17,6 @@
 ||firebaseremoteconfig.googleapis.com^
 ||ire-oneid.shalltry.com^
 ||location-cn.transsion-os.com^
-||time.cloudflare.com^
 ||remoteprovisioning.googleapis.com^
 ||connectivitycheck.gstatic.com^
 ||firebaselogging-pa.googleapis.com^
