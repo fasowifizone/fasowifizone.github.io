@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Paiement reçu - MoneyFusion</title>
+  <!-- Police moderne et clean -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(145deg, #f6f9fc 0%, #eef2f7 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .callback-card {
+      max-width: 480px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 48px;
+      padding: 2.5rem 2rem 2.2rem;
+      box-shadow: 0 30px 60px -20px rgba(0, 20, 40, 0.25),
+                  inset 0 1px 2px rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .icon-container {
+      background: #d1fae5;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 12px 24px -8px rgba(16, 185, 129, 0.25);
+    }
+
+    .checkmark {
+      font-size: 48px;
+      line-height: 1;
+      color: #065f46;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #0b1e33;
+      margin-bottom: 0.25rem;
+    }
+
+    .subhead {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #2c3e50;
+      background: rgba(16, 185, 129, 0.08);
+      display: inline-block;
+      padding: 0.3rem 1.2rem;
+      border-radius: 100px;
+      margin-bottom: 1.2rem;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .payment-details {
+      background: #ffffffcc;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-radius: 28px;
+      padding: 1.6rem 1.2rem;
+      margin: 1.8rem 0 2.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: 500;
+      color: #2c3e50;
+      opacity: 0.7;
+      font-size: 0.95rem;
+    }
+
+    .detail-value {
+      font-weight: 600;
+      color: #0b1e33;
+      font-size: 1.05rem;
+      background: #f1f5f9;
+      padding: 0.2rem 0.9rem;
+      border-radius: 40px;
+      letter-spacing: 0.01em;
+    }
+
+    .amount-large {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #065f46;
+      background: #d1fae5;
+      padding: 0.2rem 1.2rem;
+      border-radius: 60px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #d1fae5;
+      padding: 0.4rem 1.2rem 0.4rem 1rem;
+      border-radius: 60px;
+      color: #065f46;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin: 0.4rem 0 0.2rem;
+    }
+
+    .status-badge::before {
+      content: "●";
+      font-size: 0.7rem;
+      color: #10b981;
+      animation: pulse-dot 1.8s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0.4; transform: scale(0.9); }
+    }
+
+    .btn-dashboard {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      width: 100%;
+      background: #0b1e33;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 1rem 1.5rem;
+      border-radius: 80px;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 8px 20px -6px rgba(11, 30, 51, 0.2);
+      letter-spacing: -0.01em;
+      margin-top: 0.6rem;
+    }
+
+    .btn-dashboard:hover {
+      background: #1a3150;
+      transform: translateY(-2px);
+      box-shadow: 0 16px 28px -10px rgba(11, 30, 51, 0.3);
+    }
+
+    .btn-dashboard:active {
+      transform: translateY(0px);
+      box-shadow: 0 4px 12px -4px rgba(11, 30, 51, 0.2);
+    }
+
+    .btn-dashboard i {
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .back-link {
+      margin-top: 1.8rem;
+      display: inline-block;
+      font-size: 0.95rem;
+      color: #2c3e50;
+      opacity: 0.6;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.3rem 1rem;
+      border-radius: 60px;
+      transition: 0.15s;
+      border: 1px solid transparent;
+    }
+
+    .back-link:hover {
+      opacity: 1;
+      background: rgba(0,0,0,0.02);
+      border-color: #d0d9e5;
+    }
+
+    /* simulate small screen fine-tuning */
+    @media (max-width: 440px) {
+      .callback-card {
+        padding: 1.8rem 1.2rem;
+        border-radius: 32px;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.2rem;
+        padding: 0.7rem 0;
+      }
+      .detail-value {
+        width: 100%;
+        text-align: left;
+        padding: 0.3rem 0.8rem;
+      }
+      .amount-large {
+        font-size: 1.2rem;
+        padding: 0.2rem 1rem;
+      }
+      .icon-container {
+        width: 72px;
+        height: 72px;
+      }
+      .checkmark {
+        font-size: 38px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="callback-card">
+
+    <!-- Icône de confirmation -->
+    <div class="icon-container">
+      <span class="checkmark">✓</span>
+    </div>
+
+    <h1>Paiement reçu</h1>
+    <div class="subhead">MoneyFusion · callback</div>
+
+    <!-- Détails simulés (données typiques de callback) -->
+    <div class="payment-details">
+      <div class="detail-row">
+        <span class="detail-label">Transaction ID</span>
+        <span class="detail-value" id="transactionId">MF-8X3K-9P2L</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Montant</span>
+        <span class="detail-value amount-large" id="amount">42 500 FCFA</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Méthode</span>
+        <span class="detail-value" id="method">Mobile Money</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Référence</span>
+        <span class="detail-value" id="reference">#INV-2408-21</span>
+      </div>
+    </div>
+
+    <!-- Badge de statut avec animation -->
+    <div class="status-badge">
+      Confirmé · paiement validé
+    </div>
+
+    <!-- Bouton principal vers le tableau de bord -->
+    <a href="https://fasowifizone.github.io/dashboard" class="btn-dashboard">
+      <span>📊</span> Revenir au tableau de bord
+    </a>
+
+    <!-- Lien texte "Cliquez ici pour revenir" (comme demandé) -->
+    <a href="https://fasowifizone.github.io/dashboard" class="back-link">
+      Cliquez ici pour revenir
+    </a>
+
+    <!-- Note: les données affichées peuvent être dynamisées via URL / localStorage / API 
+         mais ce template static est prêt à être intégré -->
+  </div>
+
+  <script>
+    (function() {
+      // Simulation d'un callback MoneyFusion : 
+      // on peut extraire des paramètres depuis l'URL pour mettre à jour les données.
+      // Cette partie est optionnelle, mais donne un aperçu de l'intégration.
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        // Exemple de paramètres qu'on pourrait recevoir du webhook/callback
+        const txnId = urlParams.get('transaction_id') || urlParams.get('txn_id') || null;
+        const amount = urlParams.get('amount') || urlParams.get('montant') || null;
+        const method = urlParams.get('method') || urlParams.get('moyen') || null;
+        const ref = urlParams.get('reference') || urlParams.get('ref') || null;
+
+        if (txnId) {
+          document.getElementById('transactionId').textContent = txnId;
+        }
+        if (amount) {
+          // Tente d'ajouter un formatage si c'est un nombre
+          let amountStr = amount;
+          if (!isNaN(amount) && amount !== '') {
+            const num = parseFloat(amount);
+            if (num % 1 === 0) {
+              amountStr = num.toLocaleString('fr-FR') + ' FCFA';
+            } else {
+              amountStr = num.toFixed(2).replace('.', ',') + ' FCFA';
+            }
+          } else {
+            // si déjà une chaîne avec devise, on laisse
+            if (!amountStr.includes('FCFA') && !amountStr.includes('CFA')) {
+              amountStr = amountStr + ' FCFA';
+            }
+          }
+          document.getElementById('amount').textContent = amountStr;
+        }
+        if (method) {
+          document.getElementById('method').textContent = method;
+        }
+        if (ref) {
+          document.getElementById('reference').textContent = ref;
+        }
+      } catch (e) {
+        // en cas d'erreur, on garde les valeurs par défaut
+        console.log('Callback : données statiques affichées');
+      }
+
+      // Option : on peut aussi stocker en sessionStorage pour une autre page
+      // mais ce n'est pas nécessaire ici.
+    })();
+  </script>
+</body>
+</html>
